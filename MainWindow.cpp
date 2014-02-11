@@ -1,6 +1,6 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
-#include <NLDatabase.h>
+#include "NLDatabase/NLDatabase.h"
 #include <QDesktopServices>
 #include <QStandardItemModel>
 using namespace NL::DB;

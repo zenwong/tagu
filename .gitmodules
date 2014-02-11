@@ -1,0 +1,3 @@
+[submodule "NLDatabase"]
+	path = NLDatabase
+	url = https://github.com/catnapgames/NLDatabase

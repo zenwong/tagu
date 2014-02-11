@@ -17,7 +17,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    TableModel.cpp
+    TableModel.cpp \
+    HtmlDelegate.cpp
 
 HEADERS  += MainWindow.hpp \
     TableModel.hpp \
