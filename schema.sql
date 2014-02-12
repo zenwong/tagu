@@ -28,6 +28,25 @@ CREATE TABLE Acts (
   name text,
   unique(name) ON CONFLICT IGNORE
 );
+CREATE TABLE ImportDirs (
+  _id integer primary key autoincrement,
+  name text,
+  unique(name) ON CONFLICT IGNORE
+);
+CREATE TABLE Settings (
+  _id integer primary key autoincrement,
+  username text,
+  password text,
+  session text,
+  thumb_percentage int,
+  thumb_spacing int,
+  thumb_title_overlay int,
+  thumb_width int,
+  thumb_height int,
+  thumb_location text,
+  cover_location text,
+  unique(profile) ON CONFLICT IGNORE
+);
 
 CREATE VIEW TagsForVid as select title,name from VidTags inner join tags where tags._id = vidtags.tid;
 CREATE VIEW ActsForVid as select title,name from VidActs inner join acts where acts._id = vidacts.aid;

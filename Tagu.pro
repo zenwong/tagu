@@ -26,7 +26,8 @@ HEADERS  += MainWindow.hpp \
     TableModel.hpp \
     HtmlDelegate.hpp \
     MultiCompleter.hpp \
-    SettingsDialog.hpp
+    SettingsDialog.hpp \
+    Utils.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui

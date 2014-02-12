@@ -1,6 +1,7 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
 #include "SettingsDialog.hpp"
+#include "Utils.hpp"
 #include "NLDatabase/NLDatabase.h"
 #include "QtAwesome/QtAwesome/QtAwesome.h"
 #include <QDesktopServices>
@@ -8,6 +9,7 @@
 #include <QPushButton>
 #include <QListWidgetItem>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 using namespace NL::DB;
 using namespace boost::filesystem;
 
@@ -19,7 +21,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initDB();
     initToolBar();
 
-    QSize size(400,222);
+    //QSize size(400,222);
+    QSize size(420,242);
+
     int i = 0;
     boost::filesystem::path directory("/tmp/pics");
     for(recursive_directory_iterator iter(directory), end; iter != end; ++iter) {
@@ -29,11 +33,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(title), ui->listWidget);
         item->setSizeHint(size);
-        //item->setData(QPixmap(QString::fromStdString(fpath)), Qt::DecorationRole);
         ui->listWidget->insertItem(i, item);
 
         QLabel *lbl = new QLabel(QString::fromStdString(title));
-        lbl->setPixmap(QPixmap(QString::fromStdString(fpath)));
+        lbl->setPixmap(pixmapWithText(QPixmap(QString::fromStdString(fpath)), title));
         ui->listWidget->setItemWidget(item, lbl);
 
         i++;
