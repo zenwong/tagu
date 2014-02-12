@@ -26,9 +26,9 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * Subtitle sharing for JAV
 
 ## Requirements
-[Qt5] (http://qt-project.org)
-[sqlite] (http://www.sqlite.org)
-[boost] (http://www.boost.org)
+* [Qt5] (http://qt-project.org)
+* [sqlite] (http://www.sqlite.org)
+* [boost] (http://www.boost.org)
 
 ## Installation
 * git submodule init

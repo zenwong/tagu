@@ -5,6 +5,7 @@
 #include <QtSql>
 #include <map>
 #include <QLabel>
+#include <QStringListModel>
 #include "HtmlDelegate.hpp"
 #include "MultiCompleter.hpp"
 using namespace std;
