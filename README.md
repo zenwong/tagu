@@ -29,3 +29,9 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 [Qt5] (http://qt-project.org)
 [sqlite] (http://www.sqlite.org)
 [boost] (http://www.boost.org)
+
+## Installation
+* git submodule init
+* git submodule update
+* qmake
+* make

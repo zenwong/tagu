@@ -2,9 +2,9 @@
 #include "ui_MainWindow.h"
 #include "SettingsDialog.hpp"
 #include "NLDatabase/NLDatabase.h"
+#include "QtAwesome/QtAwesome/QtAwesome.h"
 #include <QDesktopServices>
 #include <QStandardItemModel>
-#include <QtAwesome.h>
 #include <QPushButton>
 using namespace NL::DB;
 

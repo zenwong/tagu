@@ -11,7 +11,7 @@ LIBS += /usr/lib/libsqlite3.so /usr/lib/libboost_system.so /usr/lib/libboost_fil
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = JavByTitle
+TARGET = Tagu
 TEMPLATE = app
 
 
@@ -31,4 +31,4 @@ HEADERS  += MainWindow.hpp \
 FORMS    += MainWindow.ui \
     SettingsDialog.ui
 
-include(/root/libs/QtAwesome/QtAwesome/QtAwesome.pri)
+include(QtAwesome/QtAwesome/QtAwesome.pri)
