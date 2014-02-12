@@ -15,13 +15,84 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="0" column="0" colspan="5">
+     <widget class="QLineEdit" name="editSearch">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>5</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="placeholderText">
+       <string>Search</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="7">
      <widget class="QListView" name="listView">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ContiguousSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectItems</enum>
+      </property>
       <property name="isWrapping" stdset="0">
        <bool>true</bool>
       </property>
       <property name="resizeMode">
        <enum>QListView::Adjust</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5" alignment="Qt::AlignRight">
+     <widget class="QRadioButton" name="radioButton_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>All</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6">
+     <widget class="QRadioButton" name="radioButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Any</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3" colspan="4">
+     <widget class="QLineEdit" name="editTags">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="placeholderText">
+       <string>Tags</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QLineEdit" name="editActs">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="placeholderText">
+       <string>Acts</string>
       </property>
      </widget>
     </item>

@@ -18,10 +18,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     TableModel.cpp \
-    HtmlDelegate.cpp
+    HtmlDelegate.cpp \
+    MultiCompleter.cpp
 
 HEADERS  += MainWindow.hpp \
     TableModel.hpp \
-    HtmlDelegate.hpp
+    HtmlDelegate.hpp \
+    MultiCompleter.hpp
 
 FORMS    += MainWindow.ui
