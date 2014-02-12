@@ -6,7 +6,10 @@
 #include <QDesktopServices>
 #include <QStandardItemModel>
 #include <QPushButton>
+#include <QListWidgetItem>
+#include <boost/filesystem.hpp>
 using namespace NL::DB;
+using namespace boost::filesystem;
 
 Database sdb("/root/devel/cpp/qt/JavByTitle/db");
 
@@ -15,6 +18,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initDB();
     initToolBar();
+
+    QSize size(400,222);
+    int i = 0;
+    boost::filesystem::path directory("/tmp/pics");
+    for(recursive_directory_iterator iter(directory), end; iter != end; ++iter) {
+        auto title = iter->path().leaf().string();
+        auto ext   = iter->path().extension().string();
+        auto fpath = iter->path().string();
+
+        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(title), ui->listWidget);
+        item->setSizeHint(size);
+        //item->setData(QPixmap(QString::fromStdString(fpath)), Qt::DecorationRole);
+        ui->listWidget->insertItem(i, item);
+
+        QLabel *lbl = new QLabel(QString::fromStdString(title));
+        lbl->setPixmap(QPixmap(QString::fromStdString(fpath)));
+        ui->listWidget->setItemWidget(item, lbl);
+
+        i++;
+    }
 }
 
 void MainWindow::initDB() {
@@ -90,15 +113,35 @@ void MainWindow::initToolBar() {
 
     QPushButton *options = new QPushButton();
     options->setText(QChar( icon_cog ) );
-    options->setFont( awesome->font(40) );
+    options->setFont( awesome->font(30) );
     ui->mainToolBar->addWidget(options);
 
+    QPushButton *gridView = new QPushButton();
+    gridView->setText(QChar( icon_th ) );
+    gridView->setFont( awesome->font(30) );
+    ui->mainToolBar->addWidget(gridView);
+
+    QPushButton *rowView = new QPushButton();
+    rowView->setText(QChar( icon_align_justify ) );
+    rowView->setFont(awesome->font(30));
+    ui->mainToolBar->addWidget(rowView);
+
     connect(options, SIGNAL(clicked()), this, SLOT(options()));
+    connect(gridView, SIGNAL(clicked()), this, SLOT(onGridView()));
+    connect(rowView, SIGNAL(clicked()), this, SLOT(onRowView()));
 }
 
 void MainWindow::options() {
     SettingsDialog dialog;
     dialog.exec();
+}
+
+void MainWindow::onGridView() {
+
+}
+
+void MainWindow::onRowView() {
+
 }
 
 MainWindow::~MainWindow(){

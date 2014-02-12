@@ -30,6 +30,8 @@ private slots:
     void on_editSearch_returnPressed();
 
     void options();
+    void onGridView();
+    void onRowView();
 
 private:
     Ui::MainWindow *ui;
