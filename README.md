@@ -36,3 +36,12 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * qmake
 * make
 * g++ -std=c++11 import.cpp -lboost_system -lboost_filesystem -lboost_regex -lsqlite3 -o import
+
+## Importing files into library
+To import files into the library, edir dirs to include the folders that you want imported.  It's recursive so just specify the top level.
+
+Compile either or both:
+import-jav.cpp to import JAV videos.
+import-porn.cpp to import Porn videos.
+
+the only difference is a regex to detect correctly named JAV files.
