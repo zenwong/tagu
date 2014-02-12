@@ -9,20 +9,33 @@
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
+#include <libffmpegthumbnailer/videothumbnailer.h>
 #include <sstream>
 using namespace std;
 using namespace NL::DB;
 using namespace boost::filesystem;
 using namespace boost;
+using namespace ffmpegthumbnailer;
+
+int     seekPercentage = 10;
+string  seekTime;
+string  imageType = "jpg";
+int     thumbnailSize = 400;
+int     imageQuality = 5;
+bool    filmStripOverlay = false;
+bool    workaroundIssues = false;
+bool    maintainAspectRatio = true;
+bool    smartFrameSelection = true;
 
 Database db("db");
+VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, true);
 
 void import() {
   vector<string> dirs;
   ifstream infile;
   infile.open("dirs");
   string line;
-  regex rx(".*?([a-zA-Z]{2,4})[-]([0-9]{2,4}).*?");
+  regex rx(".*?([a-zA-Z]{2,5})[-]([0-9]{2,4}).*?");
   smatch match;
   char buf[9999];
   int fd;
@@ -58,7 +71,10 @@ void import() {
 	    boost::trim(t);
 	    boost::replace_all(t, "\r\n", "");
 
-	    cout << t << ' ';
+	    //cout << t << '\n';
+
+	    videoThumbnailer.setSeekPercentage(20);
+	    videoThumbnailer.generateThumbnail(fpath, Jpeg, "/mnt/seagate/pics/thumbs/" + t + ".jpg");
 
 	    db.query( "INSERT INTO vids(title,path) VALUES(?,?)" ).execute(t, fpath, ss.str());
 	    ss.str("");

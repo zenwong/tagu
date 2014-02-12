@@ -33,6 +33,10 @@ private slots:
     void onGridView();
     void onRowView();
 
+    void on_listWidget_clicked(const QModelIndex &index);
+
+    void on_listWidget_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase db;

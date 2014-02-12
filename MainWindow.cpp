@@ -13,7 +13,7 @@
 using namespace NL::DB;
 using namespace boost::filesystem;
 
-Database sdb("/root/devel/cpp/qt/JavByTitle/db");
+Database sdb("/root/devel/cpp/qt/Tagu/db");
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initToolBar();
 
     //QSize size(400,222);
-    QSize size(420,242);
+    QSize size(420,240);
 
     int i = 0;
-    boost::filesystem::path directory("/tmp/pics");
+    boost::filesystem::path directory("/mnt/seagate/pics/thumbs");
     for(recursive_directory_iterator iter(directory), end; iter != end; ++iter) {
         auto title = iter->path().leaf().string();
         auto ext   = iter->path().extension().string();
@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 void MainWindow::initDB() {
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/root/devel/cpp/qt/JavByTitle/db");
+    db.setDatabaseName("/root/devel/cpp/qt/Tagu/db");
     db.open();
 
     vidTable = new QSqlTableModel(this, db);
@@ -220,6 +220,22 @@ void MainWindow::on_editTags_returnPressed()
     sdb.commit();
     searchView->select();
     tagTable->select();
+}
+
+void MainWindow::on_listWidget_clicked(const QModelIndex &index)
+{
+
+}
+
+void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
+{
+    QString txt = ui->listWidget->currentItem()->text();
+    txt.remove(txt.size() - 4, 4);
+    string path = sdb.query("select path from vids where title = ?").select_single(txt.toStdString()).column_string(0);
+
+    QString url = "file://";
+    url.append(QString::fromStdString(path));
+    QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode));
 }
 
 // TODO find a more elegant way to filter by multiple tags and acts
