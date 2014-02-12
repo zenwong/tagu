@@ -9,8 +9,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
-#include <openssl/md5.h>
-#include <city.h>
 #include <sstream>
 using namespace std;
 using namespace NL::DB;
@@ -24,12 +22,11 @@ void import() {
   ifstream infile;
   infile.open("dirs");
   string line;
-  regex rx(".*?([a-zA-Z]{2,6})[-]([0-9]{2,6}).*?");
+  regex rx(".*?([a-zA-Z]{2,4})[-]([0-9]{2,4}).*?");
   smatch match;
   char buf[9999];
   int fd;
   stringstream ss;
-  unsigned char digest[MD5_DIGEST_LENGTH];
 
   while(!infile.eof()) {
     getline(infile, line);

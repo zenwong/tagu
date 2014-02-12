@@ -35,3 +35,4 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * git submodule update
 * qmake
 * make
+* g++ -std=c++11 import.cpp -lboost_system -lboost_filesystem -lboost_regex -lsqlite3 -o import
