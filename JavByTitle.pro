@@ -19,11 +19,16 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     TableModel.cpp \
     HtmlDelegate.cpp \
-    MultiCompleter.cpp
+    MultiCompleter.cpp \
+    SettingsDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     TableModel.hpp \
     HtmlDelegate.hpp \
-    MultiCompleter.hpp
+    MultiCompleter.hpp \
+    SettingsDialog.hpp
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui \
+    SettingsDialog.ui
+
+include(/root/libs/QtAwesome/QtAwesome/QtAwesome.pri)

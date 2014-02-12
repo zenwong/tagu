@@ -23,25 +23,24 @@ public:
 
 private slots:
     void on_listView_clicked(const QModelIndex &index);
-
     void on_listView_doubleClicked(const QModelIndex &index);
-
     void on_editActs_returnPressed();
-
     void on_editTags_returnPressed();
-
     void on_editSearch_returnPressed();
+
+    void options();
 
 private:
     Ui::MainWindow *ui;
     QSqlDatabase db;
     QSqlTableModel *vidTable, *actTable, *tagTable, *vidtags, *vidacts, *searchView;
     MultiCompleter *autoTags, *autoActs, *autoSearch;
-
-    void initDB();
     QStringListModel *vids;
     QStringList title, path;
     QLabel *totalVideos;
+
+    void initDB();
+    void initToolBar();
 };
 
 #endif // MAINWINDOW_HPP

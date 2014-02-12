@@ -1,9 +1,11 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
+#include "SettingsDialog.hpp"
 #include "NLDatabase/NLDatabase.h"
 #include <QDesktopServices>
 #include <QStandardItemModel>
-#include <iostream>
+#include <QtAwesome.h>
+#include <QPushButton>
 using namespace NL::DB;
 
 Database sdb("/root/devel/cpp/qt/JavByTitle/db");
@@ -12,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     initDB();
+    initToolBar();
 }
 
 void MainWindow::initDB() {
@@ -79,6 +82,23 @@ void MainWindow::initDB() {
     ui->editTags->setCompleter(autoTags);
     ui->editActs->setCompleter(autoActs);
     ui->editSearch->setCompleter(autoSearch);
+}
+
+void MainWindow::initToolBar() {
+    QtAwesome* awesome = new QtAwesome( this );
+    awesome->initFontAwesome();
+
+    QPushButton *options = new QPushButton();
+    options->setText(QChar( icon_cog ) );
+    options->setFont( awesome->font(40) );
+    ui->mainToolBar->addWidget(options);
+
+    connect(options, SIGNAL(clicked()), this, SLOT(options()));
+}
+
+void MainWindow::options() {
+    SettingsDialog dialog;
+    dialog.exec();
 }
 
 MainWindow::~MainWindow(){
