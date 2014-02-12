@@ -76,8 +76,6 @@ void MainWindow::initDB() {
     autoSearch->setCompletionColumn(0);
 
     ui->listView->setModel(vids);
-    //ui->listView->setModelColumn(1);
-
     ui->editTags->setCompleter(autoTags);
     ui->editActs->setCompleter(autoActs);
     ui->editSearch->setCompleter(autoSearch);
@@ -95,11 +93,6 @@ void MainWindow::on_listView_clicked(const QModelIndex &index) {
 
     string tags = sdb.query("select tag from VidTagsView where title = ?").select_single(title.c_str()).column_string(0);
     ui->editTags->setText(QString::fromStdString(tags));
-}
-
-void MainWindow::on_tableView_clicked(const QModelIndex &index)
-{
-
 }
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
@@ -171,8 +164,16 @@ void MainWindow::on_editSearch_returnPressed()
     QStringList terms = search.split(",");
 
     if(terms.size() == 1) {
-    } else {
+        string term = terms.at(0).toStdString();
+        QStringList resTitle, resPath;
+        for(const auto& row: sdb.query("select vids.title as title, vids.path as path from vids inner join vidtags on vidtags.title = vids.title inner join tags on tags._id = vidtags.tid where tags.name = ? union  select vids.title as title, vids.path as path from vids inner join vidacts on vidacts.title = vids.title inner join acts on acts._id = vidacts.aid where acts.name = ?").select(term,term)){
+            resTitle.append(QString::fromStdString(row.column_string(0)));
+            resPath.append(QString::fromStdString(row.column_string(1)));
+        }
 
+        QStringListModel *searchResults = new QStringListModel(resTitle);
+        ui->listView->setModel(searchResults);
+    } else {
        QString sql;
        sql.reserve(9999);
        sql.append("select _id from tags where name = ");
@@ -186,6 +187,9 @@ void MainWindow::on_editSearch_returnPressed()
            sql.append("'");
        }
 
+       // we need to seperate the selects since i wanted the acts and tags
+       // being searched for in the same lineEdit.  First we get a list of
+       // aids and tids, then we intersect or union on those ids.
        QList<int> tids;
        for(const auto& row: sdb.query(sql.toStdString()).select()){
            tids.append(row.column_int(0));
@@ -222,8 +226,14 @@ void MainWindow::on_editSearch_returnPressed()
        sql.append(") group by vids.title having count(vids.title) = ");
        sql.append(QString::number(tids.size()));
 
-       // intersect acts
-       sql.append(" intersect select vids.title as title, vids.path from vids inner join vidacts on vidacts.title = vids.title and vidacts.aid in(");
+       // check if user specified any or all in filter
+       if(ui->radioAll->isChecked()) {
+           sql.append(" intersect ");
+       } else {
+           sql.append(" union ");
+       }
+
+       sql.append("select vids.title as title, vids.path from vids inner join vidacts on vidacts.title = vids.title and vidacts.aid in(");
        sql.append(QString::number(aids.at(0)));
        for(int i = 1; i < aids.size(); i++) {
            sql.append(",");
@@ -239,6 +249,7 @@ void MainWindow::on_editSearch_returnPressed()
            resTitle.append(QString::fromStdString(row.column_string(0)));
            resPath.append(QString::fromStdString(row.column_string(1)));
        }
+
        QStringListModel *searchResults = new QStringListModel(resTitle);
        ui->listView->setModel(searchResults);
     }

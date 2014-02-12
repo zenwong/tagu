@@ -24,8 +24,6 @@ public:
 private slots:
     void on_listView_clicked(const QModelIndex &index);
 
-    void on_tableView_clicked(const QModelIndex &index);
-
     void on_listView_doubleClicked(const QModelIndex &index);
 
     void on_editActs_returnPressed();
