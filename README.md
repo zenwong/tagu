@@ -29,6 +29,7 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * [Qt5] (http://qt-project.org)
 * [sqlite] (http://www.sqlite.org)
 * [boost] (http://www.boost.org)
+* [ffmpegthumbnailer] (https://code.google.com/p/ffmpegthumbnailer)
 
 ## Installation
 * git submodule init
@@ -36,6 +37,7 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * qmake
 * make
 * g++ -std=c++11 import.cpp -lboost_system -lboost_filesystem -lboost_regex -lsqlite3 -o import
+* set db path on line 16 & 48 of MainWindow.cpp
 
 ## Importing files into library
 To import files into the library, edit dirs to include the folders that you want imported.  It's recursive so just specify the top level, one directory per line:
