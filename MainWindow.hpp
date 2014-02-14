@@ -25,6 +25,8 @@ public:
 private slots:
     void on_listView_clicked(const QModelIndex &index);
     void on_listView_doubleClicked(const QModelIndex &index);
+    void on_listWidget_clicked(const QModelIndex &index);
+    void on_listWidget_doubleClicked(const QModelIndex &index);
     void on_editActs_returnPressed();
     void on_editTags_returnPressed();
     void on_editSearch_returnPressed();
@@ -32,10 +34,8 @@ private slots:
     void options();
     void onGridView();
     void onRowView();
+    void onHot1();
 
-    void on_listWidget_clicked(const QModelIndex &index);
-
-    void on_listWidget_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;

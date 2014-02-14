@@ -26,6 +26,8 @@ CREATE TABLE Tags (
 CREATE TABLE Acts (
   _id integer primary key autoincrement,
   name text,
+  cup_size char(1),
+  status text,
   unique(name) ON CONFLICT IGNORE
 );
 CREATE TABLE ImportDirs (

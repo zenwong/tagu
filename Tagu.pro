@@ -20,14 +20,16 @@ SOURCES += main.cpp\
     TableModel.cpp \
     HtmlDelegate.cpp \
     MultiCompleter.cpp \
-    SettingsDialog.cpp
+    SettingsDialog.cpp \
+    ImportThread.cpp
 
 HEADERS  += MainWindow.hpp \
     TableModel.hpp \
     HtmlDelegate.hpp \
     MultiCompleter.hpp \
     SettingsDialog.hpp \
-    Utils.hpp
+    Utils.hpp \
+    ImportThread.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui

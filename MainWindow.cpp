@@ -8,10 +8,9 @@
 #include <QStandardItemModel>
 #include <QPushButton>
 #include <QListWidgetItem>
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
+#include <QShortcut>
+#include <QDirIterator>
 using namespace NL::DB;
-using namespace boost::filesystem;
 
 Database sdb("/root/devel/cpp/qt/Tagu/db");
 
@@ -24,23 +23,47 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //QSize size(400,222);
     QSize size(420,240);
 
+//    int i = 0;
+//    boost::filesystem::path directory("/mnt/seagate/pics/thumbs");
+//    for(recursive_directory_iterator iter(directory), end; iter != end; ++iter) {
+//        auto title = iter->path().leaf().string();
+//        auto ext   = iter->path().extension().string();
+//        auto fpath = iter->path().string();
+
+//        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(title), ui->listWidget);
+//        item->setSizeHint(size);
+//        ui->listWidget->insertItem(i, item);
+
+//        QLabel *lbl = new QLabel(QString::fromStdString(title));
+//        lbl->setPixmap(pixmapWithText(QPixmap(QString::fromStdString(fpath)), title));
+//        lbl->setAlignment(Qt::AlignCenter);
+//        ui->listWidget->setItemWidget(item, lbl);
+
+//        i++;
+//    }
+
     int i = 0;
-    boost::filesystem::path directory("/mnt/seagate/pics/thumbs");
-    for(recursive_directory_iterator iter(directory), end; iter != end; ++iter) {
-        auto title = iter->path().leaf().string();
-        auto ext   = iter->path().extension().string();
-        auto fpath = iter->path().string();
+    QDir dir("/mnt/seagate/pics/thumbs");
+    QDirIterator iterator(dir.absolutePath(), QDirIterator::Subdirectories);
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (!iterator.fileInfo().isDir()) {
+            QString filename = iterator.fileName();
 
-        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(title), ui->listWidget);
-        item->setSizeHint(size);
-        ui->listWidget->insertItem(i, item);
+            QListWidgetItem *item = new QListWidgetItem(filename, ui->listWidget);
+            item->setSizeHint(size);
+            ui->listWidget->insertItem(i, item);
 
-        QLabel *lbl = new QLabel(QString::fromStdString(title));
-        lbl->setPixmap(pixmapWithText(QPixmap(QString::fromStdString(fpath)), title));
-        ui->listWidget->setItemWidget(item, lbl);
-
-        i++;
+            QLabel *lbl = new QLabel(filename);
+            lbl->setPixmap(pixmapWithText(QPixmap(iterator.filePath()), filename.toStdString()));
+            lbl->setAlignment(Qt::AlignCenter);
+            ui->listWidget->setItemWidget(item, lbl);
+            i++;
+        }
     }
+
+    QShortcut *hot1 = new QShortcut(QKeySequence("Ctrl+1"), this);
+    connect(hot1, SIGNAL(activated()), this, SLOT(onHot1()));
 }
 
 void MainWindow::initDB() {
@@ -145,6 +168,10 @@ void MainWindow::onGridView() {
 
 void MainWindow::onRowView() {
 
+}
+
+void MainWindow::onHot1() {
+    qDebug() << "shortcut 1";
 }
 
 MainWindow::~MainWindow(){
