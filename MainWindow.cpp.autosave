@@ -146,7 +146,7 @@ void MainWindow::initToolBar() {
 }
 
 void MainWindow::syncToServer() {
-
+  
 }
 
 void MainWindow::options() {

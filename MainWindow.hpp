@@ -6,9 +6,12 @@
 #include <map>
 #include <QLabel>
 #include <QStringListModel>
-#include "HtmlDelegate.hpp"
 #include "MultiCompleter.hpp"
 using namespace std;
+
+struct Video {
+    QString title, tag, act;
+};
 
 namespace Ui {
 class MainWindow;
@@ -46,8 +49,11 @@ private:
     QStringList title, path;
     QLabel *totalVideos;
 
+    //QSqlQuery *vidsQuery, actsForVidQuery, tagsForVidQuery, pathForVidQuery, searchQuery;
+
     void initDB();
     void initToolBar();
+    void syncToServer();
 };
 
 #endif // MAINWINDOW_HPP

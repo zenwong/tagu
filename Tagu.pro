@@ -7,25 +7,20 @@
 QMAKE_CXXFLAGS += -std=c++11
 QT       += core gui sql
 
-LIBS += /usr/lib/libsqlite3.so /usr/lib/libboost_system.so /usr/lib/libboost_filesystem.so
+LIBS += -lsqlite3
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Tagu
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         MainWindow.cpp \
-    TableModel.cpp \
-    HtmlDelegate.cpp \
     MultiCompleter.cpp \
     SettingsDialog.cpp \
     ImportThread.cpp
 
 HEADERS  += MainWindow.hpp \
-    TableModel.hpp \
-    HtmlDelegate.hpp \
     MultiCompleter.hpp \
     SettingsDialog.hpp \
     Utils.hpp \
