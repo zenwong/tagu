@@ -25,6 +25,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QSettings settings;
+
 private slots:
     void on_listView_clicked(const QModelIndex &index);
     void on_listView_doubleClicked(const QModelIndex &index);

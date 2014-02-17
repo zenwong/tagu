@@ -8,9 +8,8 @@
 #include <QListWidgetItem>
 #include <QShortcut>
 #include <QDirIterator>
-#include "DbHelper.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(qApp->applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
 
     initDB();
@@ -18,7 +17,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QSize size(420,240);
 
-    DbHelper helper(this);
+    qDebug() << qApp->applicationDirPath();
+
+    QCoreApplication::setOrganizationName("Tagu");
+    QCoreApplication::setOrganizationDomain("tagu.in");
+    QCoreApplication::setApplicationName("Tagu");
+
+//    settings.beginWriteArray("ImportDirs");
+//    settings.setArrayIndex(0);
+//    settings.setValue("dir", "/mnt/seagate/favs");
+//    settings.setArrayIndex(1);
+//    settings.setValue("dir", "/mnt/seagate/japanese");
+//    settings.setArrayIndex(2);
+//    settings.setValue("dir", "/mnt/seagate/downloads");
+//    settings.endArray();
 
     int i = 0;
     QDir dir("/mnt/seagate/pics/thumbs");
