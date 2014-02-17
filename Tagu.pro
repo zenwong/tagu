@@ -18,13 +18,17 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     MultiCompleter.cpp \
     SettingsDialog.cpp \
-    ImportThread.cpp
+    ImportThread.cpp \
+    DbHelper.cpp \
+    FilesListView.cpp
 
 HEADERS  += MainWindow.hpp \
     MultiCompleter.hpp \
     SettingsDialog.hpp \
     Utils.hpp \
-    ImportThread.hpp
+    ImportThread.hpp \
+    DbHelper.hpp \
+    FilesListView.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui

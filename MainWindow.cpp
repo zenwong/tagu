@@ -2,18 +2,13 @@
 #include "ui_MainWindow.h"
 #include "SettingsDialog.hpp"
 #include "Utils.hpp"
-#include "NLDatabase/NLDatabase.h"
-#include "QtAwesome/QtAwesome/QtAwesome.h"
 #include <QDesktopServices>
 #include <QStandardItemModel>
 #include <QPushButton>
 #include <QListWidgetItem>
 #include <QShortcut>
 #include <QDirIterator>
-
-using namespace NL::DB;
-
-//Database sdb("/root/devel/cpp/qt/Tagu/db");
+#include "DbHelper.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -22,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initToolBar();
 
     QSize size(420,240);
+
+    DbHelper helper(this);
 
     int i = 0;
     QDir dir("/mnt/seagate/pics/thumbs");
@@ -122,27 +119,7 @@ void MainWindow::initDB() {
 }
 
 void MainWindow::initToolBar() {
-    QtAwesome* awesome = new QtAwesome( this );
-    awesome->initFontAwesome();
 
-    QPushButton *options = new QPushButton();
-    options->setText(QChar( icon_cog ) );
-    options->setFont( awesome->font(30) );
-    ui->mainToolBar->addWidget(options);
-
-    QPushButton *gridView = new QPushButton();
-    gridView->setText(QChar( icon_th ) );
-    gridView->setFont( awesome->font(30) );
-    ui->mainToolBar->addWidget(gridView);
-
-    QPushButton *rowView = new QPushButton();
-    rowView->setText(QChar( icon_align_justify ) );
-    rowView->setFont(awesome->font(30));
-    ui->mainToolBar->addWidget(rowView);
-
-    connect(options, SIGNAL(clicked()), this, SLOT(options()));
-    connect(gridView, SIGNAL(clicked()), this, SLOT(onGridView()));
-    connect(rowView, SIGNAL(clicked()), this, SLOT(onRowView()));
 }
 
 void MainWindow::syncToServer() {
