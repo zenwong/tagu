@@ -21,7 +21,7 @@ CREATE TABLE VidTags (
 CREATE TABLE Tags (
   _id integer primary key autoincrement,
   name text,
-  category integer default 0,
+  cid integer default 0,
   synced integer default 0,
   remote integer default 0,
   unique(name) ON CONFLICT IGNORE
@@ -38,6 +38,11 @@ CREATE TABLE Recommendations (
   vid2 integer,
   synced integer default 0,
   unique(vid,vid2) ON CONFLICT IGNORE
+);
+CREATE TABLE Category (
+  _id integer primary key autoincrement,
+  name text,
+  unique(name) ON CONFLICT IGNORE
 );
 
 CREATE VIEW LibraryView as

@@ -8,6 +8,7 @@
 #include <QListWidgetItem>
 #include <QShortcut>
 #include <QDirIterator>
+#include "ImportThread.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(qApp->applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
@@ -135,7 +136,27 @@ void MainWindow::initToolBar() {
 }
 
 void MainWindow::syncToServer() {
+    QFile file(":/ssl/tagu.in.crt");
+    file.open(QIODevice::ReadOnly);
+    const QByteArray bytes = file.readAll();
+    const QSslCertificate certificate(bytes);
+    QSslSocket::addDefaultCaCertificate(certificate);
 
+    QNetworkAccessManager *nam = new QNetworkAccessManager(this);
+    QNetworkRequest request(QUrl("https://tagu.in/login"));
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader,  "application/x-www-form-urlencoded");
+    reply = nam->post(request, "username=zenwong&password=z23e12n77");
+
+    connect(reply, SIGNAL(finished()), this, SLOT(onReply()));
+
+    //QNetworkAccessManager().post(request, "username:sdfsdf, password:sdfasdf");
+    //QNetworkAccessManager().get(request);
+    //nam->get(request);
+}
+
+void MainWindow::onReply() {
+    qDebug() << reply->readAll();
 }
 
 void MainWindow::options() {
@@ -394,4 +415,14 @@ void MainWindow::on_editSearch_returnPressed()
 //       QStringListModel *searchResults = new QStringListModel(resTitle);
 //       ui->listView->setModel(searchResults);
 //    }
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    ImportThread t;
+    connect(&t, SIGNAL(finished()), &t, SLOT(deleteLater()));
+    t.start();
+
+    //syncToServer();
 }

@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QMAKE_CXXFLAGS += -std=c++11
-QT       += core gui sql
+QT       += core gui sql network
 
 LIBS += -lsqlite3
 
@@ -30,3 +30,6 @@ FORMS    += MainWindow.ui \
     SettingsDialog.ui
 
 include(QtAwesome/QtAwesome/QtAwesome.pri)
+
+RESOURCES += \
+    resources.qrc

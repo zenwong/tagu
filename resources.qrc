@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ssl/tagu.in.crt</file>
+    </qresource>
+</RCC>

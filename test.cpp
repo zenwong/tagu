@@ -18,8 +18,8 @@ void import() {
   ifstream tags("tags");
   ifstream acts("acts");
   ifstream directories("dirs");
-  regex rx(".*?([a-zA-Z]{2,5})[-]([0-9]{2,4}).*?");
-  smatch match;
+  //regex rx(".*?([a-zA-Z]{2,5})[-]([0-9]{2,4}).*?");
+  //smatch match;
 
   db.begin();
   db.query("delete from vids");
@@ -60,18 +60,19 @@ void import() {
 	  if(ext == ".avi" || ext == ".mp4" || ext == ".wmv" || ext == ".mkv" || ext == ".mpg"
 	      || ext == ".mpeg" || ext == ".flv" || ext == ".mov" || ext == ".asf" || ext == ".rmvb"
 	      || ext == ".ogm") {
-	    if (regex_match(title, match, rx)) {
+	    // if (regex_match(title, match, rx)) {
 
-	      string t = match[1] + '-' + match[2];
-	      boost::to_upper(t);
-	      boost::trim(t);
-	      boost::replace_all(t, "\r\n", "");
+	    //   string t = match[1] + '-' + match[2];
+	    //   boost::to_upper(t);
+	    //   boost::trim(t);
+	    //   boost::replace_all(t, "\r\n", "");
 
-	      cout << t << '\n';
+	    //   cout << t << '\n';
 
-	      db.query( "INSERT INTO vids(title) VALUES(?)" ).execute(t);
-	    }
+	    //   db.query( "INSERT INTO vids(title) VALUES(?)" ).execute(t);
+	    // }
 
+	    db.query( "INSERT INTO vids(title) VALUES(?)" ).execute(title);
 	  }
 
 	}

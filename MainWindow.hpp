@@ -6,6 +6,10 @@
 #include <map>
 #include <QLabel>
 #include <QStringListModel>
+#include <QSslCertificate>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #include "MultiCompleter.hpp"
 using namespace std;
 
@@ -41,6 +45,11 @@ private slots:
     void onRowView();
     void onHot1();
 
+    void syncToServer();
+
+    void onReply();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -50,12 +59,12 @@ private:
     QStringListModel *vids;
     QStringList title, path;
     QLabel *totalVideos;
+    QNetworkReply *reply;
 
     //QSqlQuery *vidsQuery, actsForVidQuery, tagsForVidQuery, pathForVidQuery, searchQuery;
 
     void initDB();
     void initToolBar();
-    void syncToServer();
 };
 
 #endif // MAINWINDOW_HPP

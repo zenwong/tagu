@@ -4,9 +4,15 @@
 #include <QSettings>
 #include <QApplication>
 #include <QDebug>
+#include <QDirIterator>
+#include <QSqlQuery>
+#include <QCryptographicHash>
 
 class ImportThread : public QThread
 {
+public:
+    ImportThread();
+    ~ImportThread();
 private:
     void run();
 };
