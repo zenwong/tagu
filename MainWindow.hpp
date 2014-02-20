@@ -11,7 +11,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include "MultiCompleter.hpp"
+#include "Worker.hpp"
+#include "QtWebsocket/QWsSocket.h"
 using namespace std;
+using namespace QtWebsocket;
 
 struct Video {
     QString title, tag, act;
@@ -45,6 +48,12 @@ private slots:
     void onRowView();
     void onHot1();
 
+    void onWsConnected();
+    void onWsDisconnected();
+    void onWsMessage(QString);
+    void onWsSSLError();
+    void socketStateChanged(QAbstractSocket::SocketState socketState);
+
     void syncToServer();
 
     void onReply();
@@ -61,10 +70,17 @@ private:
     QLabel *totalVideos;
     QNetworkReply *reply;
 
+
+    QThread *thread;
+    Worker *worker;
+
+    QWsSocket *ws;
+
     //QSqlQuery *vidsQuery, actsForVidQuery, tagsForVidQuery, pathForVidQuery, searchQuery;
 
     void initDB();
     void initToolBar();
+    void initWebsockets();
 };
 
 #endif // MAINWINDOW_HPP

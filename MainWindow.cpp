@@ -9,14 +9,25 @@
 #include <QShortcut>
 #include <QDirIterator>
 #include "ImportThread.hpp"
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(qApp->applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
 
     initDB();
     initToolBar();
+    initWebsockets();
 
     QSize size(420,240);
+
+    thread = new QThread();
+    worker = new Worker();
+
+    worker->moveToThread(thread);
+    connect(thread, SIGNAL(started()), worker, SLOT(mainLoop()));
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
+    qDebug()<<"Starting thread in Thread "<<this->QObject::thread()->currentThreadId();
+    thread->start();
 
     qDebug() << qApp->applicationDirPath();
 
@@ -132,6 +143,86 @@ void MainWindow::initDB() {
 }
 
 void MainWindow::initToolBar() {
+
+}
+
+void MainWindow::initWebsockets() {
+    ws = new QtWebsocket::QWsSocket(this, NULL, QtWebsocket::WS_V13);
+    //ws->connectToHost("127.0.0.1", 8080);
+
+    bool ok;
+    QString ipAddress = QInputDialog::getText(this, tr("Client"), tr("Server IP:"), QLineEdit::Normal, "ws://localhost:8080", &ok);
+    ipAddress = ipAddress.trimmed();
+    if (ok && !ipAddress.isEmpty())
+    {
+        QString ip;
+        quint16 port;
+        if (ipAddress.contains(QRegExp(QLatin1String(":([0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{1,4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"))))
+        {
+            QStringList splitted = ipAddress.split(':');
+            port = splitted.takeLast().toUInt();
+            ip = splitted.join(':');
+        }
+        else
+        {
+            ip = ipAddress;
+            port = 80;
+        }
+        ws->connectToHost(ip.toUtf8(), port);
+    }
+
+
+    socketStateChanged(ws->state());
+
+    //connect(ws, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+    connect(ws, SIGNAL(frameReceived(QString)), this, SLOT(onWsMessage(QString)));
+    connect(ws, SIGNAL(connected()), this, SLOT(onWsConnected()));
+    connect(ws, SIGNAL(disconnected()), this, SLOT(onWsDisconnected()));
+    //connect(ws, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(displaySslErrors(const QList<QSslError>&)));
+}
+
+void MainWindow::socketStateChanged(QAbstractSocket::SocketState socketState) {
+    switch (socketState) {
+        case QAbstractSocket::UnconnectedState:
+            ui->socketStateLabel->setText(tr("Unconnected"));
+            break;
+        case QAbstractSocket::HostLookupState:
+            ui->socketStateLabel->setText(tr("HostLookup"));
+            break;
+        case QAbstractSocket::ConnectingState:
+            ui->socketStateLabel->setText(tr("Connecting"));
+            break;
+        case QAbstractSocket::ConnectedState:
+            ui->socketStateLabel->setText("Connected");
+            break;
+        case QAbstractSocket::BoundState:
+            ui->socketStateLabel->setText(tr("Bound"));
+            break;
+        case QAbstractSocket::ClosingState:
+            ui->socketStateLabel->setText(tr("Closing"));
+            break;
+        case QAbstractSocket::ListeningState:
+            ui->socketStateLabel->setText(tr("Listening"));
+            break;
+        default:
+            ui->socketStateLabel->setText(tr("Unknown"));
+            break;
+    }
+}
+
+void MainWindow::onWsConnected() {
+  qDebug() << "connected";
+}
+
+void MainWindow::onWsDisconnected() {
+  qDebug() << "disconnected";
+}
+
+void MainWindow::onWsMessage(QString message) {
+  qDebug() << message;
+}
+
+void MainWindow::onWsSSLError() {
 
 }
 
@@ -420,9 +511,12 @@ void MainWindow::on_editSearch_returnPressed()
 
 void MainWindow::on_pushButton_clicked()
 {
-    ImportThread t;
-    connect(&t, SIGNAL(finished()), &t, SLOT(deleteLater()));
-    t.start();
+    worker->requestMethod(Worker::Import);
+    ws->write(QString("Hello from qt"));
+
+//    ImportThread t;
+//    connect(&t, SIGNAL(finished()), &t, SLOT(deleteLater()));
+//    t.start();
 
     //syncToServer();
 }

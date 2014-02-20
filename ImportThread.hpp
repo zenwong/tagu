@@ -7,6 +7,7 @@
 #include <QDirIterator>
 #include <QSqlQuery>
 #include <QCryptographicHash>
+#include <QDateTime>
 
 class ImportThread : public QThread
 {
@@ -15,6 +16,7 @@ public:
     ~ImportThread();
 private:
     void run();
+    void genThumbnail(QString path, int percentage);
 };
 
 #endif // IMPORTTHREAD_HPP

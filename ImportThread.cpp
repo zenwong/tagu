@@ -44,6 +44,8 @@ void ImportThread::run() {
                 if (!iterator.fileInfo().isDir()) {
                     //qDebug() << iterator.fileInfo().baseName();
 
+                    qDebug() << iterator.fileInfo().created();
+
                     QFile file(iterator.filePath());
                     file.open(QFile::ReadOnly);
                     crypto.addData(file.read(9999));

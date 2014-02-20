@@ -21,9 +21,10 @@ CREATE TABLE VidTags (
 CREATE TABLE Tags (
   _id integer primary key autoincrement,
   name text,
-  cid integer default 0,
+  cid integer default 1,
   synced integer default 0,
   remote integer default 0,
+  foreign key(cid) references category(_id),
   unique(name) ON CONFLICT IGNORE
 );
 CREATE TABLE Alias (
