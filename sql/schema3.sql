@@ -80,6 +80,16 @@ from ( vids
   left join tags t on vt.tid = t._id
 ) group by vids.title order by vids.title;
 
+CREATE VIEW ActressView as
+select
+acts._id as aid,
+acts.name as name,
+group_concat(tags.name) as tags
+from( acts
+  left join acttags on acttags.aid = acts._id
+  left join tags on acttags.tid = tags._id
+) group by acts.name order by acts.name;
+
 CREATE VIRTUAL TABLE search using fts4(title,tags,acts, tokenize=porter);
 
 CREATE TRIGGER update_fts_tags AFTER INSERT ON vidtags

@@ -148,29 +148,29 @@ void MainWindow::initToolBar() {
 
 void MainWindow::initWebsockets() {
     ws = new QtWebsocket::QWsSocket(this, NULL, QtWebsocket::WS_V13);
-    //ws->connectToHost("127.0.0.1", 8080);
+    ws->connectToHost("ws://127.0.0.1", 8080);
 
-    bool ok;
-    QString ipAddress = QInputDialog::getText(this, tr("Client"), tr("Server IP:"), QLineEdit::Normal, "ws://localhost:8080", &ok);
-    ipAddress = ipAddress.trimmed();
-    if (ok && !ipAddress.isEmpty())
-    {
-        QString ip;
-        quint16 port;
-        if (ipAddress.contains(QRegExp(QLatin1String(":([0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{1,4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"))))
-        {
-            QStringList splitted = ipAddress.split(':');
-            port = splitted.takeLast().toUInt();
-            ip = splitted.join(':');
-        }
-        else
-        {
-            ip = ipAddress;
-            port = 80;
-        }
-        ws->connectToHost(ip.toUtf8(), port);
-    }
-
+//    bool ok;
+//    QString ipAddress = QInputDialog::getText(this, tr("Client"), tr("Server IP:"), QLineEdit::Normal, "ws://localhost:8080", &ok);
+//    ipAddress = ipAddress.trimmed();
+//    if (ok && !ipAddress.isEmpty())
+//    {
+//        QString ip;
+//        quint16 port;
+//        if (ipAddress.contains(QRegExp(QLatin1String(":([0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{1,4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"))))
+//        {
+//            QStringList splitted = ipAddress.split(':');
+//            port = splitted.takeLast().toUInt();
+//            ip = splitted.join(':');
+//        }
+//        else
+//        {
+//            ip = ipAddress;
+//            port = 80;
+//        }
+//        qDebug() << ip;
+//        ws->connectToHost(ip.toUtf8(), port);
+//    }
 
     socketStateChanged(ws->state());
 

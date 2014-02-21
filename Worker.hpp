@@ -31,6 +31,8 @@ private:
     bool _interrupt;
     QMutex mutex;
     QWaitCondition condition;
+    QSqlDatabase db;
+
     void doImport();
     void doSync();
     void doSearch();

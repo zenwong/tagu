@@ -101,7 +101,7 @@ void import() {
 	      || ext == ".mpeg" || ext == ".flv" || ext == ".mov" || ext == ".asf" || ext == ".rmvb"
 	      || ext == ".ogm") {
 
-	    db.query( "INSERT INTO vids(title) VALUES(?)" ).execute(title);
+	    db.query( "INSERT INTO vids(title,path) VALUES(?,?)" ).execute(title,fpath);
 	  }
 
 	}
@@ -151,14 +151,14 @@ void import2() {
     tids.emplace_back(id.column_int(0));
   }
 
-  // for(int i = 0; i < total_acts; i++) {
-  //   int ntags = 1 + rand() % (10 - 1 + 1);
+  for(int i = 0; i < total_acts; i++) {
+    int ntags = 1 + rand() % (10 - 1 + 1);
 
-  //   for(int y = 0; y < ntags; y++) {
-  //     int idx = rand() % tids.size();
-  //     db.query("insert into acttags(aid,tid) values(?,?)").execute(i, tids.at(idx));
-  //   }
-  // }
+    for(int y = 0; y < ntags; y++) {
+      int idx = rand() % tids.size();
+      db.query("insert into acttags(aid,tid) values(?,?)").execute(i, tids.at(idx));
+    }
+  }
 
   for(int i = 1; i < total_vids; i++) {
     for(int y = 0; y < 10; y++) {
@@ -173,10 +173,10 @@ void import2() {
 }
 
 int main(int argc, char **argv) {
-  srand( time(NULL));
+  //srand( time(NULL));
 
-  import2();
   //import();
+  import2();
   //random_data();
   return 0;
 }

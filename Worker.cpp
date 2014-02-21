@@ -3,6 +3,10 @@
 Worker::Worker(QObject *parent) : QObject(parent) {
     _abort = false;
     _interrupt = false;
+
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("/root/devel/cpp/qt/Tagu/data-acts/db");
+    db.open();
 }
 
 void Worker::requestMethod(Worker::Task task){
@@ -37,10 +41,6 @@ void Worker::doImport(){
     QStringList filters;
     filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"
                << "*.asf" << "*.rmvb" << "*.ogm";
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/root/devel/cpp/qt/Tagu/db");
-    db.open();
 
 
     if(db.transaction()) {
