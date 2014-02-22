@@ -90,6 +90,24 @@ from( acts
   left join tags on acttags.tid = tags._id
 ) group by acts.name order by acts.name;
 
+CREATE VIEW ActList as
+select
+vidacts.vid as vid,
+acts._id as aid,
+acts.name as act
+from acts
+inner join vidacts on vidacts.aid = acts._id
+order by act;
+
+CREATE VIEW TagList as
+select
+vidtags.vid as vid,
+tags._id as tid,
+tags.name as tag
+from tags
+inner join vidtags on vidtags.tid = tags._id
+order by tag;
+
 CREATE VIRTUAL TABLE search using fts4(title,tags,acts, tokenize=porter);
 
 CREATE TRIGGER update_fts_tags AFTER INSERT ON vidtags
