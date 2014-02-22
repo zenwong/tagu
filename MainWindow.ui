@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>967</width>
-    <height>824</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+    <stylestrategy>PreferAntialias</stylestrategy>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Tagu</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QListView::item
@@ -23,7 +29,74 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="3">
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Actress</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QComboBox" name="comboAct">
+         <property name="font">
+          <font>
+           <family>Sans Serif</family>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>add a actress to video</string>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListView" name="listActs">
+         <property name="toolTip">
+          <string>Double Click to Remove</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="editSearch">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>5</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>search for tags or actress or title</string>
+      </property>
+      <property name="placeholderText">
+       <string>Search</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QRadioButton" name="radioAll">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>All</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
      <widget class="QRadioButton" name="radioAny">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -39,121 +112,51 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QLineEdit" name="editSearch">
+    <item row="0" column="0" rowspan="2">
+     <widget class="QGroupBox" name="groupBox">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>5</horstretch>
-        <verstretch>0</verstretch>
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
        </sizepolicy>
       </property>
-      <property name="placeholderText">
-       <string>Search</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1" colspan="3">
-     <widget class="QLineEdit" name="editTags">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="placeholderText">
+      <property name="title">
        <string>Tags</string>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QComboBox" name="comboTag">
+         <property name="toolTip">
+          <string>Add a tag to a video</string>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListView" name="listTags">
+         <property name="toolTip">
+          <string>Double Click to Remove</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLineEdit" name="editActs">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    <item row="1" column="1" rowspan="2" colspan="3">
+     <widget class="QListView" name="listView">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ContiguousSelection</enum>
       </property>
-      <property name="placeholderText">
-       <string>Acts</string>
+      <property name="flow">
+       <enum>QListView::TopToBottom</enum>
       </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="4">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>2</number>
+      <property name="isWrapping" stdset="0">
+       <bool>true</bool>
       </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>List</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QListView" name="listView">
-          <property name="flow">
-           <enum>QListView::LeftToRight</enum>
-          </property>
-          <property name="isWrapping" stdset="0">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Row</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Grid</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QListWidget" name="listWidget">
-          <property name="flow">
-           <enum>QListView::LeftToRight</enum>
-          </property>
-          <property name="isWrapping" stdset="0">
-           <bool>true</bool>
-          </property>
-          <property name="resizeMode">
-           <enum>QListView::Adjust</enum>
-          </property>
-          <property name="uniformItemSizes">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QRadioButton" name="radioAll">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>All</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="socketStateLabel">
-      <property name="text">
-       <string/>
+      <property name="resizeMode">
+       <enum>QListView::Adjust</enum>
       </property>
      </widget>
     </item>
@@ -173,22 +176,83 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>967</width>
+     <width>1280</width>
      <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionActress"/>
+    <addaction name="actionCompact"/>
+    <addaction name="actionCover"/>
+    <addaction name="actionThumbnail"/>
+    <addaction name="actionScreenshot"/>
+   </widget>
+   <widget class="QMenu" name="menuImport">
+    <property name="title">
+     <string>Database</string>
+    </property>
+    <addaction name="actionVideos"/>
+    <addaction name="actionSync_Database"/>
+    <addaction name="actionReset_Database"/>
+   </widget>
+   <widget class="QMenu" name="menuGeneral">
+    <property name="title">
+     <string>General</string>
+    </property>
+    <addaction name="actionOptions"/>
+   </widget>
+   <addaction name="menuView"/>
+   <addaction name="menuImport"/>
+   <addaction name="menuGeneral"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
+  <action name="actionActress">
+   <property name="text">
+    <string>Actress</string>
    </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
+  </action>
+  <action name="actionCompact">
+   <property name="text">
+    <string>Compact</string>
+   </property>
+  </action>
+  <action name="actionCover">
+   <property name="text">
+    <string>Cover</string>
+   </property>
+  </action>
+  <action name="actionThumbnail">
+   <property name="text">
+    <string>Thumbnail</string>
+   </property>
+  </action>
+  <action name="actionScreenshot">
+   <property name="text">
+    <string>Screenshot</string>
+   </property>
+  </action>
+  <action name="actionVideos">
+   <property name="text">
+    <string>Import Videos</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionReset_Database">
+   <property name="text">
+    <string>Reset Database</string>
+   </property>
+  </action>
+  <action name="actionSync_Database">
+   <property name="text">
+    <string>Sync Database</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

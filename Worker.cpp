@@ -1,11 +1,12 @@
 #include "Worker.hpp"
+using namespace ffmpegthumbnailer;
 
 Worker::Worker(QObject *parent) : QObject(parent) {
     _abort = false;
     _interrupt = false;
 
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/root/devel/cpp/qt/Tagu/data-acts/db");
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
     db.open();
 }
 
@@ -25,16 +26,38 @@ void Worker::abort(){
 }
 
 void Worker::doImport(){
-    qDebug()<<"Starting Method1 in Thread "<<thread()->currentThreadId();
+    qDebug()<< "Start Importing Videos in Thread "<<thread()->currentThreadId();
 
-    QSettings settings(QApplication::instance()->applicationDirPath() + "/settings.ini", QSettings::IniFormat);
+    QSettings settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat);
     QList<QString> dirs;
-    int len = settings.beginReadArray("ImportDirs");
+    int len = settings.beginReadArray("ImportJavDirs");
     for (int i = 0; i < len; ++i) {
         settings.setArrayIndex(i);
         dirs.append(settings.value("dir").toString());
     }
     settings.endArray();
+
+    len = settings.beginReadArray("ImportPornDirs");
+    for (int i = 0; i < len; ++i) {
+        settings.setArrayIndex(i);
+        dirs.append(settings.value("dir").toString());
+    }
+    settings.endArray();
+
+    len = settings.beginReadArray("ImportHentaiDirs");
+    for (int i = 0; i < len; ++i) {
+        settings.setArrayIndex(i);
+        dirs.append(settings.value("dir").toString());
+    }
+    settings.endArray();
+
+
+//    thumbWidth = settings.value("ThumbWidth").toInt();
+//    thumbPercent = settings.value("ThumbPercentage").toInt();
+
+    QString thumbDir = settings.value("ImagesDir").toString() + QDir::separator() + "thumbs" + QDir::separator();
+
+    //qDebug() << dirs;
 
     QCryptographicHash crypto(QCryptographicHash::Sha1);
 
@@ -42,91 +65,60 @@ void Worker::doImport(){
     filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"
                << "*.asf" << "*.rmvb" << "*.ogm";
 
+    QSqlQuery query(db);
+    query.prepare("insert into vids(title,path,hash) values(?,?,?)");
 
-    if(db.transaction()) {
-        QSqlQuery query(db);
-        query.prepare("insert into vids(title,path,hash) values(?,?,?)");
+    for(QString d: dirs) {
+        QDir dir(d);
+        QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
-        for(QString d: dirs) {
-            QDir dir(d);
-            QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
-            while (iterator.hasNext()) {
-                iterator.next();
-                if (!iterator.fileInfo().isDir()) {
-                    //qDebug() << iterator.fileInfo().baseName();
+        db.transaction();
+        while (iterator.hasNext()) {
+            iterator.next();
+            if (!iterator.fileInfo().isDir()) {
+                //qDebug() << iterator.fileInfo().baseName();
 
-                    // check for files created after last import date in qsettings
-                    qDebug() << iterator.fileInfo().created();
+                // check for files created after last import date in qsettings
+                // qDebug() << iterator.fileInfo().created();
 
-                    QFile file(iterator.filePath());
-                    file.open(QFile::ReadOnly);
-                    crypto.addData(file.read(9999));
-                    QByteArray hash = crypto.result();
+                VideoThumbnailer thumb(400, false, true, 6, true);
+                thumb.setSeekPercentage(30);
 
-                    //qDebug() << hash.toHex();
+                QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
+                thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
 
-                    query.bindValue(0, iterator.fileInfo().baseName());
-                    query.bindValue(1, iterator.filePath());
-                    query.bindValue(2, hash.toHex());
-                    query.exec();
-                }
+                QFile file(iterator.filePath());
+                file.open(QFile::ReadOnly);
+                crypto.addData(file.read(9999));
+                QByteArray hash = crypto.result();
+
+                //qDebug() << hash.toHex();
+
+                query.bindValue(0, iterator.fileInfo().baseName());
+                query.bindValue(1, iterator.filePath());
+                query.bindValue(2, hash.toHex());
+                query.exec();
             }
         }
         db.commit();
+        emit importFinished();
     }
+
+    db.transaction();
+    query.exec("delete from search");
+    query.exec("insert into search(docid,title,tags,acts) select vid,title,tags,acts from LibraryView");
+    db.commit();
+}
+
+void Worker::doSync(){
 
 }
 
-void Worker::doSync()
-{
-    qDebug()<<"Starting Method2 in Thread "<<thread()->currentThreadId();
+void Worker::doSearch(){
 
-    for (int i = 0; i < 20; i ++) {
-
-        mutex.lock();
-        bool abort = _abort;
-        bool interrupt = _interrupt;
-        mutex.unlock();
-
-        if (abort || interrupt) {
-            qDebug()<<"Interrupting Method2 in Thread "<<thread()->currentThreadId();
-            break;
-        }
-
-        QEventLoop loop;
-        QTimer::singleShot(1000, &loop, SLOT(quit()));
-        loop.exec();
-
-        emit valueChanged(QString::number(i));
-    }
-}
-
-void Worker::doSearch()
-{
-    qDebug()<<"Starting Method3 in Thread "<<thread()->currentThreadId();
-
-    for (int i = 0; i < 30; i ++) {
-
-        mutex.lock();
-        bool abort = _abort;
-        bool interrupt = _interrupt;
-        mutex.unlock();
-
-        if (abort || interrupt) {
-            qDebug()<<"Interrupting Method3 in Thread "<<thread()->currentThreadId();
-            break;
-        }
-
-        QEventLoop loop;
-        QTimer::singleShot(1000, &loop, SLOT(quit()));
-        loop.exec();
-
-        emit valueChanged(QString::number(i));
-    }
 }
 
 void Worker::mainLoop(){
-    qDebug()<<"Starting worker mainLoop in Thread "<<thread()->currentThreadId();
 
     forever {
 

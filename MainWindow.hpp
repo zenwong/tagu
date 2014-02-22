@@ -2,23 +2,17 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include <QtSql>
-#include <map>
-#include <QLabel>
-#include <QStringListModel>
-#include <QSslCertificate>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include "MultiCompleter.hpp"
+#include <QSqlDatabase>
+#include <QSqlTableModel>
+#include <QSqlQueryModel>
+#include <QSqlQuery>
+#include <QDebug>
+#include <QCompleter>
+#include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
+#include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
-#include "QtWebsocket/QWsSocket.h"
-using namespace std;
-using namespace QtWebsocket;
-
-struct Video {
-    QString title, tag, act;
-};
 
 namespace Ui {
 class MainWindow;
@@ -32,55 +26,40 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QSettings settings;
-
 private slots:
     void on_listView_clicked(const QModelIndex &index);
     void on_listView_doubleClicked(const QModelIndex &index);
-    void on_listWidget_clicked(const QModelIndex &index);
-    void on_listWidget_doubleClicked(const QModelIndex &index);
     void on_editActs_returnPressed();
     void on_editTags_returnPressed();
-    void on_editSearch_returnPressed();
+    void on_editSearch_textEdited(const QString &arg1);
+    void on_comboTag_currentIndexChanged(const QString &arg1);
 
-    void options();
-    void onGridView();
-    void onRowView();
-    void onHot1();
+    void onThumbnailView();
+    void onCompactView();
+    void onCoverView();
+    void onImportVideos();
+    void onOptions();
+    void onResetDatabase();
+    void onImportFinished();
 
-    void onWsConnected();
-    void onWsDisconnected();
-    void onWsMessage(QString);
-    void onWsSSLError();
-    void socketStateChanged(QAbstractSocket::SocketState socketState);
+    void on_comboAct_currentIndexChanged(const QString &arg1);
 
-    void syncToServer();
+    void on_listTags_doubleClicked(const QModelIndex &index);
 
-    void onReply();
-
-    void on_pushButton_clicked();
+    void on_listActs_doubleClicked(const QModelIndex &index);
 
 private:
+    void initDB();
+
     Ui::MainWindow *ui;
     QSqlDatabase db;
-    QSqlTableModel *vidTable, *actTable, *tagTable, *vidtags, *vidacts, *searchView;
-    MultiCompleter *autoTags, *autoActs, *autoSearch;
-    QStringListModel *vids;
-    QStringList title, path;
-    QLabel *totalVideos;
-    QNetworkReply *reply;
-
+    QSqlTableModel *vidTable, *tagTable, *actTable, *tagList, *actList;
+    QCompleter *tagComplete, *actComplete, *searchComplete;
+    ThumbnailDelegate *thumbDel;
+    int currentVid;
 
     QThread *thread;
     Worker *worker;
-
-    QWsSocket *ws;
-
-    //QSqlQuery *vidsQuery, actsForVidQuery, tagsForVidQuery, pathForVidQuery, searchQuery;
-
-    void initDB();
-    void initToolBar();
-    void initWebsockets();
 };
 
 #endif // MAINWINDOW_HPP

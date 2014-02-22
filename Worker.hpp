@@ -11,6 +11,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QTimer>
+#include <libffmpegthumbnailer/videothumbnailer.h>
 
 class Worker : public QObject
 {
@@ -32,6 +33,7 @@ private:
     QMutex mutex;
     QWaitCondition condition;
     QSqlDatabase db;
+    int thumbWidth, thumbPercent;
 
     void doImport();
     void doSync();
@@ -40,6 +42,7 @@ private:
 signals:
     void valueChanged(const QString &value);
     void finished();
+    void importFinished();
 
 public slots:
     void mainLoop();
