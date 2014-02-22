@@ -2,7 +2,7 @@
 #include "Globals.hpp"
 using namespace ffmpegthumbnailer;
 
-Worker::Worker(QObject *parent) : QObject(parent) {
+Worker::Worker(QObject *parent) : QObject(parent), settings(QCoreApplication::applicationDirPath() + "settings.ini", QSettings::IniFormat) {
     _abort = false;
     _interrupt = false;
 
@@ -29,7 +29,7 @@ void Worker::abort(){
 void Worker::doImport(){
     qDebug()<< "Start Importing Videos in Thread "<<thread()->currentThreadId();
 
-    QSettings settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat);
+    //QSettings settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat);
     QList<QString> dirs;
     int len = settings.beginReadArray("ImportJavDirs");
     for (int i = 0; i < len; ++i) {
@@ -123,7 +123,54 @@ void Worker::doImport(){
 }
 
 void Worker::doSync(){
+    QSqlQuery query(db);
 
+    db.transaction();
+    query.exec("select title,hash from vids where synced = 0");
+    QJsonArray vids;
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["hash"] = query.value(1).toString();
+        vids.append(obj);
+    }
+
+    qDebug() << vids;
+
+    QJsonArray tags;
+    query.exec("select * from SyncTags");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        tags.append(obj);
+    }
+
+    qDebug() << tags;
+
+    QJsonArray acts;
+    query.exec("select * from SyncActs");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        acts.append(obj);
+    }
+
+    qDebug() << acts;
+
+    QJsonArray acttags;
+    query.exec("select * from SyncActTags");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["act"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        acttags.append(obj);
+    }
+
+    qDebug() << acttags;
+
+    db.commit();
 }
 
 void Worker::doSearch(){

@@ -44,6 +44,7 @@ private slots:
     void onImportFinished();
     void onActressList();
     void onTagList();
+    void onSync();
 
     void on_comboAct_currentIndexChanged(const QString &arg1);
     void on_listTags_doubleClicked(const QModelIndex &index);

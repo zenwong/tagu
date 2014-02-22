@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionTags, SIGNAL(triggered()), this, SLOT(onTagList()));
 
     connect(ui->actionVideos, SIGNAL(triggered()), this, SLOT(onImportVideos()));
+    connect(ui->actionSync_Database, SIGNAL(triggered()), this, SLOT(onSync()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
     connect(ui->actionReset_Database, SIGNAL(triggered()), this, SLOT(onResetDatabase()));
 
@@ -378,6 +379,10 @@ void MainWindow::onImportVideos() {
      worker->requestMethod(Worker::Import);
 }
 
+void MainWindow::onSync() {
+    worker->requestMethod(Worker::Sync);
+}
+
 void MainWindow::onOptions() {
     SettingsDialog dialog;
     dialog.exec();
@@ -411,6 +416,7 @@ void MainWindow::onImportFinished() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
+    Q_UNUSED(event);
     settings.setValue("mainWindowGeometry", saveGeometry());
     settings.setValue("mainWindowState", saveState());
 }

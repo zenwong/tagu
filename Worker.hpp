@@ -11,6 +11,9 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QTimer>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
 #include <libffmpegthumbnailer/videothumbnailer.h>
 
 class Worker : public QObject
@@ -34,6 +37,7 @@ private:
     QWaitCondition condition;
     QSqlDatabase db;
     int thumbWidth, thumbPercent;
+    QSettings settings;
 
     void doImport();
     void doSync();

@@ -9,11 +9,13 @@ CREATE TABLE Vids (
 );
 CREATE TABLE VidTags (
   _id integer primary key autoincrement,
-  vid int,
+  vid integer,
   tid integer,
+  cid integer default 1,
   synced integer default 0,
   foreign key(vid) references vids(_id) ON DELETE CASCADE,
   foreign key(tid) references tags(_id) ON DELETE CASCADE,
+  foreign key(cid) references category(_id),
   unique(vid,tid) ON CONFLICT IGNORE
 );
 CREATE TABLE VidActs (
@@ -50,6 +52,7 @@ CREATE TABLE Tags (
 CREATE TABLE Acts (
   _id integer primary key autoincrement,
   name text,
+  foreign_name text,
   unique(name) ON CONFLICT IGNORE
 );
 CREATE TABLE Settings (
@@ -102,6 +105,36 @@ tags.name as tag
 from tags
 inner join vidtags on vidtags.tid = tags._id
 order by tag;
+
+CREATE VIEW SyncTags as
+select
+vids.title as title,
+group_concat(DISTINCT tags.name) as tags
+from vidtags
+inner join tags on vidtags.tid = tags._id
+inner join vids on vids._id = vidtags.vid
+where vidtags.synced = 0
+group by title;
+
+CREATE VIEW SyncActs as
+select
+vids.title as title,
+group_concat(DISTINCT acts.name) as acts
+from vidacts
+inner join acts on vidacts.aid = acts._id
+inner join vids on vids._id = vidacts.vid
+where vidacts.synced = 0
+group by title;
+
+CREATE VIEW SyncActTags as
+select
+acts.name as name,
+group_concat(DISTINCT tags.name) as tags
+from acttags
+inner join acts on acttags.aid = acts._id
+inner join tags on tags._id = acttags.tid
+where acttags.synced = 0
+group by acts.name;
 
 CREATE VIEW TagFilter as select _id,name from tags order by name;
 CREATE VIEW ActFilter as select _id,name from acts order by name;
