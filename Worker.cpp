@@ -68,7 +68,7 @@ void Worker::doImport(){
     QSqlQuery query(db);
     query.prepare("insert into vids(title,path,hash) values(?,?,?)");
 
-    for(QString d: dirs) {
+    foreach(QString d, dirs) {
         QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 

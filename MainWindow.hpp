@@ -41,11 +41,11 @@ private slots:
     void onOptions();
     void onResetDatabase();
     void onImportFinished();
+    void onActressList();
+    void onTagList();
 
     void on_comboAct_currentIndexChanged(const QString &arg1);
-
     void on_listTags_doubleClicked(const QModelIndex &index);
-
     void on_listActs_doubleClicked(const QModelIndex &index);
 
 private:
@@ -56,6 +56,7 @@ private:
     QSqlTableModel *vidTable, *tagTable, *actTable, *tagList, *actList;
     QCompleter *tagComplete, *actComplete, *searchComplete;
     ThumbnailDelegate *thumbDel;
+    QSettings settings;
     int currentVid;
 
     QThread *thread;

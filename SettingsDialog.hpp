@@ -24,19 +24,16 @@ private slots:
     void on_btnImageSave_clicked();
     void on_listJavImport_doubleClicked(const QModelIndex &index);
     void on_listPornImport_doubleClicked(const QModelIndex &index);
-
-    void on_buttonBox_accepted();
-
-    void on_buttonBox_rejected();
-
     void on_listHentaiImport_doubleClicked(const QModelIndex &index);
+    void on_buttonBox_accepted();
+    void on_buttonBox_rejected();
 
 private:
     Ui::SettingsDialog *ui;
     QSettings settings;
     QStringList javDirs, pornDirs, hentaiDirs;
     QStringListModel *javModel, *pornModel, *hentaiModel;
-    QString lastDir = "/home";
+    QString lastDir;
 };
 
 static void saveArray(QSettings& settings, QString array, QStringList& list) {

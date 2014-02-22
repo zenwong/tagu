@@ -2,12 +2,29 @@
 #include "ui_MainWindow.h"
 #include "SettingsDialog.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
     initDB();
 
-    thumbDel = new ThumbnailDelegate(this);
-    //ui->listView->setItemDelegate(thumbDel);
+    QString defaultView = settings.value("DefaultView").toString();
+    QStyledItemDelegate *delegate;
+    if(defaultView.isNull()) {
+        delegate = new QStyledItemDelegate;
+    } else {
+        if(defaultView == "Compact") {
+            delegate = new QStyledItemDelegate;
+            ui->listView->setFlow(QListView::TopToBottom);
+        } else if(defaultView == "Thumbnail") {
+            delegate = new ThumbnailDelegate(this);
+            ui->listView->setFlow(QListView::LeftToRight);
+        } else if(defaultView == "Cover") {
+            delegate = new CoverDelegate(this);
+            ui->listView->setFlow(QListView::LeftToRight);
+        }
+    }
+
+    //thumbDel = new ThumbnailDelegate(this);
+    ui->listView->setItemDelegate(delegate);
 
     connect(ui->comboTag->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editTags_returnPressed()));
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
@@ -15,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionThumbnail, SIGNAL(triggered()), this, SLOT(onThumbnailView()));
     connect(ui->actionCompact, SIGNAL(triggered()), this, SLOT(onCompactView()));
     connect(ui->actionCover, SIGNAL(triggered()), this, SLOT(onCoverView()));
+    connect(ui->actionActressList, SIGNAL(triggered()), this, SLOT(onActressList()));
+    connect(ui->actionTags, SIGNAL(triggered()), this, SLOT(onTagList()));
 
     connect(ui->actionVideos, SIGNAL(triggered()), this, SLOT(onImportVideos()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
@@ -152,7 +171,7 @@ void MainWindow::on_editActs_returnPressed(){
         QItemSelection selected( ui->listView->selectionModel()->selection() );
 
         db.transaction();
-        for(QModelIndex index: selected.indexes()) {
+        foreach(QModelIndex index, selected.indexes()) {
             vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
             //qDebug() << "vid: " << vid;
 
@@ -194,7 +213,7 @@ void MainWindow::on_editTags_returnPressed(){
         QItemSelection selected( ui->listView->selectionModel()->selection() );
 
         db.transaction();
-        for(QModelIndex index: selected.indexes()) {
+        foreach(QModelIndex index, selected.indexes()) {
             vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
             //qDebug() << "vid: " << vid;
 
@@ -221,21 +240,32 @@ void MainWindow::on_editTags_returnPressed(){
 }
 
 void MainWindow::onThumbnailView() {
-  ui->listView->setItemDelegate(thumbDel);
+  ui->listView->setItemDelegate(new ThumbnailDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
+  settings.setValue("DefaultView", "Thumbnail");
 }
 
 void MainWindow::onCompactView() {
   ui->listView->setItemDelegate(new QStyledItemDelegate);
-  //ui->listView->setFlow(QListView::TopToBottom);
+  ui->listView->setFlow(QListView::TopToBottom);
   ui->listView->reset();
+  settings.setValue("DefaultView", "Compact");
 }
 
 void MainWindow::onCoverView() {
   ui->listView->setItemDelegate(new CoverDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
+  settings.setValue("DefaultView", "Cover");
+}
+
+void MainWindow::onActressList() {
+
+}
+
+void MainWindow::onTagList() {
+
 }
 
 void MainWindow::on_editSearch_textEdited(const QString &txt){
@@ -279,7 +309,7 @@ void MainWindow::on_comboTag_currentIndexChanged(const QString &tag){
 
     int vid;
     db.transaction();
-    for(QModelIndex index: selected.indexes()) {
+    foreach(QModelIndex index, selected.indexes()) {
         vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
         select.bindValue(0, tag);
         select.exec();
@@ -304,7 +334,7 @@ void MainWindow::on_comboAct_currentIndexChanged(const QString &act){
 
     int vid, aid;
     db.transaction();
-    for(QModelIndex index: selected.indexes()) {
+    foreach(QModelIndex index, selected.indexes()) {
         vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
         select.bindValue(0, act);
         select.exec();

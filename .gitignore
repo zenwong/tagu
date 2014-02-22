@@ -4,3 +4,15 @@ db-backup
 ssl/*
 data-acts/db-journal
 *.o
+moc_*.cpp
+ui_*.h
+*.pro.user
+*.orig
+data-acts
+data
+importers
+sql
+randomdata
+Makefile
+backup-db
+settings.ini

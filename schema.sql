@@ -56,6 +56,11 @@ CREATE TABLE Sync (
   json text,
   unique(json) ON CONFLICT IGNORE
 );
+CREATE TABLE Settings (
+  key int,
+  value text,
+  primary key(key,value)
+);
 
 CREATE VIEW TermsView as select name from tags union all select name from acts;
 

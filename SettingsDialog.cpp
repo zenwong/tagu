@@ -85,6 +85,7 @@ void SettingsDialog::on_btnImageSave_clicked(){
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     ui->imageDir->setText(dir);
     settings.setValue("ImagesDir", dir);
+
 }
 
 void SettingsDialog::on_listJavImport_doubleClicked(const QModelIndex &index)
@@ -103,9 +104,22 @@ void SettingsDialog::on_listPornImport_doubleClicked(const QModelIndex &index){
 
 void SettingsDialog::on_buttonBox_accepted()
 {
-    qDebug() << "saved";
     settings.setValue("ThumbWidth", ui->thumbWidth->text());
     settings.setValue("ThumbPercentage", ui->thumbPercentage->text());
+
+    QString dir = ui->imageDir->text() + QDir::separator();
+    QDir act(dir + "actress");
+    QDir actSmall(act.absolutePath() + QDir::separator() + "small");
+    QDir covers(dir + "covers");
+    QDir screens(dir + "screens");
+    QDir thumbs(dir + "thumbs");
+
+    if(!act.exists()) QDir().mkdir(act.absolutePath());
+    if(!actSmall.exists()) QDir().mkdir(actSmall.absolutePath());
+    if(!covers.exists()) QDir().mkdir(covers.absolutePath());
+    if(!screens.exists()) QDir().mkdir(screens.absolutePath());
+    if(!thumbs.exists()) QDir().mkdir(thumbs.absolutePath());
+
 }
 
 void SettingsDialog::on_buttonBox_rejected()

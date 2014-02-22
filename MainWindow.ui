@@ -196,6 +196,8 @@
     </property>
     <addaction name="actionVideos"/>
     <addaction name="actionSync_Database"/>
+    <addaction name="actionActressList"/>
+    <addaction name="actionTags"/>
     <addaction name="actionReset_Database"/>
    </widget>
    <widget class="QMenu" name="menuGeneral">
@@ -251,6 +253,16 @@
   <action name="actionSync_Database">
    <property name="text">
     <string>Sync Database</string>
+   </property>
+  </action>
+  <action name="actionTags">
+   <property name="text">
+    <string>Tags</string>
+   </property>
+  </action>
+  <action name="actionActressList">
+   <property name="text">
+    <string>Actress</string>
    </property>
   </action>
  </widget>

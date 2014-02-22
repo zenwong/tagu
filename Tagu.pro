@@ -21,7 +21,6 @@ SOURCES += main.cpp\
     SettingsDialog.cpp
 
 HEADERS  += MainWindow.hpp \
-    ImageDelegate.hpp \
     delegates/ThumbnailDelegate.hpp \
     Worker.hpp \
     SettingsDialog.hpp
