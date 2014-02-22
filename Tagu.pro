@@ -23,7 +23,8 @@ SOURCES += main.cpp\
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
     Worker.hpp \
-    SettingsDialog.hpp
+    SettingsDialog.hpp \
+    Globals.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui

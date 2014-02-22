@@ -1,4 +1,5 @@
 #include "Worker.hpp"
+#include "Globals.hpp"
 using namespace ffmpegthumbnailer;
 
 Worker::Worker(QObject *parent) : QObject(parent) {
@@ -68,6 +69,9 @@ void Worker::doImport(){
     QSqlQuery query(db);
     query.prepare("insert into vids(title,path,hash) values(?,?,?)");
 
+    QSqlQuery insert(db);
+    insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
+
     foreach(QString d, dirs) {
         QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
@@ -100,6 +104,12 @@ void Worker::doImport(){
                 query.bindValue(1, iterator.filePath());
                 query.bindValue(2, hash.toHex());
                 query.exec();
+
+//                insert.bindValue(0, Table::VIDS);
+//                insert.bindValue(1, 0);
+//                QString json = QString(R"delimiter({"title":"%1","hash":"%2"})delimiter").arg(iterator.fileInfo().baseName()).arg(QString(hash.toHex()));
+//                insert.bindValue(2, json);
+//                insert.exec();
             }
         }
         db.commit();

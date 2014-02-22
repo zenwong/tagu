@@ -4,12 +4,14 @@ CREATE TABLE Vids (
   path text,
   hash text,
   rating integer,
+  synced integer default 0,
   unique(title,path) ON CONFLICT IGNORE
 );
 CREATE TABLE VidTags (
   _id integer primary key autoincrement,
   vid int,
   tid integer,
+  synced integer default 0,
   foreign key(vid) references vids(_id) ON DELETE CASCADE,
   foreign key(tid) references tags(_id) ON DELETE CASCADE,
   unique(vid,tid) ON CONFLICT IGNORE
@@ -18,6 +20,7 @@ CREATE TABLE VidActs (
   _id integer primary key autoincrement,
   vid integer,
   aid integer,
+  synced integer default 0,
   foreign key(vid) references vids(_id) ON DELETE CASCADE,
   foreign key(aid) references acts(_id) ON DELETE CASCADE,
   unique(vid,aid) ON CONFLICT IGNORE
@@ -26,6 +29,7 @@ CREATE TABLE ActTags (
   _id integer primary key autoincrement,
   aid integer,
   tid integer,
+  synced integer default 0,
   foreign key(aid) references aids(_id) ON DELETE CASCADE,
   foreign key(tid) references tags(_id) ON DELETE CASCADE,
   unique(aid,tid) ON CONFLICT IGNORE
@@ -47,14 +51,6 @@ CREATE TABLE Acts (
   _id integer primary key autoincrement,
   name text,
   unique(name) ON CONFLICT IGNORE
-);
-CREATE TABLE Sync (
-  _id integer primary key autoincrement,
-  tid int,
-  synced int,
-  timestamp datetime DEFAULT CURRENT_TIMESTAMP,
-  json text,
-  unique(json) ON CONFLICT IGNORE
 );
 CREATE TABLE Settings (
   key int,
