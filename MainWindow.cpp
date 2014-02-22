@@ -4,6 +4,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
+    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
+    restoreState(settings.value("mainWindowState").toByteArray());
     initDB();
 
     QString defaultView = settings.value("DefaultView").toString();
@@ -408,5 +410,8 @@ void MainWindow::onImportFinished() {
     vidTable->select();
 }
 
-
+void MainWindow::closeEvent(QCloseEvent *event) {
+    settings.setValue("mainWindowGeometry", saveGeometry());
+    settings.setValue("mainWindowState", saveState());
+}
 
