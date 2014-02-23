@@ -81,11 +81,13 @@ void Worker::doImport(){
                 // check for files created after last import date in qsettings
                 // qDebug() << iterator.fileInfo().created();
 
-                VideoThumbnailer thumb(400, false, true, 6, true);
-                thumb.setSeekPercentage(30);
-
                 QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
-                thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
+                QFile f(savePath);
+                if(!f.exists()) {
+                    VideoThumbnailer thumb(400, false, true, 6, true);
+                    thumb.setSeekPercentage(30);
+                    thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
+                }
 
                 QFile file(iterator.filePath());
                 file.open(QFile::ReadOnly);

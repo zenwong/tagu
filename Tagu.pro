@@ -10,7 +10,7 @@ LIBS += -lffmpegthumbnailer
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Tagu2
+TARGET = Tagu
 TEMPLATE = app
 
 
