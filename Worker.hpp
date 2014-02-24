@@ -15,6 +15,9 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <libffmpegthumbnailer/videothumbnailer.h>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 
 class Worker : public QObject
 {
@@ -38,6 +41,8 @@ private:
     QSqlDatabase db;
     int thumbWidth, thumbPercent;
     QSettings settings;
+    QNetworkAccessManager *nam;
+    QNetworkRequest get, post;
 
     void doImport();
     void doSync();
@@ -50,6 +55,7 @@ signals:
 
 public slots:
     void mainLoop();
+    void replyFinished(QNetworkReply*);
 };
 
 #endif // WORKER_HPP

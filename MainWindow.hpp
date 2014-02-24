@@ -11,6 +11,9 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
 
@@ -45,6 +48,7 @@ private slots:
     void onActressList();
     void onTagList();
     void onSync();
+    void replyFinished(QNetworkReply*);
 
     void on_comboAct_currentIndexChanged(const QString &arg1);
     void on_listTags_doubleClicked(const QModelIndex &index);
@@ -60,6 +64,8 @@ private:
     ThumbnailDelegate *thumbDel;
     QSettings settings;
     int currentVid;
+    QNetworkAccessManager *nam;
+    QNetworkRequest post, get;
 
     QThread *thread;
     Worker *worker;

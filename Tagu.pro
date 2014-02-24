@@ -18,22 +18,13 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     delegates/ThumbnailDelegate.cpp \
     Worker.cpp \
-    SettingsDialog.cpp \
-    QtWebsocket/functions.cpp \
-    QtWebsocket/QWsFrame.cpp \
-    QtWebsocket/QWsHandshake.cpp \
-    QtWebsocket/QWsSocket.cpp
+    SettingsDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
     Worker.hpp \
     SettingsDialog.hpp \
-    Globals.hpp \
-    QtWebsocket/functions.h \
-    QtWebsocket/QWsFrame.h \
-    QtWebsocket/QWsHandshake.h \
-    QtWebsocket/QWsSocket.h \
-    QtWebsocket/WsEnums.h
+    Globals.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui

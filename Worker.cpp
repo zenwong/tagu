@@ -2,17 +2,20 @@
 #include "Globals.hpp"
 using namespace ffmpegthumbnailer;
 
-Worker::Worker(QObject *parent) : QObject(parent), settings(QCoreApplication::applicationDirPath() + "settings.ini", QSettings::IniFormat) {
+Worker::Worker(QObject *parent) : QObject(parent), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     _abort = false;
     _interrupt = false;
 
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
     db.open();
+
+//    nam = new QNetworkAccessManager(this);
+//    post.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+//    connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 void Worker::requestMethod(Worker::Task task){
-    qDebug()<<"Request worker Method"<< task <<"in Thread "<<thread()->currentThreadId();
     QMutexLocker locker(&mutex);
     _interrupt = true;
     _task = task;
@@ -20,7 +23,6 @@ void Worker::requestMethod(Worker::Task task){
 }
 
 void Worker::abort(){
-    qDebug()<<"Request worker aborting in Thread "<<thread()->currentThreadId();
     QMutexLocker locker(&mutex);
     _abort = true;
     condition.wakeOne();
@@ -29,7 +31,6 @@ void Worker::abort(){
 void Worker::doImport(){
     qDebug()<< "Start Importing Videos in Thread "<<thread()->currentThreadId();
 
-    //QSettings settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat);
     QList<QString> dirs;
     int len = settings.beginReadArray("ImportJavDirs");
     for (int i = 0; i < len; ++i) {
@@ -88,6 +89,10 @@ void Worker::doImport(){
                 QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
                 QFile f(savePath);
                 if(!f.exists()) {
+                    // TODO mkdir /tmp/thumbs then generate thumbs in tmp directory
+                    // when finished move thumbs to real image directory and delete tmp dir
+
+                    // TOGO allow importing of all kinds of files
                     VideoThumbnailer thumb(400, false, true, 6, true);
                     thumb.setSeekPercentage(30);
                     thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
@@ -135,7 +140,7 @@ void Worker::doSync(){
         vids.append(obj);
     }
 
-    qDebug() << vids;
+    //qDebug() << vids;
 
     QJsonArray tags;
     query.exec("select * from SyncTags");
@@ -146,7 +151,7 @@ void Worker::doSync(){
         tags.append(obj);
     }
 
-    qDebug() << tags;
+    //qDebug() << tags;
 
     QJsonArray acts;
     query.exec("select * from SyncActs");
@@ -157,7 +162,7 @@ void Worker::doSync(){
         acts.append(obj);
     }
 
-    qDebug() << acts;
+    //qDebug() << acts;
 
     QJsonArray acttags;
     query.exec("select * from SyncActTags");
@@ -167,14 +172,34 @@ void Worker::doSync(){
         obj["tags"] = query.value(1).toString();
         acttags.append(obj);
     }
-
-    qDebug() << acttags;
-
     db.commit();
+
+    //qDebug() << acttags;
+
+    QJsonObject json;
+    if(vids.size() >= 1) {
+        json["vids"] = vids;
+    }
+    if(tags.size() >= 1) {
+        json["vidtags"] = tags;
+    }
+    if(acts.size() >= 1) {
+        json["vidacts"] = acts;
+    }
+    if(acttags.size() >= 1) {
+        json["acttags"] = acttags;
+    }
+
+    get.setUrl(QUrl("http://tagu.in"));
+    nam->get(get);
+    qDebug() << "netweork request";
+}
+
+void Worker::replyFinished(QNetworkReply *reply) {
+  qDebug() << reply->readAll();
 }
 
 void Worker::doSearch(){
-
 }
 
 void Worker::mainLoop(){

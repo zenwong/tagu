@@ -2,7 +2,7 @@
 #include "ui_MainWindow.h"
 #include "SettingsDialog.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "settings.ini", QSettings::IniFormat) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
     restoreState(settings.value("mainWindowState").toByteArray());
@@ -54,6 +54,81 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(worker, SIGNAL(importFinished()), this, SLOT(onImportFinished()));
 
     thread->start();
+
+    nam = new QNetworkAccessManager(this);
+    //post.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+
+    QSqlQuery query(db);
+
+    db.transaction();
+    query.exec("select title,hash from vids where synced = 0");
+    QJsonArray vids;
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["hash"] = query.value(1).toString();
+        vids.append(obj);
+    }
+
+    //qDebug() << vids;
+
+    QJsonArray tags;
+    query.exec("select * from SyncTags");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        tags.append(obj);
+    }
+
+    //qDebug() << tags;
+
+    QJsonArray acts;
+    query.exec("select * from SyncActs");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        acts.append(obj);
+    }
+
+    //qDebug() << acts;
+
+    QJsonArray acttags;
+    query.exec("select * from SyncActTags");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["act"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        acttags.append(obj);
+    }
+    db.commit();
+
+    //qDebug() << acttags;
+
+    QJsonObject json;
+    if(vids.size() >= 1) {
+        json["vids"] = vids;
+    }
+    if(tags.size() >= 1) {
+        json["vidtags"] = tags;
+    }
+    if(acts.size() >= 1) {
+        json["vidacts"] = acts;
+    }
+    if(acttags.size() >= 1) {
+        json["acttags"] = acttags;
+    }
+
+    QJsonDocument doc(json);
+
+    post.setUrl(QUrl("http://tagu.in/sync"));
+    nam->post(post, doc.toJson());
+}
+
+void MainWindow::replyFinished(QNetworkReply *reply) {
+    qDebug() << reply->readAll();
 }
 
 void MainWindow::initDB() {
@@ -104,7 +179,8 @@ void MainWindow::initDB() {
 
     searchComplete = new QCompleter(actTable);
     searchComplete->setCompletionColumn(1);
-    searchComplete->setCompletionMode(QCompleter::InlineCompletion);
+    searchComplete->setCompletionMode(QCompleter::PopupCompletion);
+    searchComplete->setMaxVisibleItems(1);
     searchComplete->setCaseSensitivity(Qt::CaseInsensitive);
 
 //    ui->listTags->setModel(tagList);
@@ -417,6 +493,9 @@ void MainWindow::onImportFinished() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
+//    if(db.isOpen()) {
+//        db.close();
+//    }
     settings.setValue("mainWindowGeometry", saveGeometry());
     settings.setValue("mainWindowState", saveState());
 }
