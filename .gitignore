@@ -1,6 +1,7 @@
 run
 import
 db-backup
+db-journal
 ssl/*
 data-acts/db-journal
 *.o
@@ -16,3 +17,5 @@ randomdata
 Makefile
 backup-db
 settings.ini
+Tagu
+default

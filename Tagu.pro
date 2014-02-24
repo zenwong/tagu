@@ -6,7 +6,7 @@
 
 CONFIG += c++11
 QT       += core gui sql network
-LIBS += -ffmpegthumbnailer
+LIBS += -lffmpegthumbnailer
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
