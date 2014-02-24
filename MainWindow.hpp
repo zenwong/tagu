@@ -14,7 +14,6 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
 
 namespace Ui {
@@ -38,9 +37,6 @@ private slots:
     void on_editSearch_textEdited(const QString &arg1);
     void on_comboTag_currentIndexChanged(const QString &arg1);
 
-    void onThumbnailView();
-    void onCompactView();
-    void onCoverView();
     void onImportVideos();
     void onOptions();
     void onResetDatabase();
@@ -61,7 +57,6 @@ private:
     QSqlDatabase db;
     QSqlTableModel *vidTable, *tagTable, *actTable, *tagList, *actList;
     QCompleter *tagComplete, *actComplete, *searchComplete;
-    ThumbnailDelegate *thumbDel;
     QSettings settings;
     int currentVid;
     QNetworkAccessManager *nam;

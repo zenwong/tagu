@@ -8,26 +8,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     restoreState(settings.value("mainWindowState").toByteArray());
     initDB();
 
-    QString defaultView = settings.value("DefaultView").toString();
-    QStyledItemDelegate *delegate;
-    if(defaultView.isNull()) {
-        delegate = new QStyledItemDelegate;
-    } else {
-        if(defaultView == "Compact") {
-            delegate = new QStyledItemDelegate;
-            ui->listView->setFlow(QListView::TopToBottom);
-        } else if(defaultView == "Thumbnail") {
-            delegate = new ThumbnailDelegate(this);
-            ui->listView->setFlow(QListView::LeftToRight);
-        } else if(defaultView == "Cover") {
-            delegate = new CoverDelegate(this);
-            ui->listView->setFlow(QListView::LeftToRight);
-        }
-    }
-
-    //thumbDel = new ThumbnailDelegate(this);
-    ui->listView->setItemDelegate(delegate);
-
     connect(ui->comboTag->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editTags_returnPressed()));
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
 
@@ -316,27 +296,6 @@ void MainWindow::on_editTags_returnPressed(){
 
         ui->comboTag->lineEdit()->setText("");
     }
-}
-
-void MainWindow::onThumbnailView() {
-  ui->listView->setItemDelegate(new ThumbnailDelegate);
-  ui->listView->setFlow(QListView::LeftToRight);
-  ui->listView->reset();
-  settings.setValue("DefaultView", "Thumbnail");
-}
-
-void MainWindow::onCompactView() {
-  ui->listView->setItemDelegate(new QStyledItemDelegate);
-  ui->listView->setFlow(QListView::TopToBottom);
-  ui->listView->reset();
-  settings.setValue("DefaultView", "Compact");
-}
-
-void MainWindow::onCoverView() {
-  ui->listView->setItemDelegate(new CoverDelegate);
-  ui->listView->setFlow(QListView::LeftToRight);
-  ui->listView->reset();
-  settings.setValue("DefaultView", "Cover");
 }
 
 void MainWindow::onActressList() {

@@ -1,6 +1,5 @@
 #include "Worker.hpp"
 #include "Globals.hpp"
-using namespace ffmpegthumbnailer;
 
 Worker::Worker(QObject *parent) : QObject(parent), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     _abort = false;
@@ -85,18 +84,6 @@ void Worker::doImport(){
 
                 // check for files created after last import date in qsettings
                 // qDebug() << iterator.fileInfo().created();
-
-                QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
-                QFile f(savePath);
-                if(!f.exists()) {
-                    // TODO mkdir /tmp/thumbs then generate thumbs in tmp directory
-                    // when finished move thumbs to real image directory and delete tmp dir
-
-                    // TOGO allow importing of all kinds of files
-                    VideoThumbnailer thumb(400, false, true, 6, true);
-                    thumb.setSeekPercentage(30);
-                    thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
-                }
 
                 QFile file(iterator.filePath());
                 file.open(QFile::ReadOnly);
