@@ -106,25 +106,34 @@ from tags
 inner join vidtags on vidtags.tid = tags._id
 order by tag;
 
+CREATE VIEW TagCategory as
+select
+tags._id as tid,
+category.name as category,
+tags.name as tag
+from tags
+inner join category on tags.cid = category._id
+order by category;
+
 CREATE VIEW SyncTags as
 select
 vids.title as title,
-group_concat(DISTINCT tags.name) as tags
+tags.name as tag
 from vidtags
 inner join tags on vidtags.tid = tags._id
 inner join vids on vids._id = vidtags.vid
 where vidtags.synced = 0
-group by title;
+group by tag;
 
 CREATE VIEW SyncActs as
 select
 vids.title as title,
-group_concat(DISTINCT acts.name) as acts
+acts.name as act
 from vidacts
 inner join acts on vidacts.aid = acts._id
 inner join vids on vids._id = vidacts.vid
 where vidacts.synced = 0
-group by title;
+group by act;
 
 CREATE VIEW SyncActTags as
 select

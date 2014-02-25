@@ -43,6 +43,7 @@ private slots:
     void onCoverView();
     void onImportVideos();
     void onOptions();
+    void onLogin();
     void onResetDatabase();
     void onImportFinished();
     void onActressList();

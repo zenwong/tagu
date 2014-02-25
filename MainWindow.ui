@@ -205,6 +205,7 @@
      <string>General</string>
     </property>
     <addaction name="actionOptions"/>
+    <addaction name="actionLogin"/>
    </widget>
    <addaction name="menuView"/>
    <addaction name="menuImport"/>
@@ -263,6 +264,11 @@
   <action name="actionActressList">
    <property name="text">
     <string>Actress</string>
+   </property>
+  </action>
+  <action name="actionLogin">
+   <property name="text">
+    <string>Login</string>
    </property>
   </action>
  </widget>

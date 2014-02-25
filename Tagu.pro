@@ -18,13 +18,19 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     delegates/ThumbnailDelegate.cpp \
     Worker.cpp \
-    SettingsDialog.cpp
+    SettingsDialog.cpp \
+    dialogs/TagsDialog.cpp \
+    dialogs/SignupDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
     Worker.hpp \
     SettingsDialog.hpp \
-    Globals.hpp
+    Globals.hpp \
+    dialogs/TagsDialog.hpp \
+    dialogs/SignupDialog.hpp
 
 FORMS    += MainWindow.ui \
-    SettingsDialog.ui
+    SettingsDialog.ui \
+    dialogs/TagsDialog.ui \
+    dialogs/SignupDialog.ui
