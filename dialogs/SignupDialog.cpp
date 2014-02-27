@@ -7,8 +7,6 @@ SignupDialog::SignupDialog(QWidget *parent, QNetworkAccessManager *nam) : QDialo
     ui->setupUi(this);
     this->nam = nam;
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    //connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-
 }
 
 void SignupDialog::on_btnSignup_clicked(){
@@ -16,7 +14,6 @@ void SignupDialog::on_btnSignup_clicked(){
     QString data = "email=" + ui->editEmail->text().simplified() + "&password=" + ui->editPassword->text().simplified();
     signupReply = nam->post(post, data.toLatin1());
     connect(signupReply, SIGNAL(readyRead()), this, SLOT(onSignupReply()));
-
 }
 
 void SignupDialog::onSignupReply() {
@@ -34,11 +31,6 @@ void SignupDialog::onSignupReply() {
 }
 
 void SignupDialog::onLoginReply() {
-
-}
-
-void SignupDialog::replyFinished(QNetworkReply *reply) {
-
 
 }
 

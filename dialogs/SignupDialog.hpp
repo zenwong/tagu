@@ -26,8 +26,6 @@ private slots:
     void on_btnLogin_clicked();
     void onSignupReply();
     void onLoginReply();
-    void replyFinished(QNetworkReply*);
-
     void on_editEmail_editingFinished();
 
 private:

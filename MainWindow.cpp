@@ -60,11 +60,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     nam = new QNetworkAccessManager(this);
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
     qDebug() << reply->readAll();
+
+    if(reply->error() == QNetworkReply::NoError) {
+        QSqlQuery query(db);
+        db.transaction();
+        query.exec("update vids set synced = 1");
+        query.exec("update vidtags set synced = 1");
+        query.exec("update vidacts set synced = 1");
+        db.commit();
+    }
 }
 
 void MainWindow::initDB() {
@@ -451,7 +461,7 @@ void MainWindow::onSync() {
 
     QJsonObject json;
     if(vids.size() >= 1) {
-        //json["vids"] = vids;
+        json["vids"] = vids;
     }
     if(tags.size() >= 1) {
         json["vidtags"] = tags;
