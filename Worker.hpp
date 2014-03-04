@@ -32,20 +32,12 @@ public:
     void updateSyncedVids(QSqlDatabase, QByteArray);
 
     void doImport(QSqlDatabase);
-    void doSearch();
+    QSqlQueryModel* doSearch(QSqlDatabase, const QString&);
 
 private:
     int thumbWidth, thumbPercent;
     QNetworkAccessManager *nam;
     QNetworkRequest get, post;
-
-public slots:
-    void refreshVidList();
-
-signals:
-    void valueChanged(const QString &value);
-    void finished();
-    void importFinished();
 
 };
 

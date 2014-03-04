@@ -3,17 +3,9 @@
 using namespace ffmpegthumbnailer;
 
 Worker::Worker(QObject *parent) : QObject(parent) {
-//    db = QSqlDatabase::addDatabase("QSQLITE");
-//    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
-//    db.open();
-
     nam = new QNetworkAccessManager(this);
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
-}
-
-void Worker::refreshVidList() {
-
 }
 
 void Worker::insertAct(QSqlDatabase db, QString act, QSqlTableModel *vidTable, QListView *list) {
@@ -46,7 +38,6 @@ void Worker::insertAct(QSqlDatabase db, QString act, QSqlTableModel *vidTable, Q
            insert2.bindValue(0, vid);
            insert2.bindValue(1, aid);
            insert2.exec();
-
        }
        db.commit();
    }
@@ -277,5 +268,30 @@ void Worker::doImport(QSqlDatabase db){
     db.commit();
 }
 
-void Worker::doSearch(){
+QSqlQueryModel* Worker::doSearch(QSqlDatabase db, const QString& txt){
+    QStringList terms = txt.split(" ");
+
+    QString sql = "select * from search where search MATCH '" + txt.simplified() + "*'";
+    QSqlQueryModel *model = new QSqlQueryModel;
+
+    if(terms.size() > 1) {
+        for(int i = 1; i < terms.size(); i++) {
+            if(terms.at(i).simplified().size() > 1) {
+                sql += " intersect select * from search where search MATCH '" + terms.at(i).simplified() + "*'";
+            }
+            QSqlQuery q(sql, db);
+            model->setQuery(q);
+//            list->setModel(model);
+//            list->setModelColumn(0);
+        }
+    } else {
+        if(txt.size() > 1) {
+            QSqlQuery q(sql, db);
+            model->setQuery(q);
+//            list->setModel(model);
+//            list->setModelColumn(0);
+        }
+    }
+
+    return model;
 }

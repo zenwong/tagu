@@ -59,6 +59,7 @@ private slots:
 
     void refreshVids();
     void refreshData();
+    void refreshSearch();
 
 private:
     void initDB();
@@ -76,6 +77,8 @@ private:
     QThread *thread;
     Worker *worker;
     QFutureWatcher<void> vidsWatcher, dataWatcher;
+    QFutureWatcher<QSqlQueryModel*> searchWatcher;
+    QFuture<QSqlQueryModel*> searchFuture;
 };
 
 #endif // MAINWINDOW_HPP

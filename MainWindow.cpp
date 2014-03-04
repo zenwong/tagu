@@ -33,11 +33,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(&vidsWatcher, SIGNAL(finished()), this, SLOT(refreshVids()));
     connect(&dataWatcher, SIGNAL(finished()), this, SLOT(refreshData()));
-    //connect(&actWatcher, SIGNAL(finished()), this, SLOT(refreshAct()));
-
-
-//    connect(ui->listView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-//            this, SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(&searchWatcher, SIGNAL(finished()), this, SLOT(refreshSearch()));
 
     connect(ui->comboTag->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editTags_returnPressed()));
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
@@ -78,6 +74,11 @@ void MainWindow::refreshData() {
 
     ui->comboTag->lineEdit()->setText("");
     ui->comboAct->lineEdit()->setText("");
+}
+
+void MainWindow::refreshSearch() {
+  qDebug() << "refresh search model";
+  ui->listView->setModel(searchFuture.result());
 }
 
 void MainWindow::onSelectionChanged(const QItemSelection &previous, const QItemSelection &now) {
@@ -233,35 +234,15 @@ void MainWindow::onTagList() {
 }
 
 void MainWindow::on_editSearch_textEdited(const QString &txt){
-    qDebug() << txt;
-    QStringList terms = txt.split(" ");
 
-    QString sql = "select * from search where search MATCH '" + txt.simplified() + "*'";
-    QSqlQueryModel *model = new QSqlQueryModel(this);
-
-    if(terms.size() > 1) {
-        for(int i = 1; i < terms.size(); i++) {
-            if(terms.at(i).simplified().size() > 1) {
-                sql += " intersect select * from search where search MATCH '" + terms.at(i).simplified() + "*'";
-            }
-            QSqlQuery q(sql, db);
-            model->setQuery(q);
-            ui->listView->setModel(model);
-            ui->listView->setModelColumn(0);
-        }
-    } else {
-        if(txt.size() > 1) {
-            QSqlQuery q(sql, db);
-            model->setQuery(q);
-            ui->listView->setModel(model);
-            ui->listView->setModelColumn(0);
-        }
-    }
-
-    if(txt.size() == 0) {
+    if(txt.size() < 1) {
         ui->listView->setModel(vidTable);
         ui->listView->setModelColumn(1);
+    } else {
+        searchFuture = QtConcurrent::run(worker, &Worker::doSearch, db, txt);
+        searchWatcher.setFuture(searchFuture);
     }
+
 }
 
 void MainWindow::on_editActs_returnPressed(){
