@@ -49,16 +49,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboAct->lineEdit()->setText("");
     ui->comboTag->lineEdit()->setText("");
 
-    thread = new QThread();
-    worker = new Worker();
-
-    worker->moveToThread(thread);
-    connect(thread, SIGNAL(started()), worker, SLOT(mainLoop()));
-    connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(importFinished()), this, SLOT(onImportFinished()));
-
-    thread->start();
-
     nam = new QNetworkAccessManager(this);
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
@@ -69,7 +59,7 @@ void MainWindow::replyFinished(QNetworkReply *reply) {
     //qDebug() << reply->readAll();
 
     if(reply->error() == QNetworkReply::NoError) {
-        QtConcurrent::run(worker, &Worker::updateSyncedVids, reply->readAll());
+        QtConcurrent::run(worker, &Worker::updateSyncedVids, db, reply->readAll());
     }
 }
 
@@ -180,7 +170,7 @@ void MainWindow::on_editActs_returnPressed(){
 
     QString act = ui->comboAct->currentText().simplified();
     if(act.size() > 2) {
-        QtConcurrent::run(worker, &Worker::insertAct, act, vidTable, ui->listView);
+        QtConcurrent::run(worker, &Worker::insertAct, db, act, vidTable, ui->listView);
         actTable->select();
         actList->select();
         ui->comboAct->lineEdit()->setText("");
@@ -192,7 +182,7 @@ void MainWindow::on_editTags_returnPressed(){
     QString tag = ui->comboTag->currentText().simplified();
 
     if(tag.size() > 2) {
-        QtConcurrent::run(worker, &Worker::insertTag, tag, vidTable, ui->listView);
+        QtConcurrent::run(worker, &Worker::insertTag, db, tag, vidTable, ui->listView);
         tagTable->select();
         tagList->select();
         ui->comboTag->lineEdit()->setText("");
@@ -339,7 +329,8 @@ void MainWindow::on_listActs_doubleClicked(const QModelIndex &index){
 }
 
 void MainWindow::onImportVideos() {
-     worker->requestMethod(Worker::Import);
+     //worker->requestMethod(Worker::Import);
+     QtConcurrent::run(worker, &Worker::doImport, db);
 }
 
 void MainWindow::onSync() {

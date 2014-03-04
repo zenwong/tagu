@@ -2,22 +2,17 @@
 #include "Globals.hpp"
 using namespace ffmpegthumbnailer;
 
-Worker::Worker(QObject *parent) : QObject(parent), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
-    _abort = false;
-    _interrupt = false;
-
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
-    db.open();
+Worker::Worker(QObject *parent) : QObject(parent) {
+//    db = QSqlDatabase::addDatabase("QSQLITE");
+//    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
+//    db.open();
 
     nam = new QNetworkAccessManager(this);
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
-
-    //connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
-void Worker::insertAct(QString act, QSqlTableModel *vidTable, QListView *list) {
+void Worker::insertAct(QSqlDatabase db, QString act, QSqlTableModel *vidTable, QListView *list) {
     QSqlQuery insert(db);
     QSqlQuery insert2(db);
     QSqlQuery query(db);
@@ -51,7 +46,7 @@ void Worker::insertAct(QString act, QSqlTableModel *vidTable, QListView *list) {
     db.commit();
 }
 
-void Worker::insertTag(QString tag, QSqlTableModel *vidTable, QListView *list) {
+void Worker::insertTag(QSqlDatabase db, QString tag, QSqlTableModel *vidTable, QListView *list) {
     QSqlQuery insert(db);
     QSqlQuery insert2(db);
     QSqlQuery query(db);
@@ -83,7 +78,7 @@ void Worker::insertTag(QString tag, QSqlTableModel *vidTable, QListView *list) {
     db.commit();
 }
 
-void Worker::updateSyncedVids(QByteArray json) {
+void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {
   //qDebug() << json;
   QSqlQuery query(db);
   db.transaction();
@@ -132,7 +127,7 @@ void Worker::updateSyncedVids(QByteArray json) {
       select.first();
       vid = select.value(0).toInt();
 
-      select2.bindValue(0, title.toString());
+      select2.bindValue(0, tag.toString());
       select2.exec();
       select2.first();
       tid = select2.value(0).toInt();
@@ -157,7 +152,7 @@ void Worker::updateSyncedVids(QByteArray json) {
       select.first();
       vid = select.value(0).toInt();
 
-      select3.bindValue(0, title.toString());
+      select3.bindValue(0, act.toString());
       select3.exec();
       select3.first();
       aid = select3.value(0).toInt();
@@ -167,53 +162,40 @@ void Worker::updateSyncedVids(QByteArray json) {
       insert2.exec();
   }
 
-
   db.commit();
 }
 
-void Worker::requestMethod(Worker::Task task){
-    QMutexLocker locker(&mutex);
-    _interrupt = true;
-    _task = task;
-    condition.wakeOne();
-}
+void Worker::doImport(QSqlDatabase db){
+    //qDebug()<< "Start Importing Videos in Thread "<<thread()->currentThreadId();
 
-void Worker::abort(){
-    QMutexLocker locker(&mutex);
-    _abort = true;
-    condition.wakeOne();
-}
+//    QList<QString> dirs;
+//    int len = settings.beginReadArray("ImportJavDirs");
+//    for (int i = 0; i < len; ++i) {
+//        settings.setArrayIndex(i);
+//        dirs.append(settings.value("dir").toString());
+//    }
+//    settings.endArray();
 
-void Worker::doImport(){
-    qDebug()<< "Start Importing Videos in Thread "<<thread()->currentThreadId();
+//    len = settings.beginReadArray("ImportPornDirs");
+//    for (int i = 0; i < len; ++i) {
+//        settings.setArrayIndex(i);
+//        dirs.append(settings.value("dir").toString());
+//    }
+//    settings.endArray();
 
-    QList<QString> dirs;
-    int len = settings.beginReadArray("ImportJavDirs");
-    for (int i = 0; i < len; ++i) {
-        settings.setArrayIndex(i);
-        dirs.append(settings.value("dir").toString());
-    }
-    settings.endArray();
-
-    len = settings.beginReadArray("ImportPornDirs");
-    for (int i = 0; i < len; ++i) {
-        settings.setArrayIndex(i);
-        dirs.append(settings.value("dir").toString());
-    }
-    settings.endArray();
-
-    len = settings.beginReadArray("ImportHentaiDirs");
-    for (int i = 0; i < len; ++i) {
-        settings.setArrayIndex(i);
-        dirs.append(settings.value("dir").toString());
-    }
-    settings.endArray();
+//    len = settings.beginReadArray("ImportHentaiDirs");
+//    for (int i = 0; i < len; ++i) {
+//        settings.setArrayIndex(i);
+//        dirs.append(settings.value("dir").toString());
+//    }
+//    settings.endArray();
 
 
 //    thumbWidth = settings.value("ThumbWidth").toInt();
 //    thumbPercent = settings.value("ThumbPercentage").toInt();
 
-    QString thumbDir = settings.value("ImagesDir").toString() + QDir::separator() + "thumbs" + QDir::separator();
+    //QString thumbDir = settings.value("ImagesDir").toString() + QDir::separator() + "thumbs" + QDir::separator();
+    QString thumbDir = "/tmp/test/thumbs";
 
     //qDebug() << dirs;
 
@@ -229,6 +211,8 @@ void Worker::doImport(){
     QSqlQuery insert(db);
     insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
 
+    QStringList dirs;
+    dirs << "/mnt/seagate/japanese" << "/mnt/seagate/favs";
     foreach(QString d, dirs) {
         QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
@@ -274,7 +258,6 @@ void Worker::doImport(){
             }
         }
         db.commit();
-        emit importFinished();
     }
 
     db.transaction();
@@ -283,116 +266,5 @@ void Worker::doImport(){
     db.commit();
 }
 
-void Worker::doSync(){
-    QSqlQuery query(db);
-
-    db.transaction();
-    query.exec("select title,hash from vids where synced = 0");
-    QJsonArray vids;
-    while(query.next()) {
-        QJsonObject obj;
-        obj["title"] = query.value(0).toString();
-        obj["hash"] = query.value(1).toString();
-        vids.append(obj);
-    }
-
-    //qDebug() << vids;
-
-    QJsonArray tags;
-    query.exec("select * from SyncTags");
-    while(query.next()) {
-        QJsonObject obj;
-        obj["title"] = query.value(0).toString();
-        obj["tags"] = query.value(1).toString();
-        tags.append(obj);
-    }
-
-    //qDebug() << tags;
-
-    QJsonArray acts;
-    query.exec("select * from SyncActs");
-    while(query.next()) {
-        QJsonObject obj;
-        obj["title"] = query.value(0).toString();
-        obj["tags"] = query.value(1).toString();
-        acts.append(obj);
-    }
-
-    //qDebug() << acts;
-
-    QJsonArray acttags;
-    query.exec("select * from SyncActTags");
-    while(query.next()) {
-        QJsonObject obj;
-        obj["act"] = query.value(0).toString();
-        obj["tags"] = query.value(1).toString();
-        acttags.append(obj);
-    }
-    db.commit();
-
-    //qDebug() << acttags;
-
-    QJsonObject json;
-    if(vids.size() >= 1) {
-        json["vids"] = vids;
-    }
-    if(tags.size() >= 1) {
-        json["vidtags"] = tags;
-    }
-    if(acts.size() >= 1) {
-        json["vidacts"] = acts;
-    }
-    if(acttags.size() >= 1) {
-        json["acttags"] = acttags;
-    }
-
-    QJsonDocument doc(json);
-    qDebug() << doc.toJson();
-
-    post.setUrl(QUrl("http://tagu.in/sync"));
-    nam->post(post, doc.toJson());
-}
-
-void Worker::replyFinished(QNetworkReply *reply) {
-  qDebug() << reply->readAll();
-}
-
 void Worker::doSearch(){
-}
-
-void Worker::mainLoop(){
-
-    forever {
-
-        mutex.lock();
-        if (!_interrupt && !_abort) {
-            condition.wait(&mutex);
-        }
-        _interrupt = false;
-
-        if (_abort) {
-            qDebug()<<"Aborting worker mainLoop in Thread "<<thread()->currentThreadId();
-            emit finished();
-            return;
-        }
-
-        Task task = _task;
-        mutex.unlock();
-
-        switch(task) {
-        case Import:
-            doImport();
-            break;
-        case Sync:
-            doSync();
-            break;
-        case Search:
-            doSearch();
-            break;
-        }
-    }
-}
-
-void Worker::gotData(QNetworkReply *trigger) {
-    qDebug() << "got data";
 }

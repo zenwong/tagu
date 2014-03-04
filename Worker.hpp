@@ -26,43 +26,24 @@ class Worker : public QObject
     Q_OBJECT
 public:
     explicit Worker(QObject *parent = 0);
-    enum Task {
-        Import,
-        Sync,
-        Search
-    };
-    void requestMethod(Task method);
-    void abort();
 
-    void insertAct(QString, QSqlTableModel*, QListView*);
-    void insertTag(QString, QSqlTableModel*, QListView*);
-    void updateSyncedVids(QByteArray);
+    void insertAct(QSqlDatabase, QString, QSqlTableModel*, QListView*);
+    void insertTag(QSqlDatabase, QString, QSqlTableModel*, QListView*);
+    void updateSyncedVids(QSqlDatabase, QByteArray);
+
+    void doImport(QSqlDatabase);
+    void doSearch();
 
 private:
-    Task _task;
-    bool _abort;
-    bool _interrupt;
-    QMutex mutex;
-    QWaitCondition condition;
-    QSqlDatabase db;
     int thumbWidth, thumbPercent;
-    QSettings settings;
     QNetworkAccessManager *nam;
     QNetworkRequest get, post;
-
-    void doImport();
-    void doSync();
-    void doSearch();
 
 signals:
     void valueChanged(const QString &value);
     void finished();
     void importFinished();
 
-public slots:
-    void mainLoop();
-    void replyFinished(QNetworkReply*);
-    void gotData(QNetworkReply *trigger);
 };
 
 #endif // WORKER_HPP
