@@ -35,7 +35,8 @@ public:
     void abort();
 
     void insertAct(QString, QSqlTableModel*, QListView*);
-
+    void insertTag(QString, QSqlTableModel*, QListView*);
+    void updateSyncedVids(QByteArray);
 
 private:
     Task _task;

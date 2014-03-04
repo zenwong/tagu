@@ -59,23 +59,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     thread->start();
 
-//    nam = new QNetworkAccessManager(this);
-//    post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-//    post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
-//    connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+    nam = new QNetworkAccessManager(this);
+    post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
+    connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
-    qDebug() << reply->readAll();
+    //qDebug() << reply->readAll();
 
-//    if(reply->error() == QNetworkReply::NoError) {
-//        QSqlQuery query(db);
-//        db.transaction();
-//        query.exec("update vids set synced = 1");
-//        query.exec("update vidtags set synced = 1");
-//        query.exec("update vidacts set synced = 1");
-//        db.commit();
-//    }
+    if(reply->error() == QNetworkReply::NoError) {
+        QtConcurrent::run(worker, &Worker::updateSyncedVids, reply->readAll());
+    }
 }
 
 void MainWindow::initDB() {
@@ -197,40 +192,9 @@ void MainWindow::on_editTags_returnPressed(){
     QString tag = ui->comboTag->currentText().simplified();
 
     if(tag.size() > 2) {
-        QSqlQuery insert(db);
-        QSqlQuery insert2(db);
-        QSqlQuery query(db);
-
-        insert.prepare("insert into tags(name) values(?)");
-        insert2.prepare("insert into vidtags(vid,tid) values(?,?)");
-        query.prepare("select _id from tags where name = ?");
-
-        int tid = 0, vid = 0;
-        QItemSelection selected( ui->listView->selectionModel()->selection() );
-
-        db.transaction();
-        foreach(QModelIndex index, selected.indexes()) {
-            vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
-            //qDebug() << "vid: " << vid;
-
-            insert.bindValue(0, tag);
-            insert.exec();
-
-            query.bindValue(0, tag);
-            query.exec();
-            query.first();
-            tid = query.value(0).toInt();
-            //qDebug() << "tid: " << tid << ", name: '" << tag << "'";
-
-            insert2.bindValue(0, vid);
-            insert2.bindValue(1, tid);
-            insert2.exec();
-
-        }
-        db.commit();
+        QtConcurrent::run(worker, &Worker::insertTag, tag, vidTable, ui->listView);
         tagTable->select();
         tagList->select();
-
         ui->comboTag->lineEdit()->setText("");
     }
 }
@@ -380,76 +344,76 @@ void MainWindow::onImportVideos() {
 
 void MainWindow::onSync() {
     // TODO find a way to move this to worker thread, need to start event loop in Worker
-    worker->requestMethod(Worker::Sync);
+    //worker->requestMethod(Worker::Sync);
 
-//    QSqlQuery query(db);
+    QSqlQuery query(db);
 
-//    db.transaction();
-//    query.exec("select title,hash from vids where synced = 0");
-//    QJsonArray vids;
-//    while(query.next()) {
-//        QJsonObject obj;
-//        obj["title"] = query.value(0).toString();
-//        obj["hash"] = query.value(1).toString();
-//        vids.append(obj);
-//    }
+    db.transaction();
+    query.exec("select title,hash from vids where synced = 0");
+    QJsonArray vids;
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["hash"] = query.value(1).toString();
+        vids.append(obj);
+    }
 
-//    //qDebug() << vids;
+    //qDebug() << vids;
 
-//    QJsonArray tags;
-//    query.exec("select * from SyncTags");
-//    while(query.next()) {
-//        QJsonObject obj;
-//        obj["title"] = query.value(0).toString();
-//        obj["tag"] = query.value(1).toString();
-//        tags.append(obj);
-//    }
+    QJsonArray tags;
+    query.exec("select * from SyncTags");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["tag"] = query.value(1).toString();
+        tags.append(obj);
+    }
 
-//    //qDebug() << tags;
+    //qDebug() << tags;
 
-//    QJsonArray acts;
-//    query.exec("select * from SyncActs");
-//    while(query.next()) {
-//        QJsonObject obj;
-//        obj["title"] = query.value(0).toString();
-//        obj["act"] = query.value(1).toString();
-//        acts.append(obj);
-//    }
+    QJsonArray acts;
+    query.exec("select * from SyncActs");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["title"] = query.value(0).toString();
+        obj["act"] = query.value(1).toString();
+        acts.append(obj);
+    }
 
-//    //qDebug() << acts;
+    //qDebug() << acts;
 
-//    QJsonArray acttags;
-//    query.exec("select * from SyncActTags");
-//    while(query.next()) {
-//        QJsonObject obj;
-//        obj["act"] = query.value(0).toString();
-//        obj["tags"] = query.value(1).toString();
-//        acttags.append(obj);
-//    }
-//    db.commit();
+    QJsonArray acttags;
+    query.exec("select * from SyncActTags");
+    while(query.next()) {
+        QJsonObject obj;
+        obj["act"] = query.value(0).toString();
+        obj["tags"] = query.value(1).toString();
+        acttags.append(obj);
+    }
+    db.commit();
 
-//    //qDebug() << acttags;
+    //qDebug() << acttags;
 
-//    QJsonObject json;
-//    if(vids.size() >= 1) {
-//        json["vids"] = vids;
-//    }
-//    if(tags.size() >= 1) {
-//        json["vidtags"] = tags;
-//    }
-//    if(acts.size() >= 1) {
-//        json["vidacts"] = acts;
-//    }
-//    if(acttags.size() >= 1) {
-//        json["acttags"] = acttags;
-//    }
+    QJsonObject json;
+    if(vids.size() >= 1) {
+        json["vids"] = vids;
+    }
+    if(tags.size() >= 1) {
+        json["vidtags"] = tags;
+    }
+    if(acts.size() >= 1) {
+        json["vidacts"] = acts;
+    }
+    if(acttags.size() >= 1) {
+        json["acttags"] = acttags;
+    }
 
-//    QJsonDocument doc(json);
+    QJsonDocument doc(json);
 
-//    qDebug() << doc.toJson();
+    //qDebug() << doc.toJson();
 
-//    post.setUrl(QUrl("http://tagu.in/sync"));
-//    nam->post(post, doc.toJson());
+    post.setUrl(QUrl("http://tagu.in/sync"));
+    nam->post(post, doc.toJson());
 }
 
 void MainWindow::onOptions() {

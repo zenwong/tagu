@@ -51,6 +51,126 @@ void Worker::insertAct(QString act, QSqlTableModel *vidTable, QListView *list) {
     db.commit();
 }
 
+void Worker::insertTag(QString tag, QSqlTableModel *vidTable, QListView *list) {
+    QSqlQuery insert(db);
+    QSqlQuery insert2(db);
+    QSqlQuery query(db);
+
+    insert.prepare("insert into tags(name) values(?)");
+    insert2.prepare("insert into vidtags(vid,tid) values(?,?)");
+    query.prepare("select _id from tags where name = ?");
+
+    int tid = 0, vid = 0;
+    QItemSelection selected( list->selectionModel()->selection() );
+
+    db.transaction();
+    foreach(QModelIndex index, selected.indexes()) {
+        vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
+
+        insert.bindValue(0, tag);
+        insert.exec();
+
+        query.bindValue(0, tag);
+        query.exec();
+        query.first();
+        tid = query.value(0).toInt();
+
+        insert2.bindValue(0, vid);
+        insert2.bindValue(1, tid);
+        insert2.exec();
+
+    }
+    db.commit();
+}
+
+void Worker::updateSyncedVids(QByteArray json) {
+  //qDebug() << json;
+  QSqlQuery query(db);
+  db.transaction();
+  query.exec("update vids set synced = 1");
+  query.exec("update vidtags set synced = 1");
+  query.exec("update vidacts set synced = 1");
+  db.commit();
+
+  QJsonParseError err;
+  QJsonDocument doc = QJsonDocument::fromJson(json, &err);
+
+  QJsonObject root = doc.object();
+
+  QJsonValue vidtags = root.value("vidtags");
+  QJsonArray vt = vidtags.toArray();
+
+  QSqlQuery select(db);
+  QSqlQuery select2(db);
+  QSqlQuery select3(db);
+  QSqlQuery insert(db);
+  QSqlQuery insert2(db);
+  QSqlQuery insert3(db);
+  QSqlQuery insert4(db);
+
+  select.prepare("select _id from vids where title = ?");
+  select2.prepare("select _id from tags where name = ?");
+  select3.prepare("select _id from acts where name = ?");
+
+  insert.prepare("insert into vidtags(vid,tid) values(?,?)");
+  insert2.prepare("insert into vidacts(vid,aid) values(?,?)");
+  insert3.prepare("insert into tags(name) values(?)");
+  insert4.prepare("insert into acts(name) values(?)");
+
+  int vid, tid, aid;
+  db.transaction();
+  foreach(QJsonValue v, vt) {
+      QJsonObject obj = v.toObject();
+      QJsonValue title = obj.value("title");
+      QJsonValue tag  = obj.value("tag");
+
+      insert3.bindValue(0, tag.toString());
+      insert3.exec();
+
+      select.bindValue(0, title.toString());
+      select.exec();
+      select.first();
+      vid = select.value(0).toInt();
+
+      select2.bindValue(0, title.toString());
+      select2.exec();
+      select2.first();
+      tid = select2.value(0).toInt();
+
+      insert.bindValue(0, vid);
+      insert.bindValue(1, tid);
+      insert.exec();
+  }
+
+  QJsonValue vidacts = root.value("vidacts");
+  QJsonArray va = vidacts.toArray();
+  foreach(QJsonValue v, va) {
+      QJsonObject obj = v.toObject();
+      QJsonValue title = obj.value("title");
+      QJsonValue act  = obj.value("act");
+
+      insert4.bindValue(0, act.toString());
+      insert4.exec();
+
+      select.bindValue(0, title.toString());
+      select.exec();
+      select.first();
+      vid = select.value(0).toInt();
+
+      select3.bindValue(0, title.toString());
+      select3.exec();
+      select3.first();
+      aid = select3.value(0).toInt();
+
+      insert2.bindValue(0, vid);
+      insert2.bindValue(1, aid);
+      insert2.exec();
+  }
+
+
+  db.commit();
+}
+
 void Worker::requestMethod(Worker::Task task){
     QMutexLocker locker(&mutex);
     _interrupt = true;
