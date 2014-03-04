@@ -10,9 +10,45 @@ Worker::Worker(QObject *parent) : QObject(parent), settings(QCoreApplication::ap
     db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
     db.open();
 
-//    nam = new QNetworkAccessManager(this);
-//    post.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-//    connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+    nam = new QNetworkAccessManager(this);
+    post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
+
+    //connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+}
+
+void Worker::insertAct(QString act, QSqlTableModel *vidTable, QListView *list) {
+    QSqlQuery insert(db);
+    QSqlQuery insert2(db);
+    QSqlQuery query(db);
+
+    insert.prepare("insert into acts(name) values(?)");
+    insert2.prepare("insert into vidacts(vid,aid) values(?,?)");
+    query.prepare("select _id from acts where name = ?");
+
+    int aid = 0, vid = 0;
+    QItemSelection selected( list->selectionModel()->selection() );
+
+    db.transaction();
+    foreach(QModelIndex index, selected.indexes()) {
+        vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
+        //qDebug() << "vid: " << vid;
+
+        insert.bindValue(0, act);
+        insert.exec();
+
+        query.bindValue(0, act);
+        query.exec();
+        query.first();
+        aid = query.value(0).toInt();
+        //qDebug() << "aid: " << aid << ", name: '" << act << "'";
+
+        insert2.bindValue(0, vid);
+        insert2.bindValue(1, aid);
+        insert2.exec();
+
+    }
+    db.commit();
 }
 
 void Worker::requestMethod(Worker::Task task){
@@ -190,9 +226,11 @@ void Worker::doSync(){
         json["acttags"] = acttags;
     }
 
-    get.setUrl(QUrl("http://tagu.in"));
-    nam->get(get);
-    qDebug() << "netweork request";
+    QJsonDocument doc(json);
+    qDebug() << doc.toJson();
+
+    post.setUrl(QUrl("http://tagu.in/sync"));
+    nam->post(post, doc.toJson());
 }
 
 void Worker::replyFinished(QNetworkReply *reply) {
@@ -233,4 +271,8 @@ void Worker::mainLoop(){
             break;
         }
     }
+}
+
+void Worker::gotData(QNetworkReply *trigger) {
+    qDebug() << "got data";
 }

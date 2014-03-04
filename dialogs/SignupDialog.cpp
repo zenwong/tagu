@@ -10,7 +10,7 @@ SignupDialog::SignupDialog(QWidget *parent, QNetworkAccessManager *nam) : QDialo
 }
 
 void SignupDialog::on_btnSignup_clicked(){
-    post.setUrl(QUrl("http://tagu.in/app/signup"));
+    post.setUrl(QUrl("http://tagu.in/signup"));
     QString data = "email=" + ui->editEmail->text().simplified() + "&password=" + ui->editPassword->text().simplified();
     signupReply = nam->post(post, data.toLatin1());
     connect(signupReply, SIGNAL(readyRead()), this, SLOT(onSignupReply()));

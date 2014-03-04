@@ -122,8 +122,7 @@ tags.name as tag
 from vidtags
 inner join tags on vidtags.tid = tags._id
 inner join vids on vids._id = vidtags.vid
-where vidtags.synced = 0
-group by tag;
+where vidtags.synced = 0;
 
 CREATE VIEW SyncActs as
 select
@@ -132,8 +131,7 @@ acts.name as act
 from vidacts
 inner join acts on vidacts.aid = acts._id
 inner join vids on vids._id = vidacts.vid
-where vidacts.synced = 0
-group by act;
+where vidacts.synced = 0;
 
 CREATE VIEW SyncActTags as
 select
@@ -142,8 +140,7 @@ group_concat(DISTINCT tags.name) as tags
 from acttags
 inner join acts on acttags.aid = acts._id
 inner join tags on tags._id = acttags.tid
-where acttags.synced = 0
-group by acts.name;
+where acttags.synced = 0;
 
 CREATE VIEW TagFilter as select _id,name from tags order by name;
 CREATE VIEW ActFilter as select _id,name from acts order by name;

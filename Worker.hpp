@@ -18,6 +18,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QListView>
+#include <QSqlTableModel>
 
 class Worker : public QObject
 {
@@ -31,6 +33,9 @@ public:
     };
     void requestMethod(Task method);
     void abort();
+
+    void insertAct(QString, QSqlTableModel*, QListView*);
+
 
 private:
     Task _task;
@@ -56,6 +61,7 @@ signals:
 public slots:
     void mainLoop();
     void replyFinished(QNetworkReply*);
+    void gotData(QNetworkReply *trigger);
 };
 
 #endif // WORKER_HPP
