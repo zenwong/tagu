@@ -3,7 +3,7 @@
 #include "SettingsDialog.hpp"
 #include "dialogs/TagsDialog.hpp"
 #include "dialogs/SignupDialog.hpp"
-#include <QtConcurrent/QtConcurrent>
+#include "Utils.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
@@ -31,6 +31,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //thumbDel = new ThumbnailDelegate(this);
     ui->listView->setItemDelegate(delegate);
 
+    connect(&vidsWatcher, SIGNAL(finished()), this, SLOT(refreshVids()));
+    connect(&dataWatcher, SIGNAL(finished()), this, SLOT(refreshData()));
+    //connect(&actWatcher, SIGNAL(finished()), this, SLOT(refreshAct()));
+
+
+//    connect(ui->listView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+//            this, SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
     connect(ui->comboTag->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editTags_returnPressed()));
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
 
@@ -53,6 +61,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+}
+
+void MainWindow::refreshVids() {
+    qDebug() << "refresh vids list";
+    vidTable->select();
+}
+
+void MainWindow::refreshData() {
+    qDebug() << "refresh data";
+
+    tagTable->select();
+    actTable->select();
+    tagList->select();
+    actList->select();
+
+    ui->comboTag->lineEdit()->setText("");
+    ui->comboAct->lineEdit()->setText("");
+}
+
+void MainWindow::onSelectionChanged(const QItemSelection &previous, const QItemSelection &now) {
+    // TODO reselect selection after inserting tags and acts
+//  qDebug() << previous;
+//  qDebug() << now;
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
@@ -166,29 +197,6 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index){
     QDesktopServices::openUrl(QUrl::fromLocalFile(url));
 }
 
-void MainWindow::on_editActs_returnPressed(){
-
-    QString act = ui->comboAct->currentText().simplified();
-    if(act.size() > 2) {
-        QtConcurrent::run(worker, &Worker::insertAct, db, act, vidTable, ui->listView);
-        actTable->select();
-        actList->select();
-        ui->comboAct->lineEdit()->setText("");
-    }
-
-}
-
-void MainWindow::on_editTags_returnPressed(){
-    QString tag = ui->comboTag->currentText().simplified();
-
-    if(tag.size() > 2) {
-        QtConcurrent::run(worker, &Worker::insertTag, db, tag, vidTable, ui->listView);
-        tagTable->select();
-        tagList->select();
-        ui->comboTag->lineEdit()->setText("");
-    }
-}
-
 void MainWindow::onThumbnailView() {
   ui->listView->setItemDelegate(new ThumbnailDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
@@ -256,54 +264,35 @@ void MainWindow::on_editSearch_textEdited(const QString &txt){
     }
 }
 
-void MainWindow::on_comboTag_currentIndexChanged(const QString &tag){
-    QItemSelection selected( ui->listView->selectionModel()->selection() );
-    QSqlQuery select(db);
-    QSqlQuery insert(db);
-    select.prepare("select _id from tags where name = ?");
-    insert.prepare("insert into vidtags (vid,tid) values(?,?)");
-
-    int vid;
-    db.transaction();
-    foreach(QModelIndex index, selected.indexes()) {
-        vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
-        select.bindValue(0, tag);
-        select.exec();
-        select.first();
-        int tid = select.value(0).toInt();
-
-        insert.bindValue(0, vid);
-        insert.bindValue(1, tid);
-        insert.exec();
+void MainWindow::on_editActs_returnPressed(){
+    QString act = ui->comboAct->currentText().simplified();
+    if(act.size() > 2) {
+        QFuture<void> future = QtConcurrent::run(worker, &Worker::insertAct, db, act, vidTable, ui->listView);
+        dataWatcher.setFuture(future);
     }
-    db.commit();
 
-    tagList->select();
+}
+
+void MainWindow::on_editTags_returnPressed(){
+    QString tag = ui->comboTag->currentText().simplified();
+    if(tag.size() > 2) {
+        QFuture<void> future = QtConcurrent::run(worker, &Worker::insertTag, db, tag, vidTable, ui->listView);
+        dataWatcher.setFuture(future);
+    }
+}
+
+void MainWindow::on_comboTag_currentIndexChanged(const QString &tag){
+    if(ui->comboTag->isActiveWindow()) {
+        QFuture<void> future = QtConcurrent::run(worker, &Worker::insertTag, db, tag, vidTable, ui->listView);
+        dataWatcher.setFuture(future);
+    }
 }
 
 void MainWindow::on_comboAct_currentIndexChanged(const QString &act){
-    QItemSelection selected( ui->listView->selectionModel()->selection() );
-    QSqlQuery select(db);
-    QSqlQuery insert(db);
-    select.prepare("select _id from acts where name = ?");
-    insert.prepare("insert into vidacts (vid,aid) values(?,?)");
-
-    int vid, aid;
-    db.transaction();
-    foreach(QModelIndex index, selected.indexes()) {
-        vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
-        select.bindValue(0, act);
-        select.exec();
-        select.first();
-        aid = select.value(0).toInt();
-
-        insert.bindValue(0, vid);
-        insert.bindValue(1, aid);
-        insert.exec();
+    if(ui->comboAct->isActiveWindow()) {
+        QFuture<void> future = QtConcurrent::run(worker, &Worker::insertAct, db, act, vidTable, ui->listView);
+        dataWatcher.setFuture(future);
     }
-    db.commit();
-
-    actList->select();
 }
 
 void MainWindow::on_listTags_doubleClicked(const QModelIndex &index){
@@ -329,8 +318,8 @@ void MainWindow::on_listActs_doubleClicked(const QModelIndex &index){
 }
 
 void MainWindow::onImportVideos() {
-     //worker->requestMethod(Worker::Import);
-     QtConcurrent::run(worker, &Worker::doImport, db);
+     QFuture<void> future = QtConcurrent::run(worker, &Worker::doImport, db);
+     vidsWatcher.setFuture(future);
 }
 
 void MainWindow::onSync() {
@@ -432,11 +421,6 @@ void MainWindow::onResetDatabase() {
         db.commit();
         vidTable->select();
     }
-}
-
-void MainWindow::onImportFinished() {
-    qDebug() << "MainWindow onImportFinished()";
-    vidTable->select();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

@@ -12,70 +12,81 @@ Worker::Worker(QObject *parent) : QObject(parent) {
     post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
 }
 
+void Worker::refreshVidList() {
+
+}
+
 void Worker::insertAct(QSqlDatabase db, QString act, QSqlTableModel *vidTable, QListView *list) {
-    QSqlQuery insert(db);
-    QSqlQuery insert2(db);
-    QSqlQuery query(db);
+   if(act.size() > 2) {
+       QSqlQuery insert(db);
+       QSqlQuery insert2(db);
+       QSqlQuery query(db);
 
-    insert.prepare("insert into acts(name) values(?)");
-    insert2.prepare("insert into vidacts(vid,aid) values(?,?)");
-    query.prepare("select _id from acts where name = ?");
+       insert.prepare("insert into acts(name) values(?)");
+       insert2.prepare("insert into vidacts(vid,aid) values(?,?)");
+       query.prepare("select _id from acts where name = ?");
 
-    int aid = 0, vid = 0;
-    QItemSelection selected( list->selectionModel()->selection() );
+       int aid = 0, vid = 0;
+       QItemSelection selected( list->selectionModel()->selection() );
 
-    db.transaction();
-    foreach(QModelIndex index, selected.indexes()) {
-        vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
-        //qDebug() << "vid: " << vid;
+       db.transaction();
+       foreach(QModelIndex index, selected.indexes()) {
+           vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
+           //qDebug() << "vid: " << vid;
 
-        insert.bindValue(0, act);
-        insert.exec();
+           insert.bindValue(0, act);
+           insert.exec();
 
-        query.bindValue(0, act);
-        query.exec();
-        query.first();
-        aid = query.value(0).toInt();
-        //qDebug() << "aid: " << aid << ", name: '" << act << "'";
+           query.bindValue(0, act);
+           query.exec();
+           query.first();
+           aid = query.value(0).toInt();
+           //qDebug() << "aid: " << aid << ", name: '" << act << "'";
 
-        insert2.bindValue(0, vid);
-        insert2.bindValue(1, aid);
-        insert2.exec();
+           insert2.bindValue(0, vid);
+           insert2.bindValue(1, aid);
+           insert2.exec();
 
-    }
-    db.commit();
+       }
+       db.commit();
+   }
 }
 
 void Worker::insertTag(QSqlDatabase db, QString tag, QSqlTableModel *vidTable, QListView *list) {
-    QSqlQuery insert(db);
-    QSqlQuery insert2(db);
-    QSqlQuery query(db);
+    if(tag.size() > 1) {
+        QSqlQuery insert(db);
+        QSqlQuery insert2(db);
+        QSqlQuery query(db);
 
-    insert.prepare("insert into tags(name) values(?)");
-    insert2.prepare("insert into vidtags(vid,tid) values(?,?)");
-    query.prepare("select _id from tags where name = ?");
+        insert.prepare("insert into tags(name) values(?)");
+        insert2.prepare("insert into vidtags(vid,tid) values(?,?)");
+        query.prepare("select _id from tags where name = ?");
 
-    int tid = 0, vid = 0;
-    QItemSelection selected( list->selectionModel()->selection() );
+        int tid = 0, vid = 0;
+        QItemSelection selected( list->selectionModel()->selection() );
+        qDebug() << selected;
 
-    db.transaction();
-    foreach(QModelIndex index, selected.indexes()) {
-        vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
+        db.transaction();
+        foreach(QModelIndex index, selected.indexes()) {
+            vid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
 
-        insert.bindValue(0, tag);
-        insert.exec();
+            insert.bindValue(0, tag);
+            insert.exec();
 
-        query.bindValue(0, tag);
-        query.exec();
-        query.first();
-        tid = query.value(0).toInt();
+            query.bindValue(0, tag);
+            query.exec();
+            query.first();
+            tid = query.value(0).toInt();
 
-        insert2.bindValue(0, vid);
-        insert2.bindValue(1, tid);
-        insert2.exec();
+            qDebug() << "vid: " << vid  << ", tid: " << tid;
 
+            insert2.bindValue(0, vid);
+            insert2.bindValue(1, tid);
+            insert2.exec();
+
+        }
+        db.commit();
     }
-    db.commit();
 }
 
 void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {

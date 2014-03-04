@@ -39,6 +39,9 @@ private:
     QNetworkAccessManager *nam;
     QNetworkRequest get, post;
 
+public slots:
+    void refreshVidList();
+
 signals:
     void valueChanged(const QString &value);
     void finished();

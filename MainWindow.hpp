@@ -14,6 +14,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QtConcurrent/QtConcurrent>
 #include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
 
@@ -45,7 +46,6 @@ private slots:
     void onOptions();
     void onLogin();
     void onResetDatabase();
-    void onImportFinished();
     void onActressList();
     void onTagList();
     void onSync();
@@ -54,6 +54,11 @@ private slots:
     void on_comboAct_currentIndexChanged(const QString &arg1);
     void on_listTags_doubleClicked(const QModelIndex &index);
     void on_listActs_doubleClicked(const QModelIndex &index);
+
+    void onSelectionChanged(const QItemSelection&, const QItemSelection&);
+
+    void refreshVids();
+    void refreshData();
 
 private:
     void initDB();
@@ -70,6 +75,7 @@ private:
 
     QThread *thread;
     Worker *worker;
+    QFutureWatcher<void> vidsWatcher, dataWatcher;
 };
 
 #endif // MAINWINDOW_HPP

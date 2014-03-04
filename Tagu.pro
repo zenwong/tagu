@@ -28,7 +28,8 @@ HEADERS  += MainWindow.hpp \
     SettingsDialog.hpp \
     Globals.hpp \
     dialogs/TagsDialog.hpp \
-    dialogs/SignupDialog.hpp
+    dialogs/SignupDialog.hpp \
+    Utils.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui \
