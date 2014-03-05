@@ -12,10 +12,11 @@ public:
     ~Settings();
 
     void clear();
+    void save();
 
     QByteArray windowGeometry, windowState;
     int thumbWidth, thumbPercent;
-    QString email, password, session;
+    QString email, password, session, imageDir;
     QSet<QString> javDirs, pornDirs, hentaiDirs;
 };
 

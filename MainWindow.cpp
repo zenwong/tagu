@@ -87,7 +87,8 @@ void MainWindow::refreshSearch() {
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
-    //qDebug() << reply->readAll();
+    qDebug() << reply->errorString();
+    qDebug() << reply->readAll();
 
     if(reply->error() == QNetworkReply::NoError) {
         QtConcurrent::run(worker, &Worker::updateSyncedVids, db, reply->readAll());
@@ -285,7 +286,7 @@ void MainWindow::on_listActs_doubleClicked(const QModelIndex &index){
 }
 
 void MainWindow::onImportVideos() {
-     QFuture<void> future = QtConcurrent::run(worker, &Worker::doImport, db);
+     QFuture<void> future = QtConcurrent::run(worker, &Worker::doImport, db, config);
      vidsWatcher.setFuture(future);
 }
 
@@ -357,14 +358,15 @@ void MainWindow::onSync() {
 
     QJsonDocument doc(json);
 
-    //qDebug() << doc.toJson();
+    qDebug() << doc.toJson();
 
-    post.setUrl(QUrl("http://tagu.in/sync"));
+    post.setUrl(QUrl("http://api.tagu.in/sync"));
     nam->post(post, doc.toJson());
 }
 
 void MainWindow::onOptions() {
     SettingsDialog dialog;
+    dialog.setConfig(config);
     dialog.exec();
 }
 

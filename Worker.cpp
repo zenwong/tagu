@@ -167,45 +167,10 @@ void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {
   db.commit();
 }
 
-void Worker::doImport(QSqlDatabase db){
-    //qDebug()<< "Start Importing Videos in Thread "<<thread()->currentThreadId();
-
-//    QList<QString> dirs;
-//    int len = settings.beginReadArray("ImportJavDirs");
-//    for (int i = 0; i < len; ++i) {
-//        settings.setArrayIndex(i);
-//        dirs.append(settings.value("dir").toString());
-//    }
-//    settings.endArray();
-
-//    len = settings.beginReadArray("ImportPornDirs");
-//    for (int i = 0; i < len; ++i) {
-//        settings.setArrayIndex(i);
-//        dirs.append(settings.value("dir").toString());
-//    }
-//    settings.endArray();
-
-//    len = settings.beginReadArray("ImportHentaiDirs");
-//    for (int i = 0; i < len; ++i) {
-//        settings.setArrayIndex(i);
-//        dirs.append(settings.value("dir").toString());
-//    }
-//    settings.endArray();
-
-
-//    thumbWidth = settings.value("ThumbWidth").toInt();
-//    thumbPercent = settings.value("ThumbPercentage").toInt();
-
-    //QString thumbDir = settings.value("ImagesDir").toString() + QDir::separator() + "thumbs" + QDir::separator();
-    QString thumbDir = "/tmp/test/thumbs";
-
-    //qDebug() << dirs;
-
+void Worker::doImport(QSqlDatabase db, Settings config){
     QCryptographicHash crypto(QCryptographicHash::Sha1);
-
     QStringList filters;
-    filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"
-               << "*.asf" << "*.rmvb" << "*.ogm";
+    filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"  << "*.asf" << "*.rmvb" << "*.ogm";
 
     QSqlQuery query(db);
     query.prepare("insert into vids(title,path,hash) values(?,?,?)");
@@ -214,8 +179,18 @@ void Worker::doImport(QSqlDatabase db){
     insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
 
     QStringList dirs;
-    dirs << "/mnt/seagate/japanese" << "/mnt/seagate/favs";
-    foreach(QString d, dirs) {
+    foreach(const QString& dir, config.javDirs) dirs << dir;
+    foreach(const QString& dir, config.pornDirs) dirs << dir;
+    foreach(const QString& dir, config.hentaiDirs) dirs << dir;
+
+    QString thumbDir;
+    if(config.imageDir.endsWith('/')) {
+        thumbDir = config.imageDir + "thumbs" + QDir::separator();
+    } else {
+        thumbDir = config.imageDir + QDir::separator() + "thumbs" + QDir::separator();
+    }
+
+    foreach(const QString& d, dirs) {
         QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
@@ -235,8 +210,8 @@ void Worker::doImport(QSqlDatabase db){
                     // when finished move thumbs to real image directory and delete tmp dir
 
                     // TOGO allow importing of all kinds of files
-                    VideoThumbnailer thumb(400, false, true, 6, true);
-                    thumb.setSeekPercentage(30);
+                    VideoThumbnailer thumb(config.thumbWidth, false, true, 6, true);
+                    thumb.setSeekPercentage(config.thumbPercent);
                     thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
                 }
 

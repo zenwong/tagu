@@ -5,18 +5,38 @@ Settings::Settings(){
     if(file.exists()) {
         file.open(QIODevice::ReadOnly);
         QDataStream in(&file);
-        in >> this->email >> this->password >> this->session >> this->thumbWidth >> this->thumbPercent
+        in >> this->email >> this->password >> this->session >> this->imageDir >> this->thumbWidth >> this->thumbPercent
             >> this->windowGeometry >> this->windowState >> this->javDirs >> this->pornDirs >> this->hentaiDirs;
     }
 }
 
 Settings::~Settings() {
+//    QFile file(QCoreApplication::applicationDirPath() + "/settings.dat");
+//    file.open(QIODevice::WriteOnly);
+//    QDataStream out(&file);
+
+//    out << this->email;
+//    out << this->password;
+//    out << this->session;
+//    out << this->imageDir;
+//    out << this->thumbWidth;
+//    out << this->thumbPercent;
+//    out << this->windowGeometry;
+//    out << this->windowState;
+//    out << this->javDirs;
+//    out << this->pornDirs;
+//    out << this->hentaiDirs;
+}
+
+void Settings::save() {
     QFile file(QCoreApplication::applicationDirPath() + "/settings.dat");
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
+
     out << this->email;
     out << this->password;
     out << this->session;
+    out << this->imageDir;
     out << this->thumbWidth;
     out << this->thumbPercent;
     out << this->windowGeometry;

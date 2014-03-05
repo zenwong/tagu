@@ -17,6 +17,7 @@ class SettingsDialog : public QDialog
 public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
+    void setConfig(Settings);
 
 private slots:
     void on_btnJavAdd_clicked();

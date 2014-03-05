@@ -8,43 +8,67 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
     ui(new Ui::SettingsDialog){
     ui->setupUi(this);
 
-    qDebug() << "config email: " << config.email;
+    //    javModel = new QStringListModel(config.javDirs.toList());
+    //    pornModel = new QStringListModel(config.pornDirs.toList());
+    //    hentaiModel = new QStringListModel(config.hentaiDirs.toList());
 
-    int len = settings.beginReadArray("ImportJavDirs");
-    for (int i = 0; i < len; ++i) {
-        settings.setArrayIndex(i);
-        javDirs.append(settings.value("dir").toString());
-    }
-    settings.endArray();
+    //    ui->listJavImport->setModel(javModel);
+    //    ui->listPornImport->setModel(pornModel);
+    //    ui->listHentaiImport->setModel(hentaiModel);
 
-    len = settings.beginReadArray("ImportPornDirs");
-    for (int i = 0; i < len; ++i) {
-        settings.setArrayIndex(i);
-        pornDirs.append(settings.value("dir").toString());
-    }
-    settings.endArray();
+    //    ui->imageDir->setText(config.imageDir);
+    //    ui->thumbWidth->setText(QString::number(config.thumbWidth));
+    //    ui->thumbPercentage->setText(QString::number(config.thumbPercent));
 
-    len = settings.beginReadArray("ImportHentaiDirs");
-    for (int i = 0; i < len; ++i) {
-        settings.setArrayIndex(i);
-        hentaiDirs.append(settings.value("dir").toString());
-    }
-    settings.endArray();
+    //    int len = settings.beginReadArray("ImportJavDirs");
+    //    for (int i = 0; i < len; ++i) {
+    //        settings.setArrayIndex(i);
+    //        javDirs.append(settings.value("dir").toString());
+    //    }
+    //    settings.endArray();
 
-    javModel = new QStringListModel(javDirs);
-    ui->listJavImport->setModel(javModel);
+    //    len = settings.beginReadArray("ImportPornDirs");
+    //    for (int i = 0; i < len; ++i) {
+    //        settings.setArrayIndex(i);
+    //        pornDirs.append(settings.value("dir").toString());
+    //    }
+    //    settings.endArray();
 
-    pornModel = new QStringListModel(pornDirs);
-    ui->listPornImport->setModel(pornModel);
+    //    len = settings.beginReadArray("ImportHentaiDirs");
+    //    for (int i = 0; i < len; ++i) {
+    //        settings.setArrayIndex(i);
+    //        hentaiDirs.append(settings.value("dir").toString());
+    //    }
+    //    settings.endArray();
 
-    hentaiModel = new QStringListModel(hentaiDirs);
-    ui->listHentaiImport->setModel(hentaiModel);
+    //    javModel = new QStringListModel(javDirs);
+    //    ui->listJavImport->setModel(javModel);
 
-    ui->imageDir->setText(settings.value("ImagesDir").toString());
-    ui->thumbWidth->setText(settings.value("ThumbWidth").toString());
-    ui->thumbPercentage->setText(settings.value("ThumbPercentage").toString());
+    //    pornModel = new QStringListModel(pornDirs);
+    //    ui->listPornImport->setModel(pornModel);
+
+    //    hentaiModel = new QStringListModel(hentaiDirs);
+    //    ui->listHentaiImport->setModel(hentaiModel);
+
+    //    ui->imageDir->setText(settings.value("ImagesDir").toString());
+    //    ui->thumbWidth->setText(settings.value("ThumbWidth").toString());
+    //    ui->thumbPercentage->setText(settings.value("ThumbPercentage").toString());
 }
 
+void SettingsDialog::setConfig(Settings conf) {
+    this->config = conf;
+    javModel = new QStringListModel(config.javDirs.toList());
+    pornModel = new QStringListModel(config.pornDirs.toList());
+    hentaiModel = new QStringListModel(config.hentaiDirs.toList());
+
+    ui->listJavImport->setModel(javModel);
+    ui->listPornImport->setModel(pornModel);
+    ui->listHentaiImport->setModel(hentaiModel);
+
+    ui->imageDir->setText(config.imageDir);
+    ui->thumbWidth->setText(QString::number(config.thumbWidth));
+    ui->thumbPercentage->setText(QString::number(config.thumbPercent));
+}
 
 SettingsDialog::~SettingsDialog(){
     delete ui;
@@ -54,9 +78,8 @@ void SettingsDialog::on_btnJavAdd_clicked(){
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     if(!exists(javDirs, dir) && dir.size() > 1) {
-        javDirs.append(dir);
-        javModel->setStringList(javDirs);
-        saveArray(settings, "ImportJavDirs", javDirs);
+        config.javDirs.insert(dir);
+        javModel->setStringList(config.javDirs.toList());
         lastDir = dir;
     }
 }
@@ -65,9 +88,8 @@ void SettingsDialog::on_btnPornAdd_clicked(){
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     if(!exists(pornDirs, dir) && dir.size() > 1) {
-        pornDirs.append(dir);
-        pornModel->setStringList(pornDirs);
-        saveArray(settings, "ImportPornDirs", pornDirs);
+        config.pornDirs.insert(dir);
+        pornModel->setStringList(config.pornDirs.toList());
         lastDir = dir;
     }
 }
@@ -76,9 +98,8 @@ void SettingsDialog::on_btnHentaiAdd_clicked(){
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     if(!exists(hentaiDirs, dir) && dir.size() > 1) {
-        hentaiDirs.append(dir);
-        hentaiModel->setStringList(hentaiDirs);
-        saveArray(settings, "ImportHentaiDirs", hentaiDirs);
+        config.hentaiDirs.insert(dir);
+        hentaiModel->setStringList(config.hentaiDirs.toList());
         lastDir = dir;
     }
 }
@@ -87,27 +108,33 @@ void SettingsDialog::on_btnImageSave_clicked(){
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     ui->imageDir->setText(dir);
     settings.setValue("ImagesDir", dir);
-
+    config.imageDir = dir;
 }
 
-void SettingsDialog::on_listJavImport_doubleClicked(const QModelIndex &index)
-{
+void SettingsDialog::on_listJavImport_doubleClicked(const QModelIndex &index){
     QString dir = javModel->data(index, 0).toString();
-    javDirs.removeAll(dir);
-    settings.remove("ImportJavDirs");
-    saveArray(settings, "ImportJavDirs", javDirs);
-    javModel->setStringList(javDirs);
+    config.javDirs.remove(dir);
+    javModel->setStringList(config.javDirs.toList());
 }
 
 void SettingsDialog::on_listPornImport_doubleClicked(const QModelIndex &index){
-    updateArray(settings, "ImportPornDirs", pornDirs, pornModel, index);
+    QString dir = pornModel->data(index, 0).toString();
+    config.pornDirs.remove(dir);
+    pornModel->setStringList(config.pornDirs.toList());
 }
 
+void SettingsDialog::on_listHentaiImport_doubleClicked(const QModelIndex &index){
+    QString dir = hentaiModel->data(index, 0).toString();
+    config.hentaiDirs.remove(dir);
+    hentaiModel->setStringList(config.hentaiDirs.toList());
+}
 
-void SettingsDialog::on_buttonBox_accepted()
-{
+void SettingsDialog::on_buttonBox_accepted(){
     settings.setValue("ThumbWidth", ui->thumbWidth->text());
     settings.setValue("ThumbPercentage", ui->thumbPercentage->text());
+
+    config.thumbWidth = ui->thumbWidth->text().toInt();
+    config.thumbPercent = ui->thumbPercentage->text().toInt();
 
     QString dir = ui->imageDir->text() + QDir::separator();
     QDir act(dir + "actress");
@@ -122,13 +149,10 @@ void SettingsDialog::on_buttonBox_accepted()
     if(!screens.exists()) QDir().mkdir(screens.absolutePath());
     if(!thumbs.exists()) QDir().mkdir(thumbs.absolutePath());
 
+    config.save();
 }
 
 void SettingsDialog::on_buttonBox_rejected()
 {
     qDebug() << "cancelled";
-}
-
-void SettingsDialog::on_listHentaiImport_doubleClicked(const QModelIndex &index){
-    updateArray(settings, "ImportHentaiDirs", hentaiDirs, hentaiModel, index);
 }

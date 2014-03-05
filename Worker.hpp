@@ -20,6 +20,7 @@
 #include <QNetworkRequest>
 #include <QListView>
 #include <QSqlTableModel>
+#include "Settings.hpp"
 
 class Worker : public QObject
 {
@@ -31,7 +32,7 @@ public:
     void insertTag(QSqlDatabase, QString, QSqlTableModel*, QListView*);
     void updateSyncedVids(QSqlDatabase, QByteArray);
 
-    void doImport(QSqlDatabase);
+    void doImport(QSqlDatabase, Settings);
     QSqlQueryModel* doSearch(QSqlDatabase, const QString&);
 
 private:
