@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QSettings>
 #include <QStringListModel>
+#include "Settings.hpp"
 
 namespace Ui {
 class SettingsDialog;
@@ -34,6 +35,7 @@ private:
     QStringList javDirs, pornDirs, hentaiDirs;
     QStringListModel *javModel, *pornModel, *hentaiModel;
     QString lastDir;
+    Settings config;
 };
 
 static void saveArray(QSettings& settings, QString array, QStringList& list) {

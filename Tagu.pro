@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     Worker.cpp \
     SettingsDialog.cpp \
     dialogs/TagsDialog.cpp \
-    dialogs/SignupDialog.cpp
+    dialogs/SignupDialog.cpp \
+    Settings.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
@@ -29,7 +30,8 @@ HEADERS  += MainWindow.hpp \
     Globals.hpp \
     dialogs/TagsDialog.hpp \
     dialogs/SignupDialog.hpp \
-    Utils.hpp
+    Utils.hpp \
+    Settings.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui \

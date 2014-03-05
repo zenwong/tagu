@@ -17,6 +17,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
+#include "Settings.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -55,8 +56,6 @@ private slots:
     void on_listTags_doubleClicked(const QModelIndex &index);
     void on_listActs_doubleClicked(const QModelIndex &index);
 
-    void onSelectionChanged(const QItemSelection&, const QItemSelection&);
-
     void refreshVids();
     void refreshData();
     void refreshSearch();
@@ -79,6 +78,8 @@ private:
     QFutureWatcher<void> vidsWatcher, dataWatcher;
     QFutureWatcher<QSqlQueryModel*> searchWatcher;
     QFuture<QSqlQueryModel*> searchFuture;
+
+    Settings config;
 };
 
 #endif // MAINWINDOW_HPP

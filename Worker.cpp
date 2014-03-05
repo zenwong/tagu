@@ -274,6 +274,13 @@ QSqlQueryModel* Worker::doSearch(QSqlDatabase db, const QString& txt){
     QString sql = "select * from search where search MATCH '" + txt.simplified() + "*'";
     QSqlQueryModel *model = new QSqlQueryModel;
 
+    if(terms.size() == 1) {
+        if(txt.size() > 1) {
+            QSqlQuery q(sql, db);
+            model->setQuery(q);
+        }
+    }
+
     if(terms.size() > 1) {
         for(int i = 1; i < terms.size(); i++) {
             if(terms.at(i).simplified().size() > 1) {
@@ -281,15 +288,6 @@ QSqlQueryModel* Worker::doSearch(QSqlDatabase db, const QString& txt){
             }
             QSqlQuery q(sql, db);
             model->setQuery(q);
-//            list->setModel(model);
-//            list->setModelColumn(0);
-        }
-    } else {
-        if(txt.size() > 1) {
-            QSqlQuery q(sql, db);
-            model->setQuery(q);
-//            list->setModel(model);
-//            list->setModelColumn(0);
         }
     }
 

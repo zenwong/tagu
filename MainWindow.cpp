@@ -7,8 +7,12 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
     ui->setupUi(this);
-    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
-    restoreState(settings.value("mainWindowState").toByteArray());
+//    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
+//    restoreState(settings.value("mainWindowState").toByteArray());
+
+    restoreGeometry(config.windowGeometry);
+    restoreState(config.windowState);
+
     initDB();
 
     QString defaultView = settings.value("DefaultView").toString();
@@ -55,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     nam = new QNetworkAccessManager(this);
     post.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    // TODO get session from settings
     post.setRawHeader("Cookie", "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m");
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
@@ -77,14 +83,7 @@ void MainWindow::refreshData() {
 }
 
 void MainWindow::refreshSearch() {
-  qDebug() << "refresh search model";
   ui->listView->setModel(searchFuture.result());
-}
-
-void MainWindow::onSelectionChanged(const QItemSelection &previous, const QItemSelection &now) {
-    // TODO reselect selection after inserting tags and acts
-//  qDebug() << previous;
-//  qDebug() << now;
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
@@ -160,12 +159,6 @@ void MainWindow::initDB() {
 
     ui->comboAct->setModelColumn(1);
     ui->comboAct->setCompleter(actComplete);
-
-//    QString stylesheet = "";
-//    stylesheet += "QListView::item {border-bottom: 1px solid #6a6ea9;padding: 2px;color: black}";
-//    stylesheet += "QListView::item:alternate {background-color: rgb(249, 249, 249);}";
-//    stylesheet += "QListView::item:selected {background-color: rgb(49, 106, 197);padding: 0px;color: white;}";
-//    ui->listView->setStyleSheet(stylesheet);
 }
 
 MainWindow::~MainWindow(){
@@ -187,13 +180,9 @@ void MainWindow::on_listView_clicked(const QModelIndex &index){
     tagList->setFilter("vid=" + QString::number(currentVid));
     actList->setFilter("vid=" + QString::number(currentVid));
 
-//    ui->editTags->setText(tags);
-//    ui->editActs->setText(acts);
 }
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index){
-    //qDebug() << vidTable->columnCount();
-    //qDebug() << "row: " <<  index.row() << ", column: " << index.column();
     QString url = vidTable->data(vidTable->index(index.row(), 5)).toString();
     QDesktopServices::openUrl(QUrl::fromLocalFile(url));
 }
@@ -234,7 +223,6 @@ void MainWindow::onTagList() {
 }
 
 void MainWindow::on_editSearch_textEdited(const QString &txt){
-
     if(txt.size() < 1) {
         ui->listView->setModel(vidTable);
         ui->listView->setModelColumn(1);
@@ -242,7 +230,6 @@ void MainWindow::on_editSearch_textEdited(const QString &txt){
         searchFuture = QtConcurrent::run(worker, &Worker::doSearch, db, txt);
         searchWatcher.setFuture(searchFuture);
     }
-
 }
 
 void MainWindow::on_editActs_returnPressed(){
@@ -251,7 +238,6 @@ void MainWindow::on_editActs_returnPressed(){
         QFuture<void> future = QtConcurrent::run(worker, &Worker::insertAct, db, act, vidTable, ui->listView);
         dataWatcher.setFuture(future);
     }
-
 }
 
 void MainWindow::on_editTags_returnPressed(){
@@ -406,9 +392,8 @@ void MainWindow::onResetDatabase() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
-//    if(db.isOpen()) {
-//        db.close();
-//    }
+    config.windowGeometry = saveGeometry();
+    config.windowState = saveState();
     settings.setValue("mainWindowGeometry", saveGeometry());
     settings.setValue("mainWindowState", saveState());
 }

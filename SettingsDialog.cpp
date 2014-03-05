@@ -8,6 +8,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
     ui(new Ui::SettingsDialog){
     ui->setupUi(this);
 
+    qDebug() << "config email: " << config.email;
+
     int len = settings.beginReadArray("ImportJavDirs");
     for (int i = 0; i < len; ++i) {
         settings.setArrayIndex(i);
