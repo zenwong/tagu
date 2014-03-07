@@ -15,9 +15,11 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QtConcurrent/QtConcurrent>
+#include <QLabel>
 #include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
 #include "Settings.hpp"
+#include "Thumbnailer.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -59,6 +61,7 @@ private slots:
     void refreshVids();
     void refreshData();
     void refreshSearch();
+    void refreshImport();
 
 private:
     void initDB();
@@ -76,10 +79,13 @@ private:
     QThread *thread;
     Worker *worker;
     QFutureWatcher<void> vidsWatcher, dataWatcher;
+    QFutureWatcher<int> importWatcher;
     QFutureWatcher<QSqlQueryModel*> searchWatcher;
     QFuture<QSqlQueryModel*> searchFuture;
+    QFuture<int> importFuture;
 
     Settings config;
+    Thumbnailer thumbnailer;
 };
 
 #endif // MAINWINDOW_HPP

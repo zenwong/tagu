@@ -32,7 +32,7 @@ public:
     void insertTag(QSqlDatabase, QString, QSqlTableModel*, QListView*);
     void updateSyncedVids(QSqlDatabase, QByteArray);
 
-    void doImport(QSqlDatabase, Settings);
+    int doImport(QSqlDatabase, Settings);
     QSqlQueryModel* doSearch(QSqlDatabase, const QString&);
 
 private:

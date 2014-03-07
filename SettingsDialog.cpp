@@ -7,52 +7,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
     settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat),
     ui(new Ui::SettingsDialog){
     ui->setupUi(this);
-
-    //    javModel = new QStringListModel(config.javDirs.toList());
-    //    pornModel = new QStringListModel(config.pornDirs.toList());
-    //    hentaiModel = new QStringListModel(config.hentaiDirs.toList());
-
-    //    ui->listJavImport->setModel(javModel);
-    //    ui->listPornImport->setModel(pornModel);
-    //    ui->listHentaiImport->setModel(hentaiModel);
-
-    //    ui->imageDir->setText(config.imageDir);
-    //    ui->thumbWidth->setText(QString::number(config.thumbWidth));
-    //    ui->thumbPercentage->setText(QString::number(config.thumbPercent));
-
-    //    int len = settings.beginReadArray("ImportJavDirs");
-    //    for (int i = 0; i < len; ++i) {
-    //        settings.setArrayIndex(i);
-    //        javDirs.append(settings.value("dir").toString());
-    //    }
-    //    settings.endArray();
-
-    //    len = settings.beginReadArray("ImportPornDirs");
-    //    for (int i = 0; i < len; ++i) {
-    //        settings.setArrayIndex(i);
-    //        pornDirs.append(settings.value("dir").toString());
-    //    }
-    //    settings.endArray();
-
-    //    len = settings.beginReadArray("ImportHentaiDirs");
-    //    for (int i = 0; i < len; ++i) {
-    //        settings.setArrayIndex(i);
-    //        hentaiDirs.append(settings.value("dir").toString());
-    //    }
-    //    settings.endArray();
-
-    //    javModel = new QStringListModel(javDirs);
-    //    ui->listJavImport->setModel(javModel);
-
-    //    pornModel = new QStringListModel(pornDirs);
-    //    ui->listPornImport->setModel(pornModel);
-
-    //    hentaiModel = new QStringListModel(hentaiDirs);
-    //    ui->listHentaiImport->setModel(hentaiModel);
-
-    //    ui->imageDir->setText(settings.value("ImagesDir").toString());
-    //    ui->thumbWidth->setText(settings.value("ThumbWidth").toString());
-    //    ui->thumbPercentage->setText(settings.value("ThumbPercentage").toString());
 }
 
 void SettingsDialog::setConfig(Settings conf) {

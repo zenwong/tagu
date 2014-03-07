@@ -167,7 +167,10 @@ void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {
   db.commit();
 }
 
-void Worker::doImport(QSqlDatabase db, Settings config){
+int Worker::doImport(QSqlDatabase db, Settings config){
+    // TODO mkdir /tmp/thumbs then generate thumbs in tmp directory
+    // when finished move thumbs to real image directory and delete tmp dir
+    // TODO allow importing of all kinds of files
     QCryptographicHash crypto(QCryptographicHash::Sha1);
     QStringList filters;
     filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"  << "*.asf" << "*.rmvb" << "*.ogm";
@@ -190,6 +193,7 @@ void Worker::doImport(QSqlDatabase db, Settings config){
         thumbDir = config.imageDir + QDir::separator() + "thumbs" + QDir::separator();
     }
 
+    int importedVidsCount = 0;
     foreach(const QString& d, dirs) {
         QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
@@ -198,21 +202,13 @@ void Worker::doImport(QSqlDatabase db, Settings config){
         while (iterator.hasNext()) {
             iterator.next();
             if (!iterator.fileInfo().isDir()) {
-                //qDebug() << iterator.fileInfo().baseName();
-
-                // check for files created after last import date in qsettings
-                // qDebug() << iterator.fileInfo().created();
-
                 QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
                 QFile f(savePath);
                 if(!f.exists()) {
-                    // TODO mkdir /tmp/thumbs then generate thumbs in tmp directory
-                    // when finished move thumbs to real image directory and delete tmp dir
-
-                    // TOGO allow importing of all kinds of files
                     VideoThumbnailer thumb(config.thumbWidth, false, true, 6, true);
                     thumb.setSeekPercentage(config.thumbPercent);
                     thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
+                    importedVidsCount++;
                 }
 
                 QFile file(iterator.filePath());
@@ -226,12 +222,6 @@ void Worker::doImport(QSqlDatabase db, Settings config){
                 query.bindValue(1, iterator.filePath());
                 query.bindValue(2, hash.toHex());
                 query.exec();
-
-//                insert.bindValue(0, Table::VIDS);
-//                insert.bindValue(1, 0);
-//                QString json = QString(R"delimiter({"title":"%1","hash":"%2"})delimiter").arg(iterator.fileInfo().baseName()).arg(QString(hash.toHex()));
-//                insert.bindValue(2, json);
-//                insert.exec();
             }
         }
         db.commit();
@@ -241,6 +231,8 @@ void Worker::doImport(QSqlDatabase db, Settings config){
     query.exec("delete from search");
     query.exec("insert into search(docid,title,tags,acts) select vid,title,tags,acts from LibraryView");
     db.commit();
+
+    return importedVidsCount;
 }
 
 QSqlQueryModel* Worker::doSearch(QSqlDatabase db, const QString& txt){

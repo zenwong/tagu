@@ -5,7 +5,7 @@
 #include "dialogs/SignupDialog.hpp"
 #include "Utils.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat), thumbnailer(config) {
     ui->setupUi(this);
 //    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 //    restoreState(settings.value("mainWindowState").toByteArray());
@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     restoreState(config.windowState);
 
     initDB();
+
+    //Thumbnailer thumbnailer(config);
 
     QString defaultView = settings.value("DefaultView").toString();
     QStyledItemDelegate *delegate;
@@ -38,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(&vidsWatcher, SIGNAL(finished()), this, SLOT(refreshVids()));
     connect(&dataWatcher, SIGNAL(finished()), this, SLOT(refreshData()));
     connect(&searchWatcher, SIGNAL(finished()), this, SLOT(refreshSearch()));
+    connect(&importWatcher, SIGNAL(finished()), this, SLOT(refreshImport()));
 
     connect(ui->comboTag->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editTags_returnPressed()));
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
@@ -84,6 +87,13 @@ void MainWindow::refreshData() {
 
 void MainWindow::refreshSearch() {
   ui->listView->setModel(searchFuture.result());
+}
+
+void MainWindow::refreshImport() {
+    QLabel *stat = new QLabel("Imported " + QString::number(importFuture.result()) + " vids");
+    stat->setAlignment(Qt::AlignRight);
+    ui->statusBar->addWidget(stat, 1);
+    //ui->statusBar->showMessage("Imported " + QString::number(importFuture.result()) + " vids");
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
@@ -286,8 +296,10 @@ void MainWindow::on_listActs_doubleClicked(const QModelIndex &index){
 }
 
 void MainWindow::onImportVideos() {
-     QFuture<void> future = QtConcurrent::run(worker, &Worker::doImport, db, config);
-     vidsWatcher.setFuture(future);
+//     importFuture = QtConcurrent::run(worker, &Worker::doImport, db, config);
+//     importWatcher.setFuture(importFuture);
+
+     QtConcurrent::run(thumbnailer, &Thumbnailer::import);
 }
 
 void MainWindow::onSync() {
