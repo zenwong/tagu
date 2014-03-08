@@ -6,7 +6,7 @@
 
 CONFIG += c++11
 QT       += core gui sql network
-LIBS += -lffmpegthumbnailer -lavcodec -lavformat -lswscale -lavutil
+LIBS += -lavcodec -lavformat -lswscale -lavutil
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,6 @@ SOURCES += main.cpp\
     dialogs/TagsDialog.cpp \
     dialogs/SignupDialog.cpp \
     Settings.cpp \
-    Thumbnailer.cpp \
     FFMpeg.cpp
 
 HEADERS  += MainWindow.hpp \
@@ -34,7 +33,6 @@ HEADERS  += MainWindow.hpp \
     dialogs/SignupDialog.hpp \
     Utils.hpp \
     Settings.hpp \
-    Thumbnailer.hpp \
     FFMpeg.hpp
 
 FORMS    += MainWindow.ui \

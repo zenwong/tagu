@@ -28,7 +28,7 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 ## Requirements
 * [Qt5] (http://qt-project.org)
 * [sqlite] (http://www.sqlite.org)
-* [ffmpegthumbnailer] (https://code.google.com/p/ffmpegthumbnailer)
+* [FFMPEG] (http://www.ffmpeg.org)
 
 ## Installation
 * qmake

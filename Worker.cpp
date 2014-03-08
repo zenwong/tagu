@@ -1,6 +1,5 @@
 #include "Worker.hpp"
 #include "Globals.hpp"
-using namespace ffmpegthumbnailer;
 
 Worker::Worker(QObject *parent) : QObject(parent) {
     nam = new QNetworkAccessManager(this);
@@ -205,10 +204,10 @@ int Worker::doImport(QSqlDatabase db, Settings config){
                 QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
                 QFile f(savePath);
                 if(!f.exists()) {
-                    VideoThumbnailer thumb(config.thumbWidth, false, true, 6, true);
-                    thumb.setSeekPercentage(config.thumbPercent);
-                    thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
-                    importedVidsCount++;
+//                    VideoThumbnailer thumb(config.thumbWidth, false, true, 6, true);
+//                    thumb.setSeekPercentage(config.thumbPercent);
+//                    thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
+//                    importedVidsCount++;
                 }
 
                 QFile file(iterator.filePath());
