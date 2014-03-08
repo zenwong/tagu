@@ -46,6 +46,16 @@ void Settings::save() {
     out << this->hentaiDirs;
 }
 
+void Settings::reload(){
+    QFile file(QCoreApplication::applicationDirPath() + "/settings.dat");
+    if(file.exists()) {
+        file.open(QIODevice::ReadOnly);
+        QDataStream in(&file);
+        in >> this->email >> this->password >> this->session >> this->imageDir >> this->thumbWidth >> this->thumbPercent
+            >> this->windowGeometry >> this->windowState >> this->javDirs >> this->pornDirs >> this->hentaiDirs;
+    }
+}
+
 void Settings::clear() {
   javDirs.clear();
   pornDirs.clear();

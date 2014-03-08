@@ -5,7 +5,7 @@
 #include "dialogs/SignupDialog.hpp"
 #include "Utils.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat), thumbnailer(config) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat), thumbnailer(db) {
     ui->setupUi(this);
 //    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 //    restoreState(settings.value("mainWindowState").toByteArray());
@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
+
+    saveSettings(db, DIR, "/tmp/ffmpeg");
 
     statusImport = new QLabel;
     ui->statusBar->addPermanentWidget(statusImport);
@@ -94,6 +96,7 @@ void MainWindow::refreshSearch() {
 void MainWindow::refreshImport() {
     QString status = "Imported: " + QString::number(importFuture.result()) + " vids, in " + QString::number(timer.elapsed() / 1000.0) + " seconds";
     statusImport->setText(status);
+    vidTable->select();
 //    QLabel *stat = new QLabel("Imported " + QString::number(importFuture.result()) + " vids");
 //    stat->setAlignment(Qt::AlignRight);
 //    ui->statusBar->addWidget(stat, 1);
@@ -301,11 +304,8 @@ void MainWindow::on_listActs_doubleClicked(const QModelIndex &index){
 }
 
 void MainWindow::onImportVideos() {
-//     importFuture = QtConcurrent::run(worker, &Worker::doImport, db, config);
-//     importWatcher.setFuture(importFuture);
-
     timer.start();
-    importFuture = QtConcurrent::run(thumbnailer, &FFMpeg::run);
+    importFuture = QtConcurrent::run(thumbnailer, &FFMpeg::doImport, config);
     importWatcher.setFuture(importFuture);
 }
 
@@ -385,7 +385,7 @@ void MainWindow::onSync() {
 
 void MainWindow::onOptions() {
     SettingsDialog dialog;
-    dialog.setConfig(config);
+    //dialog.setConfig(config);
     dialog.exec();
 }
 

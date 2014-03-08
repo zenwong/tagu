@@ -56,9 +56,10 @@ CREATE TABLE Acts (
   unique(name) ON CONFLICT IGNORE
 );
 CREATE TABLE Settings (
+  _id integer primary key autoincrement,
   key int,
   value text,
-  primary key(key,value)
+  unique(key,value) ON CONFLICT IGNORE
 );
 
 CREATE VIEW TermsView as select name from tags union all select name from acts;

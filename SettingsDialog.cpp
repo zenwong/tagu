@@ -4,9 +4,23 @@
 #include <QDebug>
 
 SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
-    settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat),
+    //settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat),
     ui(new Ui::SettingsDialog){
+
     ui->setupUi(this);
+    config.reload();
+
+    javModel = new QStringListModel(config.javDirs.toList());
+    pornModel = new QStringListModel(config.pornDirs.toList());
+    hentaiModel = new QStringListModel(config.hentaiDirs.toList());
+
+    ui->listJavImport->setModel(javModel);
+    ui->listPornImport->setModel(pornModel);
+    ui->listHentaiImport->setModel(hentaiModel);
+
+    ui->imageDir->setText(config.imageDir);
+    ui->thumbWidth->setText(QString::number(config.thumbWidth));
+    ui->thumbPercentage->setText(QString::number(config.thumbPercent));
 }
 
 void SettingsDialog::setConfig(Settings conf) {

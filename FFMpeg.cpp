@@ -6,8 +6,8 @@
 #include <QImageWriter>
 #include <climits>
 
-FFMpeg::FFMpeg(Settings config){
-    this->config = config;
+FFMpeg::FFMpeg(QSqlDatabase db){
+    this->db = db;
     av_register_all();
     avcodec_register_all();
     av_log_set_level(AV_LOG_QUIET);
@@ -15,23 +15,81 @@ FFMpeg::FFMpeg(Settings config){
 }
 
 int FFMpeg::run() {
-    imported = 0;
-    foreach(const QString& d, config.javDirs) {
+//    imported = 0;
+//    foreach(const QString& d, config.javDirs) {
+//        QDir dir(d);
+//        QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
+
+//        while (iterator.hasNext()) {
+//            iterator.next();
+//            if (iterator.fileInfo().isFile()) {
+//                qDebug() << imported << ") " <<  iterator.fileName();
+//                //qDebug() << "before passing to parse() " << QThread::currentThreadId();
+//                parse(iterator.filePath(), iterator.fileInfo().baseName());
+//                imported++;
+//            }
+//        }
+//    }
+
+//    return imported;
+}
+
+int FFMpeg::doImport(Settings config){
+    config.reload();
+    qDebug() << config.javDirs;
+    QCryptographicHash crypto(QCryptographicHash::Sha1);
+    QSqlQuery query(db);
+    query.prepare("insert into vids(title,path,hash) values(?,?,?)");
+    QSqlQuery insert(db);
+    insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
+
+    QStringList dirs;
+    foreach(const QString& dir, config.javDirs) dirs << dir;
+    foreach(const QString& dir, config.pornDirs) dirs << dir;
+    foreach(const QString& dir, config.hentaiDirs) dirs << dir;
+
+    QString thumbDir;
+    if(config.imageDir.endsWith('/')) {
+        thumbDir = config.imageDir + "thumbs" + QDir::separator();
+    } else {
+        thumbDir = config.imageDir + QDir::separator() + "thumbs" + QDir::separator();
+    }
+
+    int importedVidsCount = 0;
+    foreach(const QString& d, dirs) {
         QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
+        db.transaction();
         while (iterator.hasNext()) {
             iterator.next();
-            if (iterator.fileInfo().isFile()) {
-                qDebug() << imported << ") " <<  iterator.fileName();
-                //qDebug() << "before passing to parse() " << QThread::currentThreadId();
+            if (!iterator.fileInfo().isDir()) {
                 parse(iterator.filePath(), iterator.fileInfo().baseName());
-                imported++;
+
+                QFile file(iterator.filePath());
+                file.open(QFile::ReadOnly);
+                crypto.addData(file.read(9999));
+                QByteArray hash = crypto.result();
+
+                query.bindValue(0, iterator.fileInfo().baseName());
+                query.bindValue(1, iterator.filePath());
+                query.bindValue(2, hash.toHex());
+                query.exec();
+
+                importedVidsCount++;
+
+                qDebug() << importedVidsCount << ") " << iterator.filePath();
             }
         }
+        db.commit();
     }
 
-    return imported;
+    db.transaction();
+    query.exec("delete from search");
+    query.exec("insert into search(docid,title,tags,acts) select vid,title,tags,acts from LibraryView");
+    db.commit();
+
+    return importedVidsCount;
 }
 
 void FFMpeg::parse(QString path, QString name) {

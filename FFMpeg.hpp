@@ -2,6 +2,9 @@
 #define FFMPEG_HPP
 #include <QDirIterator>
 #include <QElapsedTimer>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QCryptographicHash>
 #include "Settings.hpp"
 
 extern "C" {
@@ -16,9 +19,10 @@ using namespace std;
 class FFMpeg
 {
 public:
-   FFMpeg(Settings config);
+   FFMpeg(QSqlDatabase db);
 
    int run();
+   int doImport(Settings config);
 
    void parse(QString path, QString name);
    void seek();
@@ -52,8 +56,8 @@ public:
 
    QString path, name;
    QElapsedTimer timer;
-   Settings config;
    QStringList filters;
+   QSqlDatabase db;
 };
 
 #endif // FFMPEG_HPP

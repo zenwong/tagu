@@ -13,6 +13,7 @@ public:
 
     void clear();
     void save();
+    void reload();
 
     QByteArray windowGeometry, windowState;
     int thumbWidth, thumbPercent;
