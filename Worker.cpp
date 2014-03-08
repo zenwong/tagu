@@ -238,16 +238,21 @@ QSqlQueryModel* Worker::doSearch(QSqlDatabase db, const QString& txt){
     QStringList terms = txt.split(" ");
 
     QString sql = "select * from search where search MATCH '" + txt.simplified() + "*'";
+    //QString sql = "select * from search where search MATCH ?*";
+
     QSqlQueryModel *model = new QSqlQueryModel;
 
     if(terms.size() == 1) {
         if(txt.size() > 1) {
+            qDebug() << sql;
             QSqlQuery q(sql, db);
+            //q.bindValue(0, txt.simplified());
             model->setQuery(q);
         }
     }
 
     if(terms.size() > 1) {
+        qDebug() << "multiple search terms";
         for(int i = 1; i < terms.size(); i++) {
             if(terms.at(i).simplified().size() > 1) {
                 sql += " intersect select * from search where search MATCH '" + terms.at(i).simplified() + "*'";

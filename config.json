@@ -1,15 +1,15 @@
 {
     "value0": {
         "thumbWidth": 300,
-        "rowCount": 7,
+        "rowCount": 4,
         "colCount": 4,
         "email": "test@email.com",
         "password": "password",
         "session": "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m",
-        "lastView": "/tmp/ffmpeg",
-        "imageDirs": "Thumbnail",
+        "lastView": "Thumbnail",
+        "imageDir": "/tmp/ffmpeg",
         "javDirs": [
-            "/mnt/seagate/japanese/Chika Eiro"
+            "/mnt/seagate/japanese/Incest"
         ],
         "pornDirs": [],
         "hentaiDirs": []

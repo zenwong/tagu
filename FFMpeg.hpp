@@ -29,27 +29,28 @@ public:
    void seek();
 
  private:
-   AVFormatContext *fctx = NULL;
-   AVCodecContext *cctx = NULL;
+   AVFormatContext *fctx;
+   AVCodecContext *cctx;
    AVStream *vstream;
-   AVCodec *codec = NULL;
+   AVCodec *codec;
    AVPacket packet;
-   AVFrame *frame = NULL, *frameRGB = NULL;
-   struct SwsContext *sctx = NULL;
+   AVFrame *frame, *frameRGB;
+   struct SwsContext *sctx = nullptr;
    int stream, numBytes, duration, step;
    AVPixelFormat pixfmt = PIX_FMT_RGB24;
    uint8_t *buffer;
 
-   int rowCount = 10;
-   int colCount = 4;
-   int width  = 400;
-   int height = 225;
-   int jpegQuality = 70;
+   int rowCount;
+   int colCount;
+   int width;
+   int height;
+   int jpegQuality;
 
    int imported;
 
    void genScreens();
    void saveJpeg(int seconds);
+   QImage getJpeg();
 
    void decodeVideoFrame();
    bool decodeVideoPacket();
@@ -60,6 +61,7 @@ public:
    QStringList filters;
    QSqlDatabase db;
 
+   QString thumbDir;
    Config config;
 };
 

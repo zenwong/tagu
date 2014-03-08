@@ -16,6 +16,10 @@ FFMpeg::FFMpeg(QSqlDatabase db){
 
 int FFMpeg::doImport(){
     config = loadConfig();
+    width = 400;
+    height = 225;
+    rowCount = config.rowCount;
+    colCount = config.colCount;
 
     QCryptographicHash crypto(QCryptographicHash::Sha1);
     QSqlQuery query(db);
@@ -23,7 +27,6 @@ int FFMpeg::doImport(){
     QSqlQuery insert(db);
     insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
 
-    QString thumbDir;
     if(config.imageDir[config.imageDir.size()] == QDir::separator().toLatin1()) {
         thumbDir = QString::fromStdString(config.imageDir) + "thumbs" + QDir::separator();
     } else {
@@ -53,7 +56,7 @@ int FFMpeg::doImport(){
 
                 importedVidsCount++;
 
-                qDebug() << importedVidsCount << ") " << iterator.filePath();
+                //qDebug() << importedVidsCount << ") " << iterator.filePath();
             }
         }
         db.commit();
@@ -92,6 +95,8 @@ void FFMpeg::parse(QString path, QString name) {
     duration = fctx->duration / AV_TIME_BASE;
     step = duration / (rowCount * colCount + 2);
 
+    qDebug() << "duration: " << duration << ", step: " << step;
+
     numBytes = avpicture_get_size(pixfmt, width, height);
     buffer = (uint8_t *)av_malloc(numBytes*sizeof(uint8_t));
     avpicture_fill((AVPicture *)frameRGB, buffer, pixfmt, width, height);
@@ -110,20 +115,84 @@ void FFMpeg::parse(QString path, QString name) {
 
 void FFMpeg::seek() {
 
-    for(int i = step; i < duration; i += step) {
-        //qDebug() << i;
-        int64_t timestamp = av_rescale(((uint64_t)i)*1000, fctx->streams[stream]->time_base.den, fctx->streams[stream]->time_base.num)/1000;
-        //avformat_seek_file(fctx, stream, 0, timestamp, INT64_MAX, AVSEEK_FLAG_FRAME);
+    QSize size(1600, 900);
+    QImage image(size, QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&image);
+
+    int x = 0, y = 0;
+    int num = 0;
+    int frames = config.rowCount * config.colCount;
+    int _step = step;
+
+    for(int i = 0; i < frames; i++) {
+        int64_t timestamp = av_rescale(((uint64_t) _step) * 1000, fctx->streams[stream]->time_base.den, fctx->streams[stream]->time_base.num)/1000;
         avformat_seek_file(fctx, stream, 0, timestamp, 0x7fffffffffffffffLL, AVSEEK_FLAG_FRAME);
         avcodec_flush_buffers(cctx);
 
-        saveJpeg(i);
+        auto image = getJpeg();
+        painter.drawImage(x, y, image);
+
+        num++;
+
+        if(num != 0 && num % 4 == 0) {
+            y += 225;
+            x = 0;
+        } else {
+            x += 400;
+        }
+
+        _step += step;
+
+        qDebug() << num << ") x: " << x << ", y: " << y << ", step: " << _step;
     }
+
+    QImageWriter writer("/tmp/ffmpeg/screens/" + name + ".jpg");
+    if(!writer.write(image)) {
+        qDebug() << writer.errorString();
+    }
+}
+
+QImage FFMpeg::getJpeg() {
+    AVPacket packet;
+    int frameComplete = 0;
+
+    QImage image(width, height, QImage::Format_ARGB32_Premultiplied);
+    while((av_read_frame(fctx, &packet)>=0) && !frameComplete) {
+        if(packet.stream_index== stream) {
+            avcodec_decode_video2(cctx, frame, &frameComplete, &packet);
+            if(frameComplete) {
+                sws_scale(sctx, frame->data, frame->linesize, 0, cctx->height,  frameRGB->data, frameRGB->linesize);
+
+                uint8_t *src = (uint8_t *)(frameRGB->data[0]);
+                for (int y = 0; y < height; y++) {
+                    QRgb *scanLine = (QRgb *) image.scanLine(y);
+                    for (int x = 0; x < width; x=x+1) {
+                        scanLine[x] = qRgb(src[3*x], src[3*x+1], src[3*x+2]);
+                    }
+                    src += frameRGB->linesize[0];
+                }
+
+            }
+        }
+
+        av_free_packet(&packet);
+    }
+
+    return image;
 }
 
 void FFMpeg::saveJpeg(int seconds) {
     AVPacket packet;
     int frameComplete = 0;
+
+    QSize size(1600, 900);
+    QImage image(size, QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&image);
+
+    int z = 0;
+    int xi = 0, yi = 0;
+
+    QList<QImage> images;
 
     while((av_read_frame(fctx, &packet)>=0) && !frameComplete) {
         if(packet.stream_index== stream) {
@@ -143,20 +212,40 @@ void FFMpeg::saveJpeg(int seconds) {
                     src += frameRGB->linesize[0];
                 }
 
-                QString tmp = "/tmp/ffmpeg/";
-                tmp.append(name);
-                tmp.append("-");
-                tmp.append(QString::number(seconds));
-                tmp.append(".jpg");
+                qDebug() << QThread::currentThreadId();
 
-                QImageWriter writer(tmp);
-                if(!writer.write(myImage)) {
-                    qDebug() << writer.errorString();
-                }
+//                z++;
+
+//                qDebug() << z << ") x: " << xi << ", y: " << yi;
+
+//                if(z != 0 && z % 4 == 0) {
+//                    yi += 225;
+//                    xi = 0;
+
+//                    //qDebug() << "x: " << x << ", y: " << y;
+//                }
+//                painter.drawImage(xi, yi, myImage);
+
+//                QString tmp = thumbDir;
+//                tmp.append(name);
+//                tmp.append("-");
+//                tmp.append(QString::number(seconds));
+//                tmp.append(".jpg");
+
+//                QImageWriter writer(tmp);
+//                if(!writer.write(myImage)) {
+//                    qDebug() << writer.errorString();
+//                }
 
             }
         }
 
         av_free_packet(&packet);
     }
+
+//    QImageWriter writer("/tmp/ffmpeg/screens/" + name + ".jpg");
+//    if(!writer.write(image)) {
+//        qDebug() << writer.errorString();
+//    }
+
 }

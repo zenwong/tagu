@@ -27,11 +27,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     } else {
         if(defaultView == "Compact") {
             delegate = new QStyledItemDelegate;
+            ui->listView->setViewMode(QListView::ListMode);
             ui->listView->setFlow(QListView::TopToBottom);
         }
 
         if(defaultView == "Thumbnail") {
             delegate = new ThumbnailDelegate(this);
+            ui->listView->setViewMode(QListView::IconMode);
             ui->listView->setFlow(QListView::LeftToRight);
         }
 

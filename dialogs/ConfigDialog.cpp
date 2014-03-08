@@ -17,8 +17,6 @@ ConfigDialog::ConfigDialog(QWidget *parent) :  QDialog(parent),  ui(new Ui::Conf
     for(const auto& d: config.javDirs)
         dirs << QString::fromStdString(d);
 
-    cout << config.email;
-
     javModel = new QStringListModel(dirs);
     ui->listView->setModel(javModel);
 }
@@ -31,6 +29,19 @@ ConfigDialog::~ConfigDialog()
    foreach(const QString& d, javModel->stringList()) {
        config.javDirs.emplace(d.toStdString());
    }
+
+   QString dir = ui->editImageDir->text() + QDir::separator();
+   QDir act(dir + "actress");
+   QDir actSmall(act.absolutePath() + QDir::separator() + "small");
+   QDir covers(dir + "covers");
+   QDir screens(dir + "screens");
+   QDir thumbs(dir + "thumbs");
+
+   if(!act.exists()) QDir().mkdir(act.absolutePath());
+   if(!actSmall.exists()) QDir().mkdir(actSmall.absolutePath());
+   if(!covers.exists()) QDir().mkdir(covers.absolutePath());
+   if(!screens.exists()) QDir().mkdir(screens.absolutePath());
+   if(!thumbs.exists()) QDir().mkdir(thumbs.absolutePath());
 
     saveConfig(config);
     delete ui;

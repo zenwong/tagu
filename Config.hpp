@@ -26,7 +26,7 @@ public:
         cereal::make_nvp("password",      password),
         cereal::make_nvp("session",         session),
         cereal::make_nvp("lastView",        lastView),
-        cereal::make_nvp("imageDirs",     imageDir),
+        cereal::make_nvp("imageDir",      imageDir),
         cereal::make_nvp("javDirs",          javDirs),
         cereal::make_nvp("pornDirs",       pornDirs),
         cereal::make_nvp("hentaiDirs",    hentaiDirs)
