@@ -16,10 +16,11 @@
 #include <QNetworkRequest>
 #include <QtConcurrent/QtConcurrent>
 #include <QLabel>
+#include <QElapsedTimer>
 #include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
 #include "Settings.hpp"
-#include "Thumbnailer.hpp"
+#include "FFMpeg.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -83,9 +84,12 @@ private:
     QFutureWatcher<QSqlQueryModel*> searchWatcher;
     QFuture<QSqlQueryModel*> searchFuture;
     QFuture<int> importFuture;
+    QElapsedTimer timer;
 
     Settings config;
-    Thumbnailer thumbnailer;
+    FFMpeg thumbnailer;
+
+    QLabel *statusImport;
 };
 
 #endif // MAINWINDOW_HPP

@@ -13,9 +13,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     restoreGeometry(config.windowGeometry);
     restoreState(config.windowState);
 
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
 
-    //Thumbnailer thumbnailer(config);
+    statusImport = new QLabel;
+    ui->statusBar->addPermanentWidget(statusImport);
 
     QString defaultView = settings.value("DefaultView").toString();
     QStyledItemDelegate *delegate;
@@ -90,10 +92,13 @@ void MainWindow::refreshSearch() {
 }
 
 void MainWindow::refreshImport() {
-    QLabel *stat = new QLabel("Imported " + QString::number(importFuture.result()) + " vids");
-    stat->setAlignment(Qt::AlignRight);
-    ui->statusBar->addWidget(stat, 1);
+    QString status = "Imported: " + QString::number(importFuture.result()) + " vids, in " + QString::number(timer.elapsed() / 1000.0) + " seconds";
+    statusImport->setText(status);
+//    QLabel *stat = new QLabel("Imported " + QString::number(importFuture.result()) + " vids");
+//    stat->setAlignment(Qt::AlignRight);
+//    ui->statusBar->addWidget(stat, 1);
     //ui->statusBar->showMessage("Imported " + QString::number(importFuture.result()) + " vids");
+
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
@@ -299,7 +304,9 @@ void MainWindow::onImportVideos() {
 //     importFuture = QtConcurrent::run(worker, &Worker::doImport, db, config);
 //     importWatcher.setFuture(importFuture);
 
-     QtConcurrent::run(thumbnailer, &Thumbnailer::import);
+    timer.start();
+    importFuture = QtConcurrent::run(thumbnailer, &FFMpeg::run);
+    importWatcher.setFuture(importFuture);
 }
 
 void MainWindow::onSync() {

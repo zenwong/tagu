@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     dialogs/TagsDialog.cpp \
     dialogs/SignupDialog.cpp \
     Settings.cpp \
-    Thumbnailer.cpp
+    Thumbnailer.cpp \
+    FFMpeg.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
@@ -33,7 +34,8 @@ HEADERS  += MainWindow.hpp \
     dialogs/SignupDialog.hpp \
     Utils.hpp \
     Settings.hpp \
-    Thumbnailer.hpp
+    Thumbnailer.hpp \
+    FFMpeg.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui \

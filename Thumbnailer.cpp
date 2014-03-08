@@ -14,15 +14,18 @@ Thumbnailer::Thumbnailer(Settings config){
 }
 
 void Thumbnailer::import() {
-    QDir dir("/mnt/seagate/japanese/Swimsuit");
-    QDirIterator iterator(dir.absolutePath(), QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
+    foreach(const QString& d, config.javDirs) {
+        QDir dir(d);
+        QDirIterator iterator(dir.absolutePath(), QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
-    while (iterator.hasNext()) {
-        iterator.next();
-        if (iterator.fileInfo().isFile()) {
-            generateScreens(iterator.filePath().toStdString().c_str(), iterator.fileInfo().baseName().toStdString().c_str());
+        while (iterator.hasNext()) {
+            iterator.next();
+            if (iterator.fileInfo().isFile()) {
+                generateScreens(iterator.filePath().toStdString().c_str(), iterator.fileInfo().baseName().toStdString().c_str());
+            }
         }
     }
+
 }
 
 void Thumbnailer::generateScreens(const char *videofile, const char *basename) {
@@ -60,14 +63,24 @@ void Thumbnailer::generateScreens(const char *videofile, const char *basename) {
     avpicture_fill((AVPicture *)frameRGB, buffer, pixfmt, cctx->width, cctx->height);
 
     saveScreenshots(fctx, cctx, sctx, frameRGB, frame, stream, step, videofile, basename);
+
+    if(frame) av_frame_unref(frame);
+    if(frameRGB) av_frame_unref(frameRGB);
+    if(buffer) av_free(buffer);
+    if(frameRGB) av_free(frameRGB);
+    if(frame) av_free(frame);
+    if(sctx) sws_freeContext(sctx);
+    if(cctx) {
+        avcodec_close(cctx);
+        av_free(cctx);
+    }
+    if(fctx) {
+        avformat_close_input(&fctx);
+        av_free(fctx);
+    }
 }
 
 void Thumbnailer::saveScreenshots(AVFormatContext *fctx, AVCodecContext *cctx, struct SwsContext *sctx, AVFrame *frameRGB, AVFrame *frame, int stream ,int step, const char *file, const char *basename) {
-//    static const QSize resultSize(1200, 1125);
-//    QImage screenshot = QImage(resultSize, QImage::Format_ARGB32_Premultiplied);
-//    QPainter painter(&screenshot);
-//    QRect rect(0,0,400,225);
-
     for (int i = 0; i < rowCount; ++i) {
         for (int j = 0; j < colCount; ++j) {
             int timeInSeconds = step * ( j * rowCount + i + 1);
@@ -105,8 +118,6 @@ void Thumbnailer::saveScreenshots(AVFormatContext *fctx, AVCodecContext *cctx, s
                             qDebug() << writer.errorString();
                         }
 
-//                        rect.setRect(j * 400, i * 225, 400, 225);
-//                        painter.drawImage(rect, myImage);
                     }
                 }
 
@@ -116,14 +127,6 @@ void Thumbnailer::saveScreenshots(AVFormatContext *fctx, AVCodecContext *cctx, s
         }
     }
 
-//    QString filename = "/tmp/ffmpeg/";
-//    filename.append(basename);
-//    filename.append(".jpg");
-
-//    QImageWriter writer(filename);
-//    if(!writer.write(screenshot)) {
-//        qDebug() << writer.errorString();
-//    }
 }
 
 void Thumbnailer::saveBestFrame(const char *file) {
