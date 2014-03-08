@@ -6,6 +6,8 @@
 #include <QSqlQuery>
 #include <QCryptographicHash>
 #include "Settings.hpp"
+#include "Config.hpp"
+#include "Utils.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -21,8 +23,7 @@ class FFMpeg
 public:
    FFMpeg(QSqlDatabase db);
 
-   int run();
-   int doImport(Settings config);
+   int doImport();
 
    void parse(QString path, QString name);
    void seek();
@@ -58,6 +59,8 @@ public:
    QElapsedTimer timer;
    QStringList filters;
    QSqlDatabase db;
+
+   Config config;
 };
 
 #endif // FFMPEG_HPP

@@ -19,7 +19,6 @@
 #include <QElapsedTimer>
 #include "delegates/ThumbnailDelegate.hpp"
 #include "Worker.hpp"
-#include "Settings.hpp"
 #include "FFMpeg.hpp"
 
 namespace Ui {
@@ -86,7 +85,6 @@ private:
     QFuture<int> importFuture;
     QElapsedTimer timer;
 
-    Settings config;
     FFMpeg thumbnailer;
 
     QLabel *statusImport;

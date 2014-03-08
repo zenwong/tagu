@@ -4,19 +4,18 @@
 #include "dialogs/TagsDialog.hpp"
 #include "dialogs/SignupDialog.hpp"
 #include "Utils.hpp"
+#include "dialogs/ConfigDialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat), thumbnailer(db) {
     ui->setupUi(this);
 //    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 //    restoreState(settings.value("mainWindowState").toByteArray());
 
-    restoreGeometry(config.windowGeometry);
-    restoreState(config.windowState);
+    //restoreGeometry(config.windowGeometry);
+    //restoreState(config.windowState);
 
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
-
-    saveSettings(db, DIR, "/tmp/ffmpeg");
 
     statusImport = new QLabel;
     ui->statusBar->addPermanentWidget(statusImport);
@@ -29,10 +28,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         if(defaultView == "Compact") {
             delegate = new QStyledItemDelegate;
             ui->listView->setFlow(QListView::TopToBottom);
-        } else if(defaultView == "Thumbnail") {
+        }
+
+        if(defaultView == "Thumbnail") {
             delegate = new ThumbnailDelegate(this);
             ui->listView->setFlow(QListView::LeftToRight);
-        } else if(defaultView == "Cover") {
+        }
+
+        if(defaultView == "Cover") {
             delegate = new CoverDelegate(this);
             ui->listView->setFlow(QListView::LeftToRight);
         }
@@ -97,11 +100,6 @@ void MainWindow::refreshImport() {
     QString status = "Imported: " + QString::number(importFuture.result()) + " vids, in " + QString::number(timer.elapsed() / 1000.0) + " seconds";
     statusImport->setText(status);
     vidTable->select();
-//    QLabel *stat = new QLabel("Imported " + QString::number(importFuture.result()) + " vids");
-//    stat->setAlignment(Qt::AlignRight);
-//    ui->statusBar->addWidget(stat, 1);
-    //ui->statusBar->showMessage("Imported " + QString::number(importFuture.result()) + " vids");
-
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
@@ -305,7 +303,7 @@ void MainWindow::on_listActs_doubleClicked(const QModelIndex &index){
 
 void MainWindow::onImportVideos() {
     timer.start();
-    importFuture = QtConcurrent::run(thumbnailer, &FFMpeg::doImport, config);
+    importFuture = QtConcurrent::run(thumbnailer, &FFMpeg::doImport);
     importWatcher.setFuture(importFuture);
 }
 
@@ -384,8 +382,9 @@ void MainWindow::onSync() {
 }
 
 void MainWindow::onOptions() {
-    SettingsDialog dialog;
+    //SettingsDialog dialog;
     //dialog.setConfig(config);
+    ConfigDialog dialog;
     dialog.exec();
 }
 
@@ -413,8 +412,8 @@ void MainWindow::onResetDatabase() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
-    config.windowGeometry = saveGeometry();
-    config.windowState = saveState();
+    //config.windowGeometry = saveGeometry();
+    //config.windowState = saveState();
     settings.setValue("mainWindowGeometry", saveGeometry());
     settings.setValue("mainWindowState", saveState());
 }

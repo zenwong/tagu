@@ -14,50 +14,25 @@ FFMpeg::FFMpeg(QSqlDatabase db){
     filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"  << "*.asf" << "*.rmvb" << "*.ogm";
 }
 
-int FFMpeg::run() {
-//    imported = 0;
-//    foreach(const QString& d, config.javDirs) {
-//        QDir dir(d);
-//        QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
+int FFMpeg::doImport(){
+    config = loadConfig();
 
-//        while (iterator.hasNext()) {
-//            iterator.next();
-//            if (iterator.fileInfo().isFile()) {
-//                qDebug() << imported << ") " <<  iterator.fileName();
-//                //qDebug() << "before passing to parse() " << QThread::currentThreadId();
-//                parse(iterator.filePath(), iterator.fileInfo().baseName());
-//                imported++;
-//            }
-//        }
-//    }
-
-//    return imported;
-}
-
-int FFMpeg::doImport(Settings config){
-    config.reload();
-    qDebug() << config.javDirs;
     QCryptographicHash crypto(QCryptographicHash::Sha1);
     QSqlQuery query(db);
     query.prepare("insert into vids(title,path,hash) values(?,?,?)");
     QSqlQuery insert(db);
     insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
 
-    QStringList dirs;
-    foreach(const QString& dir, config.javDirs) dirs << dir;
-    foreach(const QString& dir, config.pornDirs) dirs << dir;
-    foreach(const QString& dir, config.hentaiDirs) dirs << dir;
-
     QString thumbDir;
-    if(config.imageDir.endsWith('/')) {
-        thumbDir = config.imageDir + "thumbs" + QDir::separator();
+    if(config.imageDir[config.imageDir.size()] == QDir::separator().toLatin1()) {
+        thumbDir = QString::fromStdString(config.imageDir) + "thumbs" + QDir::separator();
     } else {
-        thumbDir = config.imageDir + QDir::separator() + "thumbs" + QDir::separator();
+        thumbDir = QString::fromStdString(config.imageDir) + QDir::separator() + "thumbs" + QDir::separator();
     }
 
     int importedVidsCount = 0;
-    foreach(const QString& d, dirs) {
-        QDir dir(d);
+    for(const auto& d: config.javDirs) {
+        QDir dir(QString::fromStdString(d));
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
         db.transaction();

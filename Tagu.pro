@@ -18,24 +18,24 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     delegates/ThumbnailDelegate.cpp \
     Worker.cpp \
-    SettingsDialog.cpp \
     dialogs/TagsDialog.cpp \
     dialogs/SignupDialog.cpp \
-    Settings.cpp \
-    FFMpeg.cpp
+    dialogs/ConfigDialog.cpp \
+    FFMpeg.cpp \
+    Config.cpp \
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
     Worker.hpp \
-    SettingsDialog.hpp \
-    Globals.hpp \
     dialogs/TagsDialog.hpp \
     dialogs/SignupDialog.hpp \
+    dialogs/ConfigDialog.hpp \
     Utils.hpp \
-    Settings.hpp \
-    FFMpeg.hpp
+    FFMpeg.hpp \
+    Config.hpp \
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui \
     dialogs/TagsDialog.ui \
-    dialogs/SignupDialog.ui
+    dialogs/SignupDialog.ui \
+    dialogs/ConfigDialog.ui

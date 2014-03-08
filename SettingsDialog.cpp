@@ -8,7 +8,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
     ui(new Ui::SettingsDialog){
 
     ui->setupUi(this);
-    config.reload();
+    //config = loadConfig();
 
     javModel = new QStringListModel(config.javDirs.toList());
     pornModel = new QStringListModel(config.pornDirs.toList());
@@ -24,18 +24,18 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 }
 
 void SettingsDialog::setConfig(Settings conf) {
-    this->config = conf;
-    javModel = new QStringListModel(config.javDirs.toList());
-    pornModel = new QStringListModel(config.pornDirs.toList());
-    hentaiModel = new QStringListModel(config.hentaiDirs.toList());
+//    this->config = conf;
+//    javModel = new QStringListModel(config.javDirs.toList());
+//    pornModel = new QStringListModel(config.pornDirs.toList());
+//    hentaiModel = new QStringListModel(config.hentaiDirs.toList());
 
-    ui->listJavImport->setModel(javModel);
-    ui->listPornImport->setModel(pornModel);
-    ui->listHentaiImport->setModel(hentaiModel);
+//    ui->listJavImport->setModel(javModel);
+//    ui->listPornImport->setModel(pornModel);
+//    ui->listHentaiImport->setModel(hentaiModel);
 
-    ui->imageDir->setText(config.imageDir);
-    ui->thumbWidth->setText(QString::number(config.thumbWidth));
-    ui->thumbPercentage->setText(QString::number(config.thumbPercent));
+//    ui->imageDir->setText(config.imageDir);
+//    ui->thumbWidth->setText(QString::number(config.thumbWidth));
+//    ui->thumbPercentage->setText(QString::number(config.thumbPercent));
 }
 
 SettingsDialog::~SettingsDialog(){

@@ -1,12 +1,17 @@
 {
-  "email": "zenwong@gmail.com",
-  "password": "z23e12n77",
-  "session": "",
-  "windowGeometry": "",
-  "windowState": "",
-  "thumbWidth": 400,
-  "thumbPercent": 30,
-  "javDirs": [ "/mnt/seagate/japanese", "/mnt/seagate/favs", "/mnt/seagate/downloads" ],
-  "pornDirs": [ "/mnt/seagate/porn" ],
-  "hentaiDirs": [ "/mnt/seagate/hentai" ]
+    "value0": {
+        "thumbWidth": 300,
+        "rowCount": 7,
+        "colCount": 4,
+        "email": "test@email.com",
+        "password": "password",
+        "session": "session=$2y$05$tDIxAIPo9I9s5fURHfN8.epFzM5Civu2InhlRLGJ5US4kiCNZ/o9m",
+        "lastView": "/tmp/ffmpeg",
+        "imageDirs": "Thumbnail",
+        "javDirs": [
+            "/mnt/seagate/japanese/Chika Eiro"
+        ],
+        "pornDirs": [],
+        "hentaiDirs": []
+    }
 }

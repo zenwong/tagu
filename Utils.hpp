@@ -5,10 +5,36 @@
 #include <QSqlTableModel>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QFile>
+#include <fstream>
+#include <sstream>
+#include "Config.hpp"
+
+static Config loadConfig() {
+    string appdir = QCoreApplication::applicationDirPath().toStdString();
+    string path = appdir + "/config.json";
+    ifstream i_archive_stream( path );
+    cereal::JSONInputArchive i_archive( i_archive_stream );
+    Config config;
+    i_archive( config );
+
+    return config;
+}
+
+static void saveConfig(Config config) {
+    string appdir = QCoreApplication::applicationDirPath().toStdString();
+    string path = appdir + "/config.json";
+
+    ofstream o_archive_stream(path);
+    {
+      cereal::JSONOutputArchive o_archive( o_archive_stream );
+      o_archive( config );
+    }
+
+}
 
 static QList<int> getVids(QListView *list, QSqlTableModel *vidTable) {
     QItemSelection selected( list->selectionModel()->selection() );
-    qDebug() << selected;
 
     QList<int> vids;
     foreach(QModelIndex index, selected.indexes()) {
@@ -16,18 +42,6 @@ static QList<int> getVids(QListView *list, QSqlTableModel *vidTable) {
     }
 
     return vids;
-}
-
-enum Config {
-    THUMB_WIDTH, ROW_COUNT, COL_COUNT, DIR
-};
-
-static void saveSettings(QSqlDatabase db, Config key, QString val) {
-    QSqlQuery insert(db);
-    insert.prepare( "insert into Settings(key,value) values(?,?)" );
-    insert.bindValue(0, key);
-    insert.bindValue(1, val);
-    insert.exec();
 }
 
 #endif // UTILS_HPP

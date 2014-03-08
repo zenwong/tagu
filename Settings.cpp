@@ -11,21 +11,21 @@ Settings::Settings(){
 }
 
 Settings::~Settings() {
-//    QFile file(QCoreApplication::applicationDirPath() + "/settings.dat");
-//    file.open(QIODevice::WriteOnly);
-//    QDataStream out(&file);
+    QFile file(QCoreApplication::applicationDirPath() + "/settings.dat");
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
 
-//    out << this->email;
-//    out << this->password;
-//    out << this->session;
-//    out << this->imageDir;
-//    out << this->thumbWidth;
-//    out << this->thumbPercent;
-//    out << this->windowGeometry;
-//    out << this->windowState;
-//    out << this->javDirs;
-//    out << this->pornDirs;
-//    out << this->hentaiDirs;
+    out << this->email;
+    out << this->password;
+    out << this->session;
+    out << this->imageDir;
+    out << this->thumbWidth;
+    out << this->thumbPercent;
+    out << this->windowGeometry;
+    out << this->windowState;
+    out << this->javDirs;
+    out << this->pornDirs;
+    out << this->hentaiDirs;
 }
 
 void Settings::save() {
