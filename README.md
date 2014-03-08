@@ -14,10 +14,10 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * Select directories to import into library
 * Filtering by tag or actress
 * Thumbnail generation
-
-## Features planned
 * Sync local database of tags to server
 * Sync tags from server to local database
+
+## Features planned
 * Sync covers of videos in your library
 * Actress videography and info
 * Duplicate detection
