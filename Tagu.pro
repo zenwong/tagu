@@ -23,6 +23,9 @@ SOURCES += main.cpp\
     dialogs/ConfigDialog.cpp \
     FFMpeg.cpp \
     Config.cpp \
+    delegates/ActressDelegate.cpp \
+    delegates/ScreenshotDelegate.cpp \
+    delegates/CoverDelegate.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
@@ -33,6 +36,10 @@ HEADERS  += MainWindow.hpp \
     Utils.hpp \
     FFMpeg.hpp \
     Config.hpp \
+    delegates/ActressDelegate.hpp \
+    delegates/ScreenshotDelegate.hpp \
+    delegates/CoverDelegate.hpp \
+    delegates/Delegates.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui \

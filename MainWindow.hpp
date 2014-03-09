@@ -17,7 +17,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QLabel>
 #include <QElapsedTimer>
-#include "delegates/ThumbnailDelegate.hpp"
+#include "delegates/Delegates.hpp"
 #include "Worker.hpp"
 #include "FFMpeg.hpp"
 
@@ -45,6 +45,7 @@ private slots:
     void onThumbnailView();
     void onCompactView();
     void onCoverView();
+    void onScreenshotView();
     void onImportVideos();
     void onOptions();
     void onLogin();

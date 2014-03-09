@@ -41,6 +41,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             delegate = new CoverDelegate(this);
             ui->listView->setFlow(QListView::LeftToRight);
         }
+
+        if(defaultView == "Screenshot") {
+            delegate = new ScreenshotDelegate(this);
+            ui->listView->setFlow(QListView::LeftToRight);
+        }
     }
 
     //thumbDel = new ThumbnailDelegate(this);
@@ -55,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
 
     connect(ui->actionThumbnail, SIGNAL(triggered()), this, SLOT(onThumbnailView()));
+    connect(ui->actionScreenshot, SIGNAL(triggered()), this, SLOT(onScreenshotView()));
     connect(ui->actionCompact, SIGNAL(triggered()), this, SLOT(onCompactView()));
     connect(ui->actionCover, SIGNAL(triggered()), this, SLOT(onCoverView()));
     connect(ui->actionActressList, SIGNAL(triggered()), this, SLOT(onActressList()));
@@ -211,6 +217,13 @@ void MainWindow::onThumbnailView() {
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
   settings.setValue("DefaultView", "Thumbnail");
+}
+
+void MainWindow::onScreenshotView() {
+    ui->listView->setItemDelegate(new ScreenshotDelegate);
+    ui->listView->setFlow(QListView::LeftToRight);
+    ui->listView->reset();
+    settings.setValue("DefaultView", "Screenshot");
 }
 
 void MainWindow::onCompactView() {
@@ -418,5 +431,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     //config.windowState = saveState();
     settings.setValue("mainWindowGeometry", saveGeometry());
     settings.setValue("mainWindowState", saveState());
+
 }
 
