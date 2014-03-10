@@ -20,6 +20,7 @@
 #include "delegates/Delegates.hpp"
 #include "Worker.hpp"
 #include "FFMpeg.hpp"
+#include "models/VidsModel.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -69,7 +70,10 @@ private:
 
     Ui::MainWindow *ui;
     QSqlDatabase db;
-    QSqlTableModel *vidTable, *tagTable, *actTable, *tagList, *actList;
+    QSqlTableModel *tagTable, *actTable, *tagList, *actList;
+
+    VidsModel *vidTable;
+
     QCompleter *tagComplete, *actComplete, *searchComplete;
     ThumbnailDelegate *thumbDel;
     QSettings settings;

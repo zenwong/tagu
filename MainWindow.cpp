@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //restoreGeometry(config.windowGeometry);
     //restoreState(config.windowState);
 
+
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
 
@@ -124,7 +125,7 @@ void MainWindow::initDB() {
     db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
     db.open();
 
-    vidTable = new QSqlTableModel(this, db);
+    vidTable = new VidsModel(loadConfig(), this);
     vidTable->setTable("LibraryView");
     vidTable->setEditStrategy(QSqlTableModel::OnFieldChange);
     vidTable->select();

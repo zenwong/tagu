@@ -1,4 +1,6 @@
 #include "ScreenshotDelegate.hpp"
+#include "models/VidsModel.hpp"
+#include <QDebug>
 
 ScreenshotDelegate::ScreenshotDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
     this->config = loadConfig();
@@ -18,8 +20,10 @@ void ScreenshotDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
+    QString path = screenDir + index.data(VidsModel::SCREEN).toString();
+    qDebug() << "screen shot path: " << path;
 
-    QPixmap pixmap(screenDir + index.data().toString());
+    QPixmap pixmap(path);
 
     painter->drawPixmap(option.rect, pixmap);
 

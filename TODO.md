@@ -5,6 +5,7 @@
 * detail delegate view
 * organize tags dialog
 * organzie acts dialog
+* mutually exclusive tags, such that when a tag natural.tits is added a fake.tits tag should be ignored or flagged to be revied by an administrator.
 * automatic Recommendations
 * user Recommendations
 * comments

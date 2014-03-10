@@ -149,6 +149,9 @@
       <property name="inputMethodHints">
        <set>Qt::ImhNone</set>
       </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::ContiguousSelection</enum>
       </property>
