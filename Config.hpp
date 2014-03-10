@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 #include <QCoreApplication>
 #include <QStringList>
+#include <QByteArray>
 #include <string>
 #include <set>
 #include <sstream>
@@ -26,6 +27,8 @@ public:
         cereal::make_nvp("password",      password),
         cereal::make_nvp("session",         session),
         cereal::make_nvp("lastView",        lastView),
+//        cereal::make_nvp("winPosition",   winPosition),
+//        cereal::make_nvp("winState",       winState),
         cereal::make_nvp("imageDir",      imageDir),
         cereal::make_nvp("javDirs",          javDirs),
         cereal::make_nvp("pornDirs",       pornDirs),
@@ -37,6 +40,7 @@ public:
     set<string> javDirs, pornDirs, hentaiDirs;
     string email, password, session, imageDir, lastView;
 
+    //QByteArray winState, winPosition;
     QStringList javList, pornList, hentaiList;
 };
 

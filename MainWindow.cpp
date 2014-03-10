@@ -8,6 +8,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat), thumbnailer(db) {
     ui->setupUi(this);
+
+
 //    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 //    restoreState(settings.value("mainWindowState").toByteArray());
 
@@ -427,10 +429,17 @@ void MainWindow::onResetDatabase() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
+//    auto config = loadConfig();
+
+//    config.winState = saveState();
+//    config.winPosition = saveGeometry();
+
+//    saveConfig(config);
+
     //config.windowGeometry = saveGeometry();
     //config.windowState = saveState();
-    settings.setValue("mainWindowGeometry", saveGeometry());
-    settings.setValue("mainWindowState", saveState());
+    //settings.setValue("mainWindowGeometry", saveGeometry());
+    //settings.setValue("mainWindowState", saveState());
 
 }
 
