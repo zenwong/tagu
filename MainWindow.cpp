@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //restoreGeometry(config.windowGeometry);
     //restoreState(config.windowState);
 
-
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
 

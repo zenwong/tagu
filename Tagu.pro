@@ -26,7 +26,6 @@ SOURCES += main.cpp\
     delegates/ActressDelegate.cpp \
     delegates/ScreenshotDelegate.cpp \
     delegates/CoverDelegate.cpp \
-    models/VideoModel.cpp \
     models/VidsModel.cpp
 
 HEADERS  += MainWindow.hpp \
@@ -42,7 +41,6 @@ HEADERS  += MainWindow.hpp \
     delegates/ScreenshotDelegate.hpp \
     delegates/CoverDelegate.hpp \
     delegates/Delegates.hpp \
-    models/VideoModel.hpp \
     models/VidsModel.hpp
 
 FORMS    += MainWindow.ui \
