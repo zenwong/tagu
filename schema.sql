@@ -1,6 +1,7 @@
 CREATE TABLE Vids (
   _id integer primary key autoincrement,
   title text,
+  description text,
   path text,
   hash text,
   rating integer,

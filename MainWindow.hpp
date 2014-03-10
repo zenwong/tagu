@@ -67,6 +67,10 @@ private slots:
     void refreshSearch();
     void refreshImport();
 
+    void on_editTitle_editingFinished();
+
+    void on_editDesc_editingFinished();
+
 private:
     void initDB();
 

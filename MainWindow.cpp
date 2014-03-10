@@ -179,7 +179,7 @@ void MainWindow::initDB() {
     mapper = new QDataWidgetMapper(this);
     mapper->setModel(vidTable);
     mapper->addMapping(ui->editTitle, vidTable->fieldIndex("title"));
-    mapper->addMapping(ui->editDesc, vidTable->fieldIndex("desc"));
+    mapper->addMapping(ui->editDesc, vidTable->fieldIndex("description"));
     mapper->toFirst();
 
 //    ui->listTags->setModel(tagList);
@@ -211,8 +211,8 @@ void MainWindow::onRowChanged(QModelIndex top, QModelIndex bot) {
 }
 
 void MainWindow::on_listView_clicked(const QModelIndex &index){
-    QString tags = vidTable->data(vidTable->index(index.row(), 3)).toString();
-    QString acts = vidTable->data(vidTable->index(index.row(), 4)).toString();
+    //QString tags = vidTable->data(vidTable->index(index.row(), 3)).toString();
+    //QString acts = vidTable->data(vidTable->index(index.row(), 4)).toString();
     currentVid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
 
     //qDebug() << "current vid = " << currentVid;
@@ -462,3 +462,15 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 }
 
+
+void MainWindow::on_editTitle_editingFinished()
+{
+    mapper->submit();
+    vidTable->submitAll();
+}
+
+void MainWindow::on_editDesc_editingFinished()
+{
+    mapper->submit();
+    vidTable->submitAll();
+}
