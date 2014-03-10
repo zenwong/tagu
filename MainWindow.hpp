@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QSqlTableModel>
 #include <QSqlQueryModel>
+#include <QDataWidgetMapper>
 #include <QSqlQuery>
 #include <QDebug>
 #include <QCompleter>
@@ -54,6 +55,7 @@ private slots:
     void onActressList();
     void onTagList();
     void onSync();
+    void onRowChanged(QModelIndex,QModelIndex);
     void replyFinished(QNetworkReply*);
 
     void on_comboAct_currentIndexChanged(const QString &arg1);
@@ -93,6 +95,7 @@ private:
     FFMpeg thumbnailer;
 
     QLabel *statusImport;
+    QDataWidgetMapper *mapper;
 };
 
 #endif // MAINWINDOW_HPP

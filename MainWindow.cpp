@@ -9,7 +9,6 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat), thumbnailer(db) {
     ui->setupUi(this);
 
-
 //    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 //    restoreState(settings.value("mainWindowState").toByteArray());
 
@@ -74,6 +73,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionReset_Database, SIGNAL(triggered()), this, SLOT(onResetDatabase()));
     connect(ui->actionLogin, SIGNAL(triggered()), this, SLOT(onLogin()));
 
+    connect(ui->listView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(onRowChanged(QModelIndex,QModelIndex)));
+
     ui->comboAct->lineEdit()->setText("");
     ui->comboTag->lineEdit()->setText("");
 
@@ -93,13 +94,14 @@ void MainWindow::refreshVids() {
 void MainWindow::refreshData() {
     qDebug() << "refresh data";
 
+    ui->comboTag->lineEdit()->setText("");
+    ui->comboAct->lineEdit()->setText("");
+
     tagTable->select();
     actTable->select();
     tagList->select();
     actList->select();
 
-    ui->comboTag->lineEdit()->setText("");
-    ui->comboAct->lineEdit()->setText("");
 }
 
 void MainWindow::refreshSearch() {
@@ -127,7 +129,7 @@ void MainWindow::initDB() {
     db.open();
 
     vidTable = new VidsModel(loadConfig(), this);
-    vidTable->setTable("LibraryView");
+    vidTable->setTable("Vids");
     vidTable->setEditStrategy(QSqlTableModel::OnFieldChange);
     vidTable->select();
     while (vidTable->canFetchMore()) {
@@ -167,11 +169,18 @@ void MainWindow::initDB() {
     actComplete->setCompletionMode(QCompleter::PopupCompletion);
     actComplete->setCaseSensitivity(Qt::CaseInsensitive);
 
+    // TODO changed this to union of tags and acts
     searchComplete = new QCompleter(actTable);
     searchComplete->setCompletionColumn(1);
     searchComplete->setCompletionMode(QCompleter::PopupCompletion);
-    searchComplete->setMaxVisibleItems(1);
+    //searchComplete->setMaxVisibleItems(1);
     searchComplete->setCaseSensitivity(Qt::CaseInsensitive);
+
+    mapper = new QDataWidgetMapper(this);
+    mapper->setModel(vidTable);
+    mapper->addMapping(ui->editTitle, vidTable->fieldIndex("title"));
+    mapper->addMapping(ui->editDesc, vidTable->fieldIndex("desc"));
+    mapper->toFirst();
 
 //    ui->listTags->setModel(tagList);
 //    ui->listActs->setModel(actList);
@@ -192,6 +201,15 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 
+void MainWindow::onRowChanged(QModelIndex top, QModelIndex bot) {
+    Q_UNUSED(bot);
+    currentVid = vidTable->data(vidTable->index(top.row(), 0)).toInt();
+    tagList->setFilter("vid=" + QString::number(currentVid));
+    actList->setFilter("vid=" + QString::number(currentVid));
+
+    mapper->setCurrentModelIndex(top);
+}
+
 void MainWindow::on_listView_clicked(const QModelIndex &index){
     QString tags = vidTable->data(vidTable->index(index.row(), 3)).toString();
     QString acts = vidTable->data(vidTable->index(index.row(), 4)).toString();
@@ -207,6 +225,7 @@ void MainWindow::on_listView_clicked(const QModelIndex &index){
     tagList->setFilter("vid=" + QString::number(currentVid));
     actList->setFilter("vid=" + QString::number(currentVid));
 
+    mapper->setCurrentModelIndex(index);
 }
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index){
