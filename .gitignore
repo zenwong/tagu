@@ -4,6 +4,7 @@ db-backup
 db-journal
 ssl/*
 data-acts/db-journal
+models/VideoModel.*
 *.o
 moc_*.cpp
 ui_*.h
