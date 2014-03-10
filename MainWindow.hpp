@@ -7,6 +7,8 @@
 #include <QSqlQueryModel>
 #include <QDataWidgetMapper>
 #include <QSqlQuery>
+#include <QSqlError>
+#include <QSqlRecord>
 #include <QDebug>
 #include <QCompleter>
 #include <QMessageBox>
@@ -68,8 +70,9 @@ private slots:
     void refreshImport();
 
     void on_editTitle_editingFinished();
-
     void on_editDesc_editingFinished();
+
+    void on_comboRating_activated(int index);
 
 private:
     void initDB();

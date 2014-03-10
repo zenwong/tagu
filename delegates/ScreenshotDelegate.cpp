@@ -21,7 +21,7 @@ void ScreenshotDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     QString path = screenDir + index.data(VidsModel::SCREEN).toString();
-    qDebug() << "screen shot path: " << path;
+    //qDebug() << "screen shot path: " << path;
 
     QPixmap pixmap(path);
 

@@ -63,7 +63,14 @@
       <widget class="QWidget" name="page_2">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QTableView" name="tableView"/>
+         <widget class="QTableView" name="tableView">
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -87,7 +94,9 @@
     </property>
     <addaction name="actionActress"/>
     <addaction name="actionCompact"/>
+    <addaction name="actionDetail"/>
     <addaction name="actionCover"/>
+    <addaction name="actionCover_and_Thumbs"/>
     <addaction name="actionThumbnail"/>
     <addaction name="actionScreenshot"/>
    </widget>
@@ -143,7 +152,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox_2">
+      <widget class="QComboBox" name="comboRating">
        <item>
         <property name="text">
          <string>0</string>
@@ -430,6 +439,16 @@
   <action name="actionAbout_Tagu">
    <property name="text">
     <string>About Tagu</string>
+   </property>
+  </action>
+  <action name="actionDetail">
+   <property name="text">
+    <string>Detail</string>
+   </property>
+  </action>
+  <action name="actionCover_and_Thumbs">
+   <property name="text">
+    <string>Cover and Thumbs</string>
    </property>
   </action>
  </widget>

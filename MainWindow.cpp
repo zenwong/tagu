@@ -73,6 +73,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionReset_Database, SIGNAL(triggered()), this, SLOT(onResetDatabase()));
     connect(ui->actionLogin, SIGNAL(triggered()), this, SLOT(onLogin()));
 
+    connect(ui->actionDetail, &QAction::triggered, [&] {
+        ui->tableView->setModel(vidTable);
+        ui->tableView->resizeColumnsToContents();
+        ui->stackedWidget->setCurrentIndex(1);
+    });
+
     connect(ui->listView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(onRowChanged(QModelIndex,QModelIndex)));
 
     ui->comboAct->lineEdit()->setText("");
@@ -204,8 +210,11 @@ MainWindow::~MainWindow(){
 void MainWindow::onRowChanged(QModelIndex top, QModelIndex bot) {
     Q_UNUSED(bot);
     currentVid = vidTable->data(vidTable->index(top.row(), 0)).toInt();
+    //int rating = vidTable->data(vidTable->index(top.row(), vidTable->fieldIndex("rating"))).toInt();
+
     tagList->setFilter("vid=" + QString::number(currentVid));
     actList->setFilter("vid=" + QString::number(currentVid));
+    ui->comboRating->setCurrentIndex(vidTable->data(top, VidsModel::RATING).toInt());
 
     mapper->setCurrentModelIndex(top);
 }
@@ -213,7 +222,14 @@ void MainWindow::onRowChanged(QModelIndex top, QModelIndex bot) {
 void MainWindow::on_listView_clicked(const QModelIndex &index){
     //QString tags = vidTable->data(vidTable->index(index.row(), 3)).toString();
     //QString acts = vidTable->data(vidTable->index(index.row(), 4)).toString();
+    //int rating = vidTable->data(vidTable->index(index.row(), vidTable->fieldIndex("rating"))).toInt();
     currentVid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
+
+    //qDebug() << "rating: " << rating;
+
+    //int rating = vidTable->data(index, VidsModel::RATING).toInt();
+
+    ui->comboRating->setCurrentIndex(vidTable->data(index, VidsModel::RATING).toInt());
 
     //qDebug() << "current vid = " << currentVid;
 
@@ -221,6 +237,7 @@ void MainWindow::on_listView_clicked(const QModelIndex &index){
     ui->listActs->setModel(actList);
     ui->listTags->setModelColumn(2);
     ui->listActs->setModelColumn(2);
+    //ui->comboRating->setCurrentIndex(rating);
 
     tagList->setFilter("vid=" + QString::number(currentVid));
     actList->setFilter("vid=" + QString::number(currentVid));
@@ -473,4 +490,9 @@ void MainWindow::on_editDesc_editingFinished()
 {
     mapper->submit();
     vidTable->submitAll();
+}
+
+void MainWindow::on_comboRating_activated(int rating)
+{
+    vidTable->updateRating(ui->listView->currentIndex(), rating);
 }

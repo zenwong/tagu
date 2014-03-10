@@ -1,6 +1,7 @@
 #ifndef VIDSMODEL_HPP
 #define VIDSMODEL_HPP
 #include <QSqlTableModel>
+#include <QSqlRecord>
 #include "Config.hpp"
 
 class VidsModel : public QSqlTableModel
@@ -13,14 +14,16 @@ public:
 
     enum Roles
     {
-        TAGS_ROLE = Qt::UserRole + 100,
-        ACTS_ROLE = Qt::UserRole + 101,
-        PATH_ROLE = Qt::UserRole + 102,
-        SCREEN      = Qt::UserRole + 103,
-        THUMB       = Qt::UserRole + 104
+        TAGS      = Qt::UserRole + 100,
+        ACTS      = Qt::UserRole + 101,
+        PATH      = Qt::UserRole + 102,
+        SCREEN = Qt::UserRole + 103,
+        THUMB  = Qt::UserRole + 104,
+        COVER   = Qt::UserRole + 105,
+        RATING  = Qt::UserRole + 106
     };
 
-
+    void updateRating(const QModelIndex&,int);
 };
 
 #endif // VIDSMODEL_HPP
