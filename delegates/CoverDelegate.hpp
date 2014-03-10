@@ -14,5 +14,8 @@ public:
     CoverDelegate(QWidget *parent = 0);
     void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
     QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const ;
+
+    Config config;
+    QString coverDir;
 };
 #endif // COVERDELEGATE_HPP

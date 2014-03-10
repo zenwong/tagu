@@ -134,7 +134,7 @@ void MainWindow::initDB() {
     db.setDatabaseName(QCoreApplication::applicationDirPath() + "/db");
     db.open();
 
-    vidTable = new VidsModel(loadConfig(), this);
+    vidTable = new VidsModel(this);
     vidTable->setTable("Vids");
     vidTable->setEditStrategy(QSqlTableModel::OnFieldChange);
     vidTable->select();
@@ -210,11 +210,12 @@ MainWindow::~MainWindow(){
 void MainWindow::onRowChanged(QModelIndex top, QModelIndex bot) {
     Q_UNUSED(bot);
     currentVid = vidTable->data(vidTable->index(top.row(), 0)).toInt();
-    //int rating = vidTable->data(vidTable->index(top.row(), vidTable->fieldIndex("rating"))).toInt();
+    int rating = vidTable->data(vidTable->index(top.row(), vidTable->fieldIndex("rating"))).toInt();
+    ui->comboRating->setCurrentIndex(rating);
+    //ui->comboRating->setCurrentIndex(vidTable->data(top, VidsModel::RATING).toInt());
 
     tagList->setFilter("vid=" + QString::number(currentVid));
     actList->setFilter("vid=" + QString::number(currentVid));
-    ui->comboRating->setCurrentIndex(vidTable->data(top, VidsModel::RATING).toInt());
 
     mapper->setCurrentModelIndex(top);
 }
@@ -222,14 +223,17 @@ void MainWindow::onRowChanged(QModelIndex top, QModelIndex bot) {
 void MainWindow::on_listView_clicked(const QModelIndex &index){
     //QString tags = vidTable->data(vidTable->index(index.row(), 3)).toString();
     //QString acts = vidTable->data(vidTable->index(index.row(), 4)).toString();
-    //int rating = vidTable->data(vidTable->index(index.row(), vidTable->fieldIndex("rating"))).toInt();
     currentVid = vidTable->data(vidTable->index(index.row(), 0)).toInt();
+
+    int rating = vidTable->data(vidTable->index(index.row(), vidTable->fieldIndex("rating"))).toInt();
+    ui->comboRating->setCurrentIndex(rating);
+
 
     //qDebug() << "rating: " << rating;
 
     //int rating = vidTable->data(index, VidsModel::RATING).toInt();
 
-    ui->comboRating->setCurrentIndex(vidTable->data(index, VidsModel::RATING).toInt());
+    //ui->comboRating->setCurrentIndex(vidTable->data(index, VidsModel::RATING).toInt());
 
     //qDebug() << "current vid = " << currentVid;
 
@@ -246,7 +250,7 @@ void MainWindow::on_listView_clicked(const QModelIndex &index){
 }
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index){
-    QString url = vidTable->data(vidTable->index(index.row(), 5)).toString();
+    auto url = vidTable->data(vidTable->index(index.row(), vidTable->fieldIndex("path"))).toString();
     QDesktopServices::openUrl(QUrl::fromLocalFile(url));
 }
 
@@ -261,6 +265,11 @@ void MainWindow::onScreenshotView() {
     ui->listView->setItemDelegate(new ScreenshotDelegate);
     ui->listView->setFlow(QListView::LeftToRight);
     ui->listView->reset();
+
+//    QPalette palette;
+//    palette.setColor(QPalette::Highlight,Qt::white);
+//    ui->listView->setPalette(palette);
+
     settings.setValue("DefaultView", "Screenshot");
 }
 

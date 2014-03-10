@@ -36,16 +36,16 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
     QRect rect(margin, margin, config.thumbWidth, thumbHeight);
 
-//    for(int i = 0; i < frames; i++) {
-//        if(i != 0 &&  i % 4 == 0) {
-//            rect.adjust(0, thumbHeight + padding, 0, 0);
-//            rect.moveLeft(margin);
-//            qDebug() << i << ") " << rect;
-//        }
+    //    for(int i = 0; i < frames; i++) {
+    //        if(i != 0 &&  i % 4 == 0) {
+    //            rect.adjust(0, thumbHeight + padding, 0, 0);
+    //            rect.moveLeft(margin);
+    //            qDebug() << i << ") " << rect;
+    //        }
 
-//        QPixmap pixmap(thumbDir + index.data().toString() + "-" + QString::number(i) + ".jpg");
-//        painter->drawPixmap()
-//    }
+    //        QPixmap pixmap(thumbDir + index.data().toString() + "-" + QString::number(i) + ".jpg");
+    //        painter->drawPixmap()
+    //    }
 
 
     for(int i = 0; i < frames; i++) {
@@ -66,41 +66,41 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         //qDebug() << i << ") " <<  rect;
     }
 
-//    int i = 0;
-//    for(int y = 0; y < totalHeight; y += thumbHeight + padding) {
+    //    int i = 0;
+    //    for(int y = 0; y < totalHeight; y += thumbHeight + padding) {
 
-//        qDebug() << "row: " << rect;
-//        rect.moveBottom(y);
+    //        qDebug() << "row: " << rect;
+    //        rect.moveBottom(y);
 
-//        QFont font("Times", 15, QFont::Bold);
-//        painter->setFont(font);
-//        painter->setBrush(Qt::white);
-//        painter->drawText(rect, Qt::BottomSection, QString::number(i));
+    //        QFont font("Times", 15, QFont::Bold);
+    //        painter->setFont(font);
+    //        painter->setBrush(Qt::white);
+    //        painter->drawText(rect, Qt::BottomSection, QString::number(i));
 
-//        for(int x = 0; x < totalWidth; x += config.thumbWidth + padding) {
+    //        for(int x = 0; x < totalWidth; x += config.thumbWidth + padding) {
 
-//            qDebug() << "col : " << rect;
-//            rect.moveLeft(config.thumbWidth + padding);
+    //            qDebug() << "col : " << rect;
+    //            rect.moveLeft(config.thumbWidth + padding);
 
-//            if(x > totalWidth) {
-//                rect.moveLeft(margin);
-//            }
+    //            if(x > totalWidth) {
+    //                rect.moveLeft(margin);
+    //            }
 
-//            QFont font("Times", 15, QFont::Bold);
-//            painter->setFont(font);
-//            painter->drawText(rect, Qt::BottomSection, QString::number(i));
+    //            QFont font("Times", 15, QFont::Bold);
+    //            painter->setFont(font);
+    //            painter->drawText(rect, Qt::BottomSection, QString::number(i));
 
-//            i++;
-//        }
-//    }
+    //            i++;
+    //        }
+    //    }
 
 
     //QRect rect(0,0,400,222);
     //painter->drawPixmap(option.rect, pixmap);
 
-//        QFont font("Times", 15, QFont::Bold);
-//        painter->setFont(font);
-//        painter->drawText(option.rect, Qt::BottomSection, index.data().toString());
+    //        QFont font("Times", 15, QFont::Bold);
+    //        painter->setFont(font);
+    //        painter->drawText(option.rect, Qt::BottomSection, index.data().toString());
 
 
     painter->restore();

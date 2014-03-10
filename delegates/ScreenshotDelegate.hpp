@@ -19,6 +19,9 @@ public:
 private:
     Config config;
     QString screenDir;
+    int padding, margin, totalWidth, totalHeight;
+    QFontMetrics fm;
+    QFont font;
 };
 
 #endif // SCREENSHOTDELEGATE_HPP

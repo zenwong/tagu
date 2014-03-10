@@ -3,14 +3,15 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include "Config.hpp"
+#include "Utils.hpp"
 
 class VidsModel : public QSqlTableModel
 {
     Q_OBJECT
 public:
-    explicit VidsModel(Config config, QObject *parent = 0);
+    explicit VidsModel(QObject *parent = 0);
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    //QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
     enum Roles
     {
@@ -24,6 +25,8 @@ public:
     };
 
     void updateRating(const QModelIndex&,int);
+
+    Config config;
 };
 
 #endif // VIDSMODEL_HPP

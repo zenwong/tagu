@@ -35,6 +35,15 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QListView" name="listView">
+          <property name="styleSheet">
+           <string notr="true">QListView::item:hover {
+background:color: white;
+}
+
+QListView::item:active {
+background:color: white;
+}</string>
+          </property>
           <property name="inputMethodHints">
            <set>Qt::ImhNone</set>
           </property>
