@@ -1,25 +1,24 @@
 #include "ThumbnailDelegate.hpp"
 #include <QDebug>
 
-ThumbnailDelegate::ThumbnailDelegate(QWidget *parent) : QStyledItemDelegate(parent), fm(QApplication::font()), font("Times", 15, QFont::Bold){
-    opts = new Options;
-
-    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
-        thumbDir = opts->imageDir + "thumbs" + QDir::separator();
+ThumbnailDelegate::ThumbnailDelegate(QWidget *parent) : QStyledItemDelegate(parent), fm(QApplication::font()), font("Times", 15, QFont::Bold), opts(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat)
+{
+    QString imgDir = opts.value(Key::ImageDir).toString();
+    if(imgDir[imgDir.size()] == QDir::separator().toLatin1()) {
+        thumbDir = imgDir + "thumbs" + QDir::separator();
     } else {
-        thumbDir = opts->imageDir + QDir::separator() + "thumbs" + QDir::separator();
+        thumbDir = imgDir + QDir::separator() + "thumbs" + QDir::separator();
     }
+
+    qDebug() << thumbDir;
 
     margin  = 10;
     padding = 0;
     thumbWidth = 400;
     thumbHeight = 225;
 
-    frames = opts->rowCount * opts->colCount;
-    //thumbHeight = opts.thumbWidth / 1.7777778;
-
-    totalWidth = opts->colCount * opts->thumbWidth + padding * opts->colCount + margin * 2;
-    totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
+//    totalWidth = opts->colCount * opts->thumbWidth + padding * opts->colCount + margin * 2;
+//    totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
 
     //qDebug() << "total width: " << totalWidth << ", total height: " << totalHeight;
 }
@@ -55,6 +54,8 @@ QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const Q
     //return QSize(totalWidth + 5, totalHeight + 5);
     //return QSize(thumbWidth + margin * 2, thumbHeight + margin * 2 + fm.height() * 2);
     //return QSize(thumbWidth + margin * 2, thumbHeight + fm.height() * 2);
+    Q_UNUSED(option);
+    Q_UNUSED(index);
     return QSize(thumbWidth, thumbHeight);
 }
 

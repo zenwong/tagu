@@ -5,8 +5,8 @@
 #include <QStringListModel>
 #include <QFileDialog>
 #include <QDebug>
-#include <models/Options.hpp>
-#include "../Utils.hpp"
+#include <QSettings>
+#include "Utils.hpp"
 
 namespace Ui {
 class ConfigDialog;
@@ -19,8 +19,6 @@ class ConfigDialog : public QDialog
 public:
     explicit ConfigDialog(QWidget *parent = 0);
     ~ConfigDialog();
-
-    void setOptions(Options *opts);
 
 signals:
     void onClose();
@@ -40,10 +38,11 @@ private slots:
 
 private:
     Ui::ConfigDialog *ui;
-    QStringList dirs;
+    //QStringList dirs;
     QStringListModel *javModel;
     QString lastDir;
-    Options opts;
+    QSettings opts;
+    QSet<QString> dirs;
 };
 
 #endif // CONFIGDIALOG_HPP

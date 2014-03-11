@@ -7,7 +7,6 @@
 #include <QCryptographicHash>
 #include "Settings.hpp"
 #include "Utils.hpp"
-#include "models/Options.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -21,6 +20,7 @@ class FFMpeg
 {
 public:
    FFMpeg(QSqlDatabase db);
+   ~FFMpeg();
 
    int doImport();
 
@@ -48,7 +48,6 @@ public:
    int imported;
 
    void genScreens();
-   void saveJpeg(int seconds);
    QImage getJpeg();
 
    void decodeVideoFrame();
@@ -61,8 +60,6 @@ public:
    QSqlDatabase db;
 
    QString thumbDir, screenDir;
-   //Config config;
-   Options *opts;
 };
 
 #endif // FFMPEG_HPP

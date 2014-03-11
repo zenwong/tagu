@@ -9,9 +9,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    Options options;
-    restoreGeometry(options.winPosition);
-    restoreState(options.winState);
+    restoreGeometry(settings.value(Key::WinPos).toByteArray());
+    restoreState(settings.value(Key::WinState).toByteArray());
 
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
@@ -76,7 +75,6 @@ void MainWindow::refreshData() {
     actTable->select();
     tagList->select();
     actList->select();
-
 }
 
 void MainWindow::refreshSearch() {
@@ -227,37 +225,35 @@ void MainWindow::onThumbnailView() {
   ui->listView->setItemDelegate(new ThumbnailDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
-  Options opts;
-  opts.lastView = "Thumbnail";
+  ui->stackedWidget->setCurrentIndex(0);
+
+  settings.setValue(Key::LastView, "Thumbnail");
 }
 
 void MainWindow::onScreenshotView() {
     ui->listView->setItemDelegate(new ScreenshotDelegate);
     ui->listView->setFlow(QListView::LeftToRight);
     ui->listView->reset();
+    ui->stackedWidget->setCurrentIndex(0);
 
-//    QPalette palette;
-//    palette.setColor(QPalette::Highlight,Qt::white);
-//    ui->listView->setPalette(palette);
-
-    Options opts;
-    opts.lastView = "Screenshot";
+    settings.setValue(Key::LastView, "Screenshot");
 }
 
 void MainWindow::onCompactView() {
   ui->listView->setItemDelegate(new QStyledItemDelegate);
   ui->listView->setFlow(QListView::TopToBottom);
   ui->listView->reset();
-  Options opts;
-  opts.lastView = "Compact";
+  ui->stackedWidget->setCurrentIndex(0);
+
+  settings.setValue(Key::LastView, "Compact");
 }
 
 void MainWindow::onCoverView() {
   ui->listView->setItemDelegate(new CoverDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
-  Options opts;
-  opts.lastView = "Cover";
+  ui->stackedWidget->setCurrentIndex(0);
+  settings.setValue(Key::LastView, "Cover");
 }
 
 void MainWindow::onLogin() {
@@ -447,9 +443,8 @@ void MainWindow::onResetDatabase() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
-    Options opts;
-    opts.winState = saveState();
-    opts.winPosition = saveGeometry();
+    settings.setValue(Key::WinPos, saveGeometry());
+    settings.setValue(Key::WinState, saveState());
 }
 
 void MainWindow::on_editTitle_editingFinished()
@@ -470,11 +465,13 @@ void MainWindow::on_comboRating_activated(int rating)
 }
 
 void MainWindow::initViews() {
-    Options opts;
-    QString defaultView = opts.lastView;
+    ui->listView->reset();
+    QString defaultView = settings.value(Key::LastView).toString();
 
-    qDebug() << "set delegate imageDir: " << opts.imageDir;
-    qDebug() << "set delegate settings imageDir: " << settings.value("Images/imageDir").toString();
+    if(defaultView.isNull())
+        defaultView = "Compact";
+
+    qDebug() << "default view:" << defaultView;
 
     QStyledItemDelegate *delegate;
 

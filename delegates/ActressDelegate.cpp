@@ -26,5 +26,7 @@ void ActressDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 }
 
 QSize ActressDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const {
+    Q_UNUSED(option);
+    Q_UNUSED(index);
     return QSize(400, 120);
 }

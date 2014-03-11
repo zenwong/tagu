@@ -2,22 +2,27 @@
 #include "models/VidsModel.hpp"
 #include <QDebug>
 
-ScreenshotDelegate::ScreenshotDelegate(QWidget *parent) : QStyledItemDelegate(parent), fm(QApplication::font()), font("Times", 15, QFont::Bold)
+ScreenshotDelegate::ScreenshotDelegate(QWidget *parent) : QStyledItemDelegate(parent), fm(QApplication::font()), font("Times", 15, QFont::Bold), opts(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat)
 {
-    opts = new Options;
-    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
-        screenDir = opts->imageDir + "screens" + QDir::separator();
+    QString imgDir = opts.value(Key::ImageDir).toString();
+    if(imgDir[imgDir.size()] == QDir::separator().toLatin1()) {
+        screenDir = imgDir + "screens" + QDir::separator();
     } else {
-        screenDir = opts->imageDir + QDir::separator() + "screens" + QDir::separator();
+        screenDir = imgDir + QDir::separator() + "screens" + QDir::separator();
     }
+
+    qDebug() << screenDir;
 
     margin  = 10;
     padding = 0;
+    rows = opts.value(Key::Rows).toInt();
+    cols = opts.value(Key::Columns).toInt();
 
-    int thumbHeight = 225;
+    thumbWidth = 400;
+    thumbHeight = 225;
 
-    totalWidth = opts->colCount * 400 + padding * opts->colCount + margin * 2;
-    totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
+    totalWidth = cols * thumbWidth + padding * cols + margin * 2;
+    totalHeight = rows * thumbHeight + padding * rows + margin * 2;
 }
 
 void ScreenshotDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -50,15 +55,8 @@ void ScreenshotDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->restore();
 }
 
-void ScreenshotDelegate::updateOptions() {
-    Options opt;
-    if(opt.imageDir[opt.imageDir.size()] == QDir::separator().toLatin1()) {
-        screenDir = opt.imageDir + "screens" + QDir::separator();
-    } else {
-        screenDir = opt.imageDir + QDir::separator() + "screens" + QDir::separator();
-    }
-}
-
 QSize ScreenshotDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const {
+    Q_UNUSED(option);
+    Q_UNUSED(index);
     return QSize(totalWidth, totalHeight + 2 * fm.height());
 }

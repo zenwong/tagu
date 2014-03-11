@@ -3,7 +3,6 @@
 
 VidsModel::VidsModel(QObject *parent) : QSqlTableModel(parent)
 {
-    opts = new Options;
 }
 
 //QVariant VidsModel::data(const QModelIndex &index, int role) const

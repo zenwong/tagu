@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDir>
-#include "models/Options.hpp"
 #include "../Utils.hpp"
 
 class ScreenshotDelegate : public QStyledItemDelegate
@@ -16,14 +15,12 @@ public:
     void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
     QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const ;
 
-    void updateOptions();
-
 private:
-    Options *opts;
     QString screenDir;
-    int padding, margin, totalWidth, totalHeight;
+    int padding, margin, totalWidth, totalHeight, rows, cols, thumbWidth, thumbHeight;
     QFontMetrics fm;
     QFont font;
+    QSettings opts;
 };
 
 #endif // SCREENSHOTDELEGATE_HPP

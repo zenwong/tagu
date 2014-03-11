@@ -26,7 +26,7 @@ SOURCES += main.cpp\
     delegates/ScreenshotDelegate.cpp \
     delegates/CoverDelegate.cpp \
     models/VidsModel.cpp \
-    models/Options.cpp
+    Utils.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
@@ -40,8 +40,7 @@ HEADERS  += MainWindow.hpp \
     delegates/ScreenshotDelegate.hpp \
     delegates/CoverDelegate.hpp \
     delegates/Delegates.hpp \
-    models/VidsModel.hpp \
-    models/Options.hpp
+    models/VidsModel.hpp
 
 FORMS    += MainWindow.ui \
     dialogs/TagsDialog.ui \

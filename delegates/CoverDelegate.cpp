@@ -2,13 +2,13 @@
 
 CoverDelegate::CoverDelegate(QWidget *parent) : QStyledItemDelegate(parent)
 {
-    opts = new Options;
+//    opts = new Options;
 
-    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
-        coverDir = opts->imageDir + "covers" + QDir::separator();
-    } else {
-        coverDir = opts->imageDir + QDir::separator() + "covers" + QDir::separator();
-    }
+//    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
+//        coverDir = opts->imageDir + "covers" + QDir::separator();
+//    } else {
+//        coverDir = opts->imageDir + QDir::separator() + "covers" + QDir::separator();
+//    }
 }
 
 void CoverDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {

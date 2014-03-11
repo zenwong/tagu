@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QDir>
 #include <QDebug>
-#include "models/Options.hpp"
+#include <QSettings>
 #include "Utils.hpp"
 
 class ThumbnailDelegate : public QStyledItemDelegate
@@ -18,13 +18,13 @@ public:
     QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const ;
 
 private:
-    Options *opts;
     QString thumbDir;
     int margin, padding, totalWidth, totalHeight, frames;
     int thumbWidth, thumbHeight;
 
     QFontMetrics fm;
     QFont font;
+    QSettings opts;
 };
 
 #endif // IMAGEDELEGATE_HPP
