@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDir>
-#include "../Config.hpp"
+#include "models/Options.hpp"
 #include "../Utils.hpp"
 
 class ScreenshotDelegate : public QStyledItemDelegate
@@ -17,7 +17,7 @@ public:
     QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const ;
 
 private:
-    Config config;
+    Options *opts;
     QString screenDir;
     int padding, margin, totalWidth, totalHeight;
     QFontMetrics fm;

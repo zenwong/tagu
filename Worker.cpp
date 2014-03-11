@@ -1,5 +1,4 @@
 #include "Worker.hpp"
-#include "Globals.hpp"
 
 Worker::Worker(QObject *parent) : QObject(parent) {
     nam = new QNetworkAccessManager(this);

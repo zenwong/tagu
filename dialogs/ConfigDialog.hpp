@@ -7,7 +7,6 @@
 #include <QDebug>
 #include <models/Options.hpp>
 #include "../Utils.hpp"
-#include "../Config.hpp"
 
 namespace Ui {
 class ConfigDialog;
@@ -36,11 +35,9 @@ private slots:
 
 private:
     Ui::ConfigDialog *ui;
-    //Config config;
     QStringList dirs;
     QStringListModel *javModel;
     QString lastDir;
-    std::set<string>::iterator iter;
     Options opts;
 };
 

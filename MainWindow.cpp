@@ -1,6 +1,5 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
-#include "SettingsDialog.hpp"
 #include "dialogs/TagsDialog.hpp"
 #include "dialogs/SignupDialog.hpp"
 #include "Utils.hpp"
@@ -8,6 +7,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), thumbnailer(db) {
     ui->setupUi(this);
+
+    qDebug() << QCoreApplication::applicationDirPath();
 
     opts = new Options;
 

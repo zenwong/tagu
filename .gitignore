@@ -5,6 +5,9 @@ db-journal
 ssl/*
 data-acts/db-journal
 models/VideoModel.*
+Globals.hpp
+MultiCompleter.*
+SettingsDialog.*
 *.o
 moc_*.cpp
 ui_*.h

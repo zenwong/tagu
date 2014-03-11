@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDir>
-#include "../Config.hpp"
+#include "models/Options.hpp"
 #include "../Utils.hpp"
 
 class CoverDelegate: public QStyledItemDelegate
@@ -15,7 +15,7 @@ public:
     void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
     QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const ;
 
-    Config config;
+    Options *opts;
     QString coverDir;
 };
 #endif // COVERDELEGATE_HPP

@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDir>
-#include "../Config.hpp"
+#include "models/Options.hpp"
 #include "../Utils.hpp"
 
 class ActressDelegate: public QStyledItemDelegate

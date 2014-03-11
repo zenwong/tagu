@@ -22,7 +22,6 @@ SOURCES += main.cpp\
     dialogs/SignupDialog.cpp \
     dialogs/ConfigDialog.cpp \
     FFMpeg.cpp \
-    Config.cpp \
     delegates/ActressDelegate.cpp \
     delegates/ScreenshotDelegate.cpp \
     delegates/CoverDelegate.cpp \
@@ -37,7 +36,6 @@ HEADERS  += MainWindow.hpp \
     dialogs/ConfigDialog.hpp \
     Utils.hpp \
     FFMpeg.hpp \
-    Config.hpp \
     delegates/ActressDelegate.hpp \
     delegates/ScreenshotDelegate.hpp \
     delegates/CoverDelegate.hpp \
@@ -46,7 +44,6 @@ HEADERS  += MainWindow.hpp \
     models/Options.hpp
 
 FORMS    += MainWindow.ui \
-    SettingsDialog.ui \
     dialogs/TagsDialog.ui \
     dialogs/SignupDialog.ui \
     dialogs/ConfigDialog.ui

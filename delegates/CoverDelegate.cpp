@@ -2,12 +2,12 @@
 
 CoverDelegate::CoverDelegate(QWidget *parent) : QStyledItemDelegate(parent)
 {
-    config = loadConfig();
+    opts = new Options;
 
-    if(config.imageDir[config.imageDir.size()] == QDir::separator().toLatin1()) {
-        coverDir = QString::fromStdString(config.imageDir) + "covers" + QDir::separator();
+    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
+        coverDir = opts->imageDir + "covers" + QDir::separator();
     } else {
-        coverDir = QString::fromStdString(config.imageDir) + QDir::separator() + "covers" + QDir::separator();
+        coverDir = opts->imageDir + QDir::separator() + "covers" + QDir::separator();
     }
 }
 

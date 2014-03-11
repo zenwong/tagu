@@ -2,7 +2,7 @@
 #define VIDSMODEL_HPP
 #include <QSqlTableModel>
 #include <QSqlRecord>
-#include "Config.hpp"
+#include "models/Options.hpp"
 #include "Utils.hpp"
 
 class VidsModel : public QSqlTableModel
@@ -26,7 +26,7 @@ public:
 
     void updateRating(const QModelIndex&,int);
 
-    Config config;
+    Options *opts;
 };
 
 #endif // VIDSMODEL_HPP

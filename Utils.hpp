@@ -10,30 +10,29 @@
 #include <fstream>
 #include <QDebug>
 #include <sstream>
-#include "Config.hpp"
 
-static Config loadConfig() {
-    string appdir = QCoreApplication::applicationDirPath().toStdString();
-    string path = appdir + "/config.json";
-    ifstream i_archive_stream( path );
-    cereal::JSONInputArchive i_archive( i_archive_stream );
-    Config config;
-    i_archive( config );
+//static Config loadConfig() {
+//    string appdir = QCoreApplication::applicationDirPath().toStdString();
+//    string path = appdir + "/config.json";
+//    ifstream i_archive_stream( path );
+//    cereal::JSONInputArchive i_archive( i_archive_stream );
+//    Config config;
+//    i_archive( config );
 
-    return config;
-}
+//    return config;
+//}
 
-static void saveConfig(Config config) {
-    string appdir = QCoreApplication::applicationDirPath().toStdString();
-    string path = appdir + "/config.json";
+//static void saveConfig(Config config) {
+//    string appdir = QCoreApplication::applicationDirPath().toStdString();
+//    string path = appdir + "/config.json";
 
-    ofstream o_archive_stream(path);
-    {
-      cereal::JSONOutputArchive o_archive( o_archive_stream );
-      o_archive( config );
-    }
+//    ofstream o_archive_stream(path);
+//    {
+//      cereal::JSONOutputArchive o_archive( o_archive_stream );
+//      o_archive( config );
+//    }
 
-}
+//}
 
 //struct Options {
 //    int thumbWidth, rowCount, colCount, padding, margin;

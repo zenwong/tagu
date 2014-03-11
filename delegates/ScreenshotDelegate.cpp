@@ -4,12 +4,11 @@
 
 ScreenshotDelegate::ScreenshotDelegate(QWidget *parent) : QStyledItemDelegate(parent), fm(QApplication::font()), font("Times", 15, QFont::Bold)
 {
-    this->config = loadConfig();
-
-    if(config.imageDir[config.imageDir.size()] == QDir::separator().toLatin1()) {
-        screenDir = QString::fromStdString(config.imageDir) + "screens" + QDir::separator();
+    opts = new Options;
+    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
+        screenDir = opts->imageDir + "screens" + QDir::separator();
     } else {
-        screenDir = QString::fromStdString(config.imageDir) + QDir::separator() + "screens" + QDir::separator();
+        screenDir = opts->imageDir + QDir::separator() + "screens" + QDir::separator();
     }
 
     margin  = 10;
@@ -17,8 +16,8 @@ ScreenshotDelegate::ScreenshotDelegate(QWidget *parent) : QStyledItemDelegate(pa
 
     int thumbHeight = 225;
 
-    totalWidth = config.colCount * 400 + padding * config.colCount + margin * 2;
-    totalHeight = config.rowCount * thumbHeight + padding * config.rowCount + margin * 2;
+    totalWidth = opts->colCount * 400 + padding * opts->colCount + margin * 2;
+    totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
 }
 
 void ScreenshotDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {

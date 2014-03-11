@@ -6,7 +6,6 @@
 #include <QSqlQuery>
 #include <QCryptographicHash>
 #include "Settings.hpp"
-#include "Config.hpp"
 #include "Utils.hpp"
 #include "models/Options.hpp"
 
