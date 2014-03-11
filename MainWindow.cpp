@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
+    qDebug() << QCoreApplication::applicationDirPath();
+
     restoreGeometry(settings.value(Key::WinPos).toByteArray());
     restoreState(settings.value(Key::WinState).toByteArray());
 
@@ -168,6 +170,9 @@ void MainWindow::initDB() {
 
     ui->comboAct->setModelColumn(1);
     ui->comboAct->setCompleter(actComplete);
+
+    //qDebug() << vidTable->getRating(ui->listView->));
+    //ui->comboRating->setCurrentIndex(vidTable->getRating(ui->listView->currentIndex()));
 }
 
 MainWindow::~MainWindow(){
@@ -423,9 +428,14 @@ void MainWindow::onResetDatabase() {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Reset Database", "Are you sure you want to reset the database?", QMessageBox::Yes| QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-        QString sql = "delete from category; delete from tags; delete from acts; delete from vids;"
-                "delete from vidacts; delete from vidtags; delete from acttags; delete from search;"
+//        QString sql = "delete from category; delete from tags; delete from acts; delete from vids;"
+//                "delete from vidacts; delete from vidtags; delete from acttags; delete from search;"
+//                "delete from sqlite_sequence;";
+
+        QString sql = "delete from category; delete from vids;"
+                "delete from search;"
                 "delete from sqlite_sequence;";
+
         QStringList scriptQueries = sql.split(';');
         QSqlQuery query(db);
 
@@ -483,7 +493,7 @@ void MainWindow::initViews() {
 
     if(defaultView == "Thumbnail") {
         delegate = new ThumbnailDelegate(this);
-        ui->listView->setViewMode(QListView::IconMode);
+        //ui->listView->setViewMode(QListView::IconMode);
         ui->listView->setFlow(QListView::LeftToRight);
     }
 
@@ -494,7 +504,7 @@ void MainWindow::initViews() {
 
     if(defaultView == "Screenshot") {
         delegate = new ScreenshotDelegate(this);
-        ui->listView->setFlow(QListView::LeftToRight);
+        ui->listView->setFlow(QListView::TopToBottom);
     }
 
     ui->listView->setItemDelegate(delegate);

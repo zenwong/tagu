@@ -57,9 +57,16 @@ VidsModel::VidsModel(QObject *parent) : QSqlTableModel(parent)
 //    return result;
 //}
 
+int VidsModel::getRating(const QModelIndex& index) {
+    auto rec = record(index.row());
+    qDebug() << rec;
+    return rec.value("rating").toInt();
+}
+
 void VidsModel::updateRating(const QModelIndex &index, int rating) {
     auto rec = record(index.row());
     qDebug() << rec;
+    qDebug() << "rating: " << rating;
     rec.setValue("rating", rating);
     setRecord(index.row(), rec);
     emit dataChanged(index,index);

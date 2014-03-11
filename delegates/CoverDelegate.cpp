@@ -1,14 +1,13 @@
 #include "CoverDelegate.hpp"
 
-CoverDelegate::CoverDelegate(QWidget *parent) : QStyledItemDelegate(parent)
+CoverDelegate::CoverDelegate(QWidget *parent) : QStyledItemDelegate(parent), opts(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat)
 {
-//    opts = new Options;
-
-//    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
-//        coverDir = opts->imageDir + "covers" + QDir::separator();
-//    } else {
-//        coverDir = opts->imageDir + QDir::separator() + "covers" + QDir::separator();
-//    }
+    QString imgDir = opts.value(Key::ImageDir).toString();
+    if(imgDir[imgDir.size()] == QDir::separator().toLatin1()) {
+        coverDir = imgDir + "covers" + QDir::separator();
+    } else {
+        coverDir = imgDir + QDir::separator() + "covers" + QDir::separator();
+    }
 }
 
 void CoverDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -18,7 +17,7 @@ void CoverDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::TextAntialiasing, true);
 
-    QPixmap pixmap("/mnt/seagate/pics/covers/" + index.data().toString() + ".jpg");
+    QPixmap pixmap(coverDir + index.data().toString() + ".jpg");
 
     painter->drawPixmap(option.rect, pixmap);
 

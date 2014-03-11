@@ -10,8 +10,6 @@ ThumbnailDelegate::ThumbnailDelegate(QWidget *parent) : QStyledItemDelegate(pare
         thumbDir = imgDir + QDir::separator() + "thumbs" + QDir::separator();
     }
 
-    qDebug() << thumbDir;
-
     margin  = 10;
     padding = 0;
     thumbWidth = 400;
@@ -31,9 +29,12 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
-    QPixmap pixmap(thumbDir + index.data().toString() + ".jpg");
-    QRect rect(0, 0, thumbWidth, thumbHeight);
-    painter->drawPixmap(rect, pixmap);
+    QString path = thumbDir + index.data().toString() + ".jpg";
+    qDebug() << path;
+
+    QPixmap pixmap(path);
+    QRect rect(0, 0, 400, 225);
+    painter->drawPixmap(option.rect, pixmap);
 
 //    painter->setFont(font);
 //    if (option.state & QStyle::State_Selected)
@@ -46,8 +47,7 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 //    painter->drawText(bounding, Qt::AlignBottom | Qt::AlignCenter, index.data().toString());
 
-
-    painter->restore();
+   painter->restore();
 }
 
 QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const {
@@ -56,7 +56,7 @@ QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const Q
     //return QSize(thumbWidth + margin * 2, thumbHeight + fm.height() * 2);
     Q_UNUSED(option);
     Q_UNUSED(index);
-    return QSize(thumbWidth, thumbHeight);
+    return QSize(400,225);
 }
 
 

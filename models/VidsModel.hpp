@@ -24,6 +24,7 @@ public:
     };
 
     void updateRating(const QModelIndex&,int);
+    int getRating(const QModelIndex &index);
 };
 
 #endif // VIDSMODEL_HPP

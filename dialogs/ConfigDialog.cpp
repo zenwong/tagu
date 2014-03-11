@@ -48,6 +48,8 @@ void ConfigDialog::on_spinThumbWidth_valueChanged(int thumbWidth)
 }
 
 void ConfigDialog::on_listView_doubleClicked(const QModelIndex &index){
+    dirs.remove(index.data().toString());
+    Utils::saveDirs(opts,dirs);
     javModel->removeRow(index.row());
 }
 
