@@ -5,7 +5,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QCryptographicHash>
-#include "Settings.hpp"
+#include <QCoreApplication>
 #include "Utils.hpp"
 
 extern "C" {

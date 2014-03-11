@@ -165,73 +165,73 @@ void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {
   db.commit();
 }
 
-int Worker::doImport(QSqlDatabase db, Settings config){
-    // TODO mkdir /tmp/thumbs then generate thumbs in tmp directory
-    // when finished move thumbs to real image directory and delete tmp dir
-    // TODO allow importing of all kinds of files
-    QCryptographicHash crypto(QCryptographicHash::Sha1);
-    QStringList filters;
-    filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"  << "*.asf" << "*.rmvb" << "*.ogm";
+//int Worker::doImport(QSqlDatabase db, Settings config){
+//    // TODO mkdir /tmp/thumbs then generate thumbs in tmp directory
+//    // when finished move thumbs to real image directory and delete tmp dir
+//    // TODO allow importing of all kinds of files
+//    QCryptographicHash crypto(QCryptographicHash::Sha1);
+//    QStringList filters;
+//    filters << "*.avi" << "*.wmv" << "*.mp4" << "*.mkv" << "*.flv" << "*.mpg" << "*.mpeg" << "*.mov"  << "*.asf" << "*.rmvb" << "*.ogm";
 
-    QSqlQuery query(db);
-    query.prepare("insert into vids(title,path,hash) values(?,?,?)");
+//    QSqlQuery query(db);
+//    query.prepare("insert into vids(title,path,hash) values(?,?,?)");
 
-    QSqlQuery insert(db);
-    insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
+//    QSqlQuery insert(db);
+//    insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
 
-    QStringList dirs;
-    foreach(const QString& dir, config.javDirs) dirs << dir;
-    foreach(const QString& dir, config.pornDirs) dirs << dir;
-    foreach(const QString& dir, config.hentaiDirs) dirs << dir;
+//    QStringList dirs;
+//    foreach(const QString& dir, config.javDirs) dirs << dir;
+//    foreach(const QString& dir, config.pornDirs) dirs << dir;
+//    foreach(const QString& dir, config.hentaiDirs) dirs << dir;
 
-    QString thumbDir;
-    if(config.imageDir.endsWith('/')) {
-        thumbDir = config.imageDir + "thumbs" + QDir::separator();
-    } else {
-        thumbDir = config.imageDir + QDir::separator() + "thumbs" + QDir::separator();
-    }
+//    QString thumbDir;
+//    if(config.imageDir.endsWith('/')) {
+//        thumbDir = config.imageDir + "thumbs" + QDir::separator();
+//    } else {
+//        thumbDir = config.imageDir + QDir::separator() + "thumbs" + QDir::separator();
+//    }
 
-    int importedVidsCount = 0;
-    foreach(const QString& d, dirs) {
-        QDir dir(d);
-        QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
+//    int importedVidsCount = 0;
+//    foreach(const QString& d, dirs) {
+//        QDir dir(d);
+//        QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
-        db.transaction();
-        while (iterator.hasNext()) {
-            iterator.next();
-            if (!iterator.fileInfo().isDir()) {
-                QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
-                QFile f(savePath);
-                if(!f.exists()) {
-//                    VideoThumbnailer thumb(config.thumbWidth, false, true, 6, true);
-//                    thumb.setSeekPercentage(config.thumbPercent);
-//                    thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
-//                    importedVidsCount++;
-                }
+//        db.transaction();
+//        while (iterator.hasNext()) {
+//            iterator.next();
+//            if (!iterator.fileInfo().isDir()) {
+//                QString savePath = thumbDir + iterator.fileInfo().baseName() + ".jpg";
+//                QFile f(savePath);
+//                if(!f.exists()) {
+////                    VideoThumbnailer thumb(config.thumbWidth, false, true, 6, true);
+////                    thumb.setSeekPercentage(config.thumbPercent);
+////                    thumb.generateThumbnail(iterator.filePath().toStdString(), Jpeg, savePath.toStdString());
+////                    importedVidsCount++;
+//                }
 
-                QFile file(iterator.filePath());
-                file.open(QFile::ReadOnly);
-                crypto.addData(file.read(9999));
-                QByteArray hash = crypto.result();
+//                QFile file(iterator.filePath());
+//                file.open(QFile::ReadOnly);
+//                crypto.addData(file.read(9999));
+//                QByteArray hash = crypto.result();
 
-                //qDebug() << hash.toHex();
+//                //qDebug() << hash.toHex();
 
-                query.bindValue(0, iterator.fileInfo().baseName());
-                query.bindValue(1, iterator.filePath());
-                query.bindValue(2, hash.toHex());
-                query.exec();
-            }
-        }
-        db.commit();
-    }
+//                query.bindValue(0, iterator.fileInfo().baseName());
+//                query.bindValue(1, iterator.filePath());
+//                query.bindValue(2, hash.toHex());
+//                query.exec();
+//            }
+//        }
+//        db.commit();
+//    }
 
-    db.transaction();
-    query.exec("delete from search");
-    query.exec("insert into search(docid,title,tags,acts) select vid,title,tags,acts from LibraryView");
-    db.commit();
+//    db.transaction();
+//    query.exec("delete from search");
+//    query.exec("insert into search(docid,title,tags,acts) select vid,title,tags,acts from LibraryView");
+//    db.commit();
 
-    return importedVidsCount;
-}
+//    return importedVidsCount;
+//}
 
 QSqlQueryModel* Worker::doSearch(QSqlDatabase db, const QString& txt){
     QStringList terms = txt.split(" ");
