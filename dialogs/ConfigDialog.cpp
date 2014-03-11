@@ -50,6 +50,7 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::on_spinThumbWidth_valueChanged(int thumbWidth)
 {
     config.thumbWidth = thumbWidth;
+    opts.thumbWidth = thumbWidth;
 }
 
 void ConfigDialog::on_listView_doubleClicked(const QModelIndex &index){
@@ -60,6 +61,7 @@ void ConfigDialog::on_pushButton_clicked(){
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     config.javDirs.insert(dir.toStdString());
+    opts.importDirs.insert(dir);
 
     dirs.clear();
     for(const auto& d: config.javDirs)
@@ -72,31 +74,37 @@ void ConfigDialog::on_pushButton_clicked(){
 void ConfigDialog::on_spinRowCount_valueChanged(int rowCount)
 {
     config.rowCount = rowCount;
+    opts.rowCount = rowCount;
 }
 
 void ConfigDialog::on_spinRowCount_valueChanged(const QString &rowCount)
 {
     config.rowCount = rowCount.toInt();
+    opts.rowCount = rowCount.toInt();
 }
 
 void ConfigDialog::on_spinColCount_valueChanged(int colCount)
 {
     config.colCount = colCount;
+    opts.colCount = colCount;
 }
 
 void ConfigDialog::on_spinColCount_valueChanged(const QString &colCount)
 {
     config.colCount = colCount.toInt();
+    opts.colCount = colCount.toInt();
 }
 
 void ConfigDialog::on_editEmail_textChanged(const QString &email)
 {
     config.email = email.toStdString();
+    opts.email = email;
 }
 
 void ConfigDialog::on_editPassword_textChanged(const QString &password)
 {
     config.password = password.toStdString();
+    opts.password = password;
 }
 
 void ConfigDialog::on_toolButton_clicked()
@@ -104,4 +112,5 @@ void ConfigDialog::on_toolButton_clicked()
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), lastDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     ui->editImageDir->setText(dir);
     config.imageDir = dir.toStdString();
+    opts.imageDir = dir;
 }

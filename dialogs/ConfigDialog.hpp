@@ -5,6 +5,7 @@
 #include <QStringListModel>
 #include <QFileDialog>
 #include <QDebug>
+#include "../Utils.hpp"
 #include "../Config.hpp"
 
 namespace Ui {
@@ -48,6 +49,7 @@ private:
     QStringListModel *javModel;
     QString lastDir;
     std::set<string>::iterator iter;
+    Options opts;
 };
 
 #endif // CONFIGDIALOG_HPP

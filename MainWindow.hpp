@@ -85,7 +85,7 @@ private:
 
     QCompleter *tagComplete, *actComplete, *searchComplete;
     ThumbnailDelegate *thumbDel;
-    QSettings settings;
+    //QSettings settings;
     int currentVid;
     QNetworkAccessManager *nam;
     QNetworkRequest post, get;
@@ -103,6 +103,8 @@ private:
 
     QLabel *statusImport;
     QDataWidgetMapper *mapper;
+
+    Options opts;
 };
 
 #endif // MAINWINDOW_HPP

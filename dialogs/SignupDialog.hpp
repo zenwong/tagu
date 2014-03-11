@@ -1,6 +1,7 @@
 #ifndef SIGNUPDIALOG_HPP
 #define SIGNUPDIALOG_HPP
 
+#include <QDebug>
 #include <QDialog>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>

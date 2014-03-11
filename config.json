@@ -1,6 +1,6 @@
 {
     "value0": {
-        "thumbWidth": 300,
+        "thumbWidth": 400,
         "rowCount": 4,
         "colCount": 4,
         "email": "test@email.com",
@@ -9,6 +9,7 @@
         "lastView": "Thumbnail",
         "imageDir": "/tmp/ffmpeg",
         "javDirs": [
+            "/mnt/seagate/NTR",
             "/mnt/seagate/japanese/Incest"
         ],
         "pornDirs": [],
