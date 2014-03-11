@@ -20,7 +20,11 @@ public:
 private:
     Options *opts;
     QString thumbDir;
-    int margin, padding, totalWidth, totalHeight, frames, thumbHeight;
+    int margin, padding, totalWidth, totalHeight, frames;
+    int thumbWidth, thumbHeight;
+
+    QFontMetrics fm;
+    QFont font;
 };
 
 #endif // IMAGEDELEGATE_HPP

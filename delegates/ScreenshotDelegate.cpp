@@ -50,6 +50,15 @@ void ScreenshotDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->restore();
 }
 
+void ScreenshotDelegate::updateOptions() {
+    Options opt;
+    if(opt.imageDir[opt.imageDir.size()] == QDir::separator().toLatin1()) {
+        screenDir = opt.imageDir + "screens" + QDir::separator();
+    } else {
+        screenDir = opt.imageDir + QDir::separator() + "screens" + QDir::separator();
+    }
+}
+
 QSize ScreenshotDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const {
     return QSize(totalWidth, totalHeight + 2 * fm.height());
 }

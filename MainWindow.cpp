@@ -5,15 +5,13 @@
 #include "Utils.hpp"
 #include "dialogs/ConfigDialog.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), thumbnailer(db) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), thumbnailer(db), settings(QCoreApplication::applicationDirPath() + "/settings.ini", QSettings::IniFormat)
+{
     ui->setupUi(this);
 
-    qDebug() << QCoreApplication::applicationDirPath();
-
-    opts = new Options;
-
-    restoreGeometry(opts->winPosition);
-    restoreState(opts->winState);
+    Options options;
+    restoreGeometry(options.winPosition);
+    restoreState(options.winState);
 
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
@@ -21,36 +19,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     statusImport = new QLabel;
     ui->statusBar->addPermanentWidget(statusImport);
 
-    QString defaultView = opts->lastView;
-    QStyledItemDelegate *delegate;
-    if(defaultView.isNull()) {
-        delegate = new QStyledItemDelegate;
-    } else {
-        if(defaultView == "Compact") {
-            delegate = new QStyledItemDelegate;
-            ui->listView->setViewMode(QListView::ListMode);
-            ui->listView->setFlow(QListView::TopToBottom);
-        }
-
-        if(defaultView == "Thumbnail") {
-            delegate = new ThumbnailDelegate(this);
-            ui->listView->setViewMode(QListView::IconMode);
-            ui->listView->setFlow(QListView::LeftToRight);
-        }
-
-        if(defaultView == "Cover") {
-            delegate = new CoverDelegate(this);
-            ui->listView->setFlow(QListView::LeftToRight);
-        }
-
-        if(defaultView == "Screenshot") {
-            delegate = new ScreenshotDelegate(this);
-            ui->listView->setFlow(QListView::LeftToRight);
-        }
-    }
-
-    //thumbDel = new ThumbnailDelegate(this);
-    ui->listView->setItemDelegate(delegate);
+    initViews();
 
     connect(&vidsWatcher, SIGNAL(finished()), this, SLOT(refreshVids()));
     connect(&dataWatcher, SIGNAL(finished()), this, SLOT(refreshData()));
@@ -258,8 +227,8 @@ void MainWindow::onThumbnailView() {
   ui->listView->setItemDelegate(new ThumbnailDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
-  //settings.setValue("DefaultView", "Thumbnail");
-  opts->lastView = "Thumbnail";
+  Options opts;
+  opts.lastView = "Thumbnail";
 }
 
 void MainWindow::onScreenshotView() {
@@ -271,24 +240,24 @@ void MainWindow::onScreenshotView() {
 //    palette.setColor(QPalette::Highlight,Qt::white);
 //    ui->listView->setPalette(palette);
 
-    //settings.setValue("DefaultView", "Screenshot");
-    opts->lastView = "Screenshot";
+    Options opts;
+    opts.lastView = "Screenshot";
 }
 
 void MainWindow::onCompactView() {
   ui->listView->setItemDelegate(new QStyledItemDelegate);
   ui->listView->setFlow(QListView::TopToBottom);
   ui->listView->reset();
-  //settings.setValue("DefaultView", "Compact");
-  opts->lastView = "Compact";
+  Options opts;
+  opts.lastView = "Compact";
 }
 
 void MainWindow::onCoverView() {
   ui->listView->setItemDelegate(new CoverDelegate);
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
-  //settings.setValue("DefaultView", "Cover");
-  opts->lastView = "Cover";
+  Options opts;
+  opts.lastView = "Cover";
 }
 
 void MainWindow::onLogin() {
@@ -451,7 +420,7 @@ void MainWindow::onOptions() {
     ConfigDialog dialog;
     dialog.exec();
 
-    qDebug() << "mainwindow imageDir: " << opts->imageDir;
+    connect(&dialog, SIGNAL(onClose()), this, SLOT(initViews()));
 }
 
 void MainWindow::onResetDatabase() {
@@ -478,8 +447,9 @@ void MainWindow::onResetDatabase() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
-    opts->winState = saveState();
-    opts->winPosition = saveGeometry();
+    Options opts;
+    opts.winState = saveState();
+    opts.winPosition = saveGeometry();
 }
 
 void MainWindow::on_editTitle_editingFinished()
@@ -497,4 +467,38 @@ void MainWindow::on_editDesc_editingFinished()
 void MainWindow::on_comboRating_activated(int rating)
 {
     vidTable->updateRating(ui->listView->currentIndex(), rating);
+}
+
+void MainWindow::initViews() {
+    Options opts;
+    QString defaultView = opts.lastView;
+
+    qDebug() << "set delegate imageDir: " << opts.imageDir;
+    qDebug() << "set delegate settings imageDir: " << settings.value("Images/imageDir").toString();
+
+    QStyledItemDelegate *delegate;
+
+    if(defaultView == "Compact") {
+        delegate = new QStyledItemDelegate;
+        ui->listView->setViewMode(QListView::ListMode);
+        ui->listView->setFlow(QListView::TopToBottom);
+    }
+
+    if(defaultView == "Thumbnail") {
+        delegate = new ThumbnailDelegate(this);
+        ui->listView->setViewMode(QListView::IconMode);
+        ui->listView->setFlow(QListView::LeftToRight);
+    }
+
+    if(defaultView == "Cover") {
+        delegate = new CoverDelegate(this);
+        ui->listView->setFlow(QListView::LeftToRight);
+    }
+
+    if(defaultView == "Screenshot") {
+        delegate = new ScreenshotDelegate(this);
+        ui->listView->setFlow(QListView::LeftToRight);
+    }
+
+    ui->listView->setItemDelegate(delegate);
 }

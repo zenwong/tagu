@@ -75,8 +75,11 @@ private slots:
 
     void on_comboRating_activated(int index);
 
+    void initViews();
+
 private:
     void initDB();
+    //void setDelegate();
 
     Ui::MainWindow *ui;
     QSqlDatabase db;
@@ -86,7 +89,6 @@ private:
 
     QCompleter *tagComplete, *actComplete, *searchComplete;
     ThumbnailDelegate *thumbDel;
-    //QSettings settings;
     int currentVid;
     QNetworkAccessManager *nam;
     QNetworkRequest post, get;
@@ -105,7 +107,7 @@ private:
     QLabel *statusImport;
     QDataWidgetMapper *mapper;
 
-    Options *opts;
+    QSettings settings;
 };
 
 #endif // MAINWINDOW_HPP

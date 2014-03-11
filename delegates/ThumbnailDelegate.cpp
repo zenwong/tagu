@@ -1,20 +1,22 @@
 #include "ThumbnailDelegate.hpp"
 #include <QDebug>
 
-ThumbnailDelegate::ThumbnailDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
+ThumbnailDelegate::ThumbnailDelegate(QWidget *parent) : QStyledItemDelegate(parent), fm(QApplication::font()), font("Times", 15, QFont::Bold){
     opts = new Options;
+
     if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
         thumbDir = opts->imageDir + "thumbs" + QDir::separator();
     } else {
         thumbDir = opts->imageDir + QDir::separator() + "thumbs" + QDir::separator();
     }
 
-    margin  = 0;
+    margin  = 10;
     padding = 0;
-    opts->thumbWidth = 400;
+    thumbWidth = 400;
+    thumbHeight = 225;
+
     frames = opts->rowCount * opts->colCount;
     //thumbHeight = opts.thumbWidth / 1.7777778;
-    thumbHeight = 225;
 
     totalWidth = opts->colCount * opts->thumbWidth + padding * opts->colCount + margin * 2;
     totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
@@ -27,86 +29,33 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     painter->save();
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    //painter->setRenderHint(QPainter::TextAntialiasing, true);
-    //painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
+    painter->setRenderHint(QPainter::TextAntialiasing, true);
+    painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
-    //qDebug() << index.data().toString();
-    //QPixmap pixmap(thumbDir + index.data().toString());
+    QPixmap pixmap(thumbDir + index.data().toString() + ".jpg");
+    QRect rect(0, 0, thumbWidth, thumbHeight);
+    painter->drawPixmap(rect, pixmap);
 
-    QRect rect(margin, margin, opts->thumbWidth, thumbHeight);
+//    painter->setFont(font);
+//    if (option.state & QStyle::State_Selected)
+//        painter->setPen(QColor(Qt::white));
+//    else
+//        painter->setPen(QColor(Qt::black));
 
-    //    for(int i = 0; i < frames; i++) {
-    //        if(i != 0 &&  i % 4 == 0) {
-    //            rect.adjust(0, thumbHeight + padding, 0, 0);
-    //            rect.moveLeft(margin);
-    //            qDebug() << i << ") " << rect;
-    //        }
+//    QRect bounding = option.rect;
+//    bounding.adjust(-margin * 2,-margin - fm.height(), 0, 0);
 
-    //        QPixmap pixmap(thumbDir + index.data().toString() + "-" + QString::number(i) + ".jpg");
-    //        painter->drawPixmap()
-    //    }
-
-
-    for(int i = 0; i < frames; i++) {
-
-        if(i != 0 &&  i % 4 == 0) {
-            //qDebug() << "moduls = " << i % 4;
-            rect.adjust(0, thumbHeight + padding, 0, 0);
-            rect.moveLeft(margin);
-            //qDebug() << i << ") " << rect;
-        }
-
-        QPixmap pixmap(thumbDir + index.data().toString() + "-" + QString::number(i) + ".jpg");
-        painter->drawPixmap(rect, pixmap);
-        //rect.moveLeft(opts.thumbWidth + padding);
-
-        rect.adjust(opts->thumbWidth + padding, 0, 0, 0);
-
-        //qDebug() << i << ") " <<  rect;
-    }
-
-    //    int i = 0;
-    //    for(int y = 0; y < totalHeight; y += thumbHeight + padding) {
-
-    //        qDebug() << "row: " << rect;
-    //        rect.moveBottom(y);
-
-    //        QFont font("Times", 15, QFont::Bold);
-    //        painter->setFont(font);
-    //        painter->setBrush(Qt::white);
-    //        painter->drawText(rect, Qt::BottomSection, QString::number(i));
-
-    //        for(int x = 0; x < totalWidth; x += opts.thumbWidth + padding) {
-
-    //            qDebug() << "col : " << rect;
-    //            rect.moveLeft(opts.thumbWidth + padding);
-
-    //            if(x > totalWidth) {
-    //                rect.moveLeft(margin);
-    //            }
-
-    //            QFont font("Times", 15, QFont::Bold);
-    //            painter->setFont(font);
-    //            painter->drawText(rect, Qt::BottomSection, QString::number(i));
-
-    //            i++;
-    //        }
-    //    }
-
-
-    //QRect rect(0,0,400,222);
-    //painter->drawPixmap(option.rect, pixmap);
-
-    //        QFont font("Times", 15, QFont::Bold);
-    //        painter->setFont(font);
-    //        painter->drawText(option.rect, Qt::BottomSection, index.data().toString());
+//    painter->drawText(bounding, Qt::AlignBottom | Qt::AlignCenter, index.data().toString());
 
 
     painter->restore();
 }
 
 QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const {
-    return QSize(totalWidth + 5, totalHeight + 5);
+    //return QSize(totalWidth + 5, totalHeight + 5);
+    //return QSize(thumbWidth + margin * 2, thumbHeight + margin * 2 + fm.height() * 2);
+    //return QSize(thumbWidth + margin * 2, thumbHeight + fm.height() * 2);
+    return QSize(thumbWidth, thumbHeight);
 }
 
 

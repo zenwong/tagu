@@ -16,6 +16,8 @@ struct Options {
     QByteArray winState, winPosition;
     QSet<QString> importDirs;
     QSettings settings;
+
+    //void save();
 };
 
 #endif // OPTIONS_HPP

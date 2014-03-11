@@ -20,6 +20,11 @@ public:
     explicit ConfigDialog(QWidget *parent = 0);
     ~ConfigDialog();
 
+    void setOptions(Options *opts);
+
+signals:
+    void onClose();
+
 private slots:
 
     void on_spinThumbWidth_valueChanged(int arg1);

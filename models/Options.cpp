@@ -28,6 +28,39 @@ Options::Options() : settings(QCoreApplication::applicationDirPath() + "/setting
     //qDebug() << "Options ctor imageDir: " << imageDir;
 }
 
+//void Options::save() {
+//    settings.setValue("Images/thumbWidth", thumbWidth);
+//    settings.setValue("Images/rowCount", rowCount);
+//    settings.setValue("Images/colCount", colCount);
+//    settings.setValue("Images/padding", padding);
+//    settings.setValue("Images/margin", margin);
+//    settings.setValue("Images/imageDir", imageDir);
+
+//    qDebug() << "Options save lastView: " << lastView;
+
+//    settings.setValue("User/email", email);
+//    settings.setValue("User/password", password);
+//    settings.setValue("User/session", session);
+
+//    settings.setValue("State/lastView", lastView);
+//    settings.setValue("State/winState", winState);
+//    settings.setValue("State/winPosition", winPosition);
+
+//    settings.beginGroup("Import");
+//    settings.beginWriteArray("dirs");
+
+//    int i = 0;
+//    foreach(const QString& dir, importDirs) {
+//        settings.setArrayIndex(i);
+//        settings.setValue("dir", dir);
+//        i++;
+//    }
+//    settings.endArray();
+//    settings.endGroup();
+
+//    //settings.sync();
+//}
+
 Options::~Options() {
     settings.setValue("Images/thumbWidth", thumbWidth);
     settings.setValue("Images/rowCount", rowCount);
@@ -36,7 +69,7 @@ Options::~Options() {
     settings.setValue("Images/margin", margin);
     settings.setValue("Images/imageDir", imageDir);
 
-    //qDebug() << "Options dtor imageDir: " << imageDir;
+    qDebug() << "Options dtor lastView: " << lastView;
 
     settings.setValue("User/email", email);
     settings.setValue("User/password", password);
