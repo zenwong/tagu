@@ -8,6 +8,7 @@
 #include "Settings.hpp"
 #include "Config.hpp"
 #include "Utils.hpp"
+#include "models/Options.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -60,8 +61,9 @@ public:
    QStringList filters;
    QSqlDatabase db;
 
-   QString thumbDir;
-   Config config;
+   QString thumbDir, screenDir;
+   //Config config;
+   Options *opts;
 };
 
 #endif // FFMPEG_HPP

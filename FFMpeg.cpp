@@ -8,6 +8,8 @@
 
 FFMpeg::FFMpeg(QSqlDatabase db){
     this->db = db;
+    opts = new Options();
+
     av_register_all();
     avcodec_register_all();
     av_log_set_level(AV_LOG_QUIET);
@@ -15,11 +17,10 @@ FFMpeg::FFMpeg(QSqlDatabase db){
 }
 
 int FFMpeg::doImport(){
-    config = loadConfig();
     width = 400;
     height = 225;
-    rowCount = config.rowCount;
-    colCount = config.colCount;
+    rowCount = opts->rowCount;
+    colCount = opts->colCount;
 
     QCryptographicHash crypto(QCryptographicHash::Sha1);
     QSqlQuery query(db);
@@ -27,15 +28,20 @@ int FFMpeg::doImport(){
     QSqlQuery insert(db);
     insert.prepare("insert into sync(tid,synced,json) values(?,?,?)");
 
-    if(config.imageDir[config.imageDir.size()] == QDir::separator().toLatin1()) {
-        thumbDir = QString::fromStdString(config.imageDir) + "thumbs" + QDir::separator();
+    if(opts->imageDir[opts->imageDir.size()] == QDir::separator().toLatin1()) {
+        thumbDir = opts->imageDir + "thumbs" + QDir::separator();
+        screenDir = opts->imageDir + "screens" + QDir::separator();
     } else {
-        thumbDir = QString::fromStdString(config.imageDir) + QDir::separator() + "thumbs" + QDir::separator();
+        thumbDir = opts->imageDir + QDir::separator() + "thumbs" + QDir::separator();
+        screenDir = opts->imageDir + QDir::separator() + "screens" + QDir::separator();
     }
 
+//    qDebug() << thumbDir;
+//    qDebug() << screenDir;
+
     int importedVidsCount = 0;
-    for(const auto& d: config.javDirs) {
-        QDir dir(QString::fromStdString(d));
+    for(const auto& d: opts->importDirs) {
+        QDir dir(d);
         QDirIterator iterator(dir.absolutePath(), filters,  QDir::AllDirs|QDir::Files, QDirIterator::Subdirectories);
 
         db.transaction();
@@ -72,7 +78,6 @@ int FFMpeg::doImport(){
 
 void FFMpeg::parse(QString path, QString name) {
     this->path = path; this->name = name;
-    //qDebug() << "inside parse() " << QThread::currentThreadId();
 
     fctx = avformat_alloc_context();
 
@@ -95,7 +100,7 @@ void FFMpeg::parse(QString path, QString name) {
     duration = fctx->duration / AV_TIME_BASE;
     step = duration / (rowCount * colCount + 2);
 
-    qDebug() << "duration: " << duration << ", step: " << step;
+    //qDebug() << "duration: " << duration << ", step: " << step;
 
     numBytes = avpicture_get_size(pixfmt, width, height);
     buffer = (uint8_t *)av_malloc(numBytes*sizeof(uint8_t));
@@ -121,7 +126,7 @@ void FFMpeg::seek() {
 
     int x = 0, y = 0;
     int num = 0;
-    int frames = config.rowCount * config.colCount;
+    int frames = opts->rowCount * opts->colCount;
     int _step = step;
 
     for(int i = 0; i < frames; i++) {
@@ -131,6 +136,18 @@ void FFMpeg::seek() {
 
         auto image = getJpeg();
         painter.drawImage(x, y, image);
+
+        // TODO select best thumbnail from all the images generated from screenshot
+        if(i == 4) {
+            QSize s(400,225);
+            QImage thumb(s, QImage::Format_ARGB32_Premultiplied);
+            QPainter p2(&thumb);
+            QRect r(0,0,400,225);
+            p2.drawImage(r, image);
+
+            QImageWriter iw(thumbDir + name + ".jpg");
+            iw.write(thumb);
+        }
 
         num++;
 
@@ -143,10 +160,10 @@ void FFMpeg::seek() {
 
         _step += step;
 
-        qDebug() << num << ") x: " << x << ", y: " << y << ", step: " << _step;
+        //qDebug() << num << ") x: " << x << ", y: " << y << ", step: " << _step;
     }
 
-    QImageWriter writer("/tmp/ffmpeg/screens/" + name + ".jpg");
+    QImageWriter writer(screenDir + name + ".jpg");
     if(!writer.write(image)) {
         qDebug() << writer.errorString();
     }
@@ -212,7 +229,7 @@ void FFMpeg::saveJpeg(int seconds) {
                     src += frameRGB->linesize[0];
                 }
 
-                qDebug() << QThread::currentThreadId();
+                //qDebug() << QThread::currentThreadId();
 
 //                z++;
 

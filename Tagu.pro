@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     delegates/ActressDelegate.cpp \
     delegates/ScreenshotDelegate.cpp \
     delegates/CoverDelegate.cpp \
-    models/VidsModel.cpp
+    models/VidsModel.cpp \
+    models/Options.cpp
 
 HEADERS  += MainWindow.hpp \
     delegates/ThumbnailDelegate.hpp \
@@ -41,7 +42,8 @@ HEADERS  += MainWindow.hpp \
     delegates/ScreenshotDelegate.hpp \
     delegates/CoverDelegate.hpp \
     delegates/Delegates.hpp \
-    models/VidsModel.hpp
+    models/VidsModel.hpp \
+    models/Options.hpp
 
 FORMS    += MainWindow.ui \
     SettingsDialog.ui \

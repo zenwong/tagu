@@ -9,8 +9,10 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), thumbnailer(db) {
     ui->setupUi(this);
 
-    restoreGeometry(opts.winPosition);
-    restoreState(opts.winState);
+    opts = new Options;
+
+    restoreGeometry(opts->winPosition);
+    restoreState(opts->winState);
 
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     initDB();
@@ -18,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     statusImport = new QLabel;
     ui->statusBar->addPermanentWidget(statusImport);
 
-    QString defaultView = opts.lastView;
+    QString defaultView = opts->lastView;
     QStyledItemDelegate *delegate;
     if(defaultView.isNull()) {
         delegate = new QStyledItemDelegate;
@@ -256,7 +258,7 @@ void MainWindow::onThumbnailView() {
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
   //settings.setValue("DefaultView", "Thumbnail");
-  opts.lastView = "Thumbnail";
+  opts->lastView = "Thumbnail";
 }
 
 void MainWindow::onScreenshotView() {
@@ -269,7 +271,7 @@ void MainWindow::onScreenshotView() {
 //    ui->listView->setPalette(palette);
 
     //settings.setValue("DefaultView", "Screenshot");
-    opts.lastView = "Screenshot";
+    opts->lastView = "Screenshot";
 }
 
 void MainWindow::onCompactView() {
@@ -277,7 +279,7 @@ void MainWindow::onCompactView() {
   ui->listView->setFlow(QListView::TopToBottom);
   ui->listView->reset();
   //settings.setValue("DefaultView", "Compact");
-  opts.lastView = "Compact";
+  opts->lastView = "Compact";
 }
 
 void MainWindow::onCoverView() {
@@ -285,7 +287,7 @@ void MainWindow::onCoverView() {
   ui->listView->setFlow(QListView::LeftToRight);
   ui->listView->reset();
   //settings.setValue("DefaultView", "Cover");
-  opts.lastView = "Cover";
+  opts->lastView = "Cover";
 }
 
 void MainWindow::onLogin() {
@@ -445,10 +447,10 @@ void MainWindow::onSync() {
 }
 
 void MainWindow::onOptions() {
-    //SettingsDialog dialog;
-    //dialog.setConfig(config);
     ConfigDialog dialog;
     dialog.exec();
+
+    qDebug() << "mainwindow imageDir: " << opts->imageDir;
 }
 
 void MainWindow::onResetDatabase() {
@@ -475,8 +477,8 @@ void MainWindow::onResetDatabase() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
-    opts.winState = saveState();
-    opts.winPosition = saveGeometry();
+    opts->winState = saveState();
+    opts->winPosition = saveGeometry();
 }
 
 void MainWindow::on_editTitle_editingFinished()

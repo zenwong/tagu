@@ -24,6 +24,7 @@
 #include "Worker.hpp"
 #include "FFMpeg.hpp"
 #include "models/VidsModel.hpp"
+#include "models/Options.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -104,7 +105,7 @@ private:
     QLabel *statusImport;
     QDataWidgetMapper *mapper;
 
-    Options opts;
+    Options *opts;
 };
 
 #endif // MAINWINDOW_HPP
