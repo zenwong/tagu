@@ -5,6 +5,7 @@
 * autocomplete search should show tags pics
 * actress delegate view
 * detail delegate view
+* animated gid or png of thumbnails
 * editable delegates
 * organize tags dialog
 * organize acts dialog
@@ -19,3 +20,4 @@
 * Subtitle sharing for JAV
 * generate screenshot layout via user configurable templates
 * generate screenshot using masonry algorithm, and highlight(bigger thumbnail) important scenes by using OpenCV to detect video activity (http://designshack.net/articles/css/masonry)
+* explore using using zeromq to send commands to ffmpeg

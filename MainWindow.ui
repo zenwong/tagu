@@ -35,6 +35,9 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QListView" name="listView">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
           <property name="styleSheet">
            <string notr="true">QListView::item:hover {
 background:color: white;

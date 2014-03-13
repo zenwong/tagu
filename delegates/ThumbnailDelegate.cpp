@@ -15,14 +15,13 @@ ThumbnailDelegate::ThumbnailDelegate(QWidget *parent) : QStyledItemDelegate(pare
     thumbWidth = 400;
     thumbHeight = 225;
 
-//    totalWidth = opts->colCount * opts->thumbWidth + padding * opts->colCount + margin * 2;
-//    totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
+    //    totalWidth = opts->colCount * opts->thumbWidth + padding * opts->colCount + margin * 2;
+    //    totalHeight = opts->rowCount * thumbHeight + padding * opts->rowCount + margin * 2;
 
     //qDebug() << "total width: " << totalWidth << ", total height: " << totalHeight;
 }
 
 void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    QStyledItemDelegate::paint(painter,option,index);
     painter->save();
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter->setRenderHint(QPainter::Antialiasing, true);
@@ -30,24 +29,28 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     QString path = thumbDir + index.data().toString() + ".jpg";
-    qDebug() << path;
+    //qDebug() << path;
 
     QPixmap pixmap(path);
-    QRect rect(0, 0, 400, 225);
-    painter->drawPixmap(option.rect, pixmap);
+    QRect r = option.rect;
 
-//    painter->setFont(font);
-//    if (option.state & QStyle::State_Selected)
-//        painter->setPen(QColor(Qt::white));
-//    else
-//        painter->setPen(QColor(Qt::black));
+    r.adjust(10,10,-10,-10);
+    painter->drawRoundedRect(r, 3.0, 3.0);
 
-//    QRect bounding = option.rect;
-//    bounding.adjust(-margin * 2,-margin - fm.height(), 0, 0);
+    r.adjust(10,10,-10,-60);
+    painter->drawPixmap(r, pixmap);
 
-//    painter->drawText(bounding, Qt::AlignBottom | Qt::AlignCenter, index.data().toString());
+    r.adjust(0,10,0,60);
 
-   painter->restore();
+    painter->setFont(font);
+    if (option.state & QStyle::State_Selected)
+        painter->setPen(QColor(Qt::white));
+    else
+        painter->setPen(QColor(Qt::black));
+
+    painter->drawText(r, Qt::AlignBottom | Qt::AlignCenter, index.data().toString());
+
+    painter->restore();
 }
 
 QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const {
@@ -56,7 +59,7 @@ QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const Q
     //return QSize(thumbWidth + margin * 2, thumbHeight + fm.height() * 2);
     Q_UNUSED(option);
     Q_UNUSED(index);
-    return QSize(400,225);
+    return QSize(500,350);
 }
 
 
