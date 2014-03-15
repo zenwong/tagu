@@ -38,13 +38,14 @@ void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     painter->drawRoundedRect(r, 3.0, 3.0);
 
     r.adjust(10,10,-10,-60);
+    //qDebug() << r;
     painter->drawPixmap(r, pixmap);
 
-    r.adjust(0,10,0,60);
+    r.adjust(0,10,0,40);
 
     painter->setFont(font);
     if (option.state & QStyle::State_Selected)
-        painter->setPen(QColor(Qt::white));
+        painter->setPen(QColor(Qt::red));
     else
         painter->setPen(QColor(Qt::black));
 
@@ -59,7 +60,7 @@ QSize ThumbnailDelegate::sizeHint ( const QStyleOptionViewItem & option, const Q
     //return QSize(thumbWidth + margin * 2, thumbHeight + fm.height() * 2);
     Q_UNUSED(option);
     Q_UNUSED(index);
-    return QSize(500,350);
+    return QSize(500,340);
 }
 
 

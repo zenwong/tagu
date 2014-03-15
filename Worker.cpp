@@ -79,7 +79,7 @@ void Worker::insertTag(QSqlDatabase db, QString tag, QSqlTableModel *vidTable, Q
 }
 
 void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {
-  //qDebug() << json;
+  qDebug() << json;
   QSqlQuery query(db);
   db.transaction();
   query.exec("update vids set synced = 1");
@@ -162,6 +162,11 @@ void Worker::updateSyncedVids(QSqlDatabase db, QByteArray json) {
       insert2.exec();
   }
 
+  db.commit();
+
+  db.transaction();
+  query.exec("delete from search");
+  query.exec("insert into search(docid,title,tags,acts) select vid,title,tags,acts from LibraryView");
   db.commit();
 }
 

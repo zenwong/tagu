@@ -21,3 +21,4 @@
 * generate screenshot layout via user configurable templates
 * generate screenshot using masonry algorithm, and highlight(bigger thumbnail) important scenes by using OpenCV to detect video activity (http://designshack.net/articles/css/masonry)
 * explore using using zeromq to send commands to ffmpeg
+* add slider on statusbar to scale covers / thumbnails dynamically

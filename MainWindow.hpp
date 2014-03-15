@@ -20,6 +20,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QLabel>
 #include <QElapsedTimer>
+#include <QFutureWatcher>
 #include "delegates/Delegates.hpp"
 #include "Worker.hpp"
 #include "FFMpeg.hpp"
@@ -68,6 +69,7 @@ private slots:
     void refreshData();
     void refreshSearch();
     void refreshImport();
+    void refreshSync();
 
     void on_editTitle_editingFinished();
     void on_editDesc_editingFinished();
@@ -94,7 +96,7 @@ private:
 
     QThread *thread;
     Worker *worker;
-    QFutureWatcher<void> vidsWatcher, dataWatcher;
+    QFutureWatcher<void> vidsWatcher, dataWatcher, syncWatcher;
     QFutureWatcher<int> importWatcher;
     QFutureWatcher<QSqlQueryModel*> searchWatcher;
     QFuture<QSqlQueryModel*> searchFuture;

@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(&dataWatcher, SIGNAL(finished()), this, SLOT(refreshData()));
     connect(&searchWatcher, SIGNAL(finished()), this, SLOT(refreshSearch()));
     connect(&importWatcher, SIGNAL(finished()), this, SLOT(refreshImport()));
+    connect(&syncWatcher, SIGNAL(finished()), this, SLOT(refreshSync()));
 
     connect(ui->comboTag->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editTags_returnPressed()));
     connect(ui->comboAct->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_editActs_returnPressed()));
@@ -62,6 +63,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 }
 
+void MainWindow::refreshSync() {
+    vidTable->select();
+    tagTable->select();
+    actTable->select();
+    tagList->select();
+    actList->select();
+}
+
 void MainWindow::refreshVids() {
     qDebug() << "refresh vids list";
     vidTable->select();
@@ -90,11 +99,12 @@ void MainWindow::refreshImport() {
 }
 
 void MainWindow::replyFinished(QNetworkReply *reply) {
-    qDebug() << reply->errorString();
-    qDebug() << reply->readAll();
+    //qDebug() << reply->errorString();
+    //qDebug() << reply->readAll();
 
     if(reply->error() == QNetworkReply::NoError) {
-        QtConcurrent::run(worker, &Worker::updateSyncedVids, db, reply->readAll());
+        QFuture<void> future = QtConcurrent::run(worker, &Worker::updateSyncedVids, db, reply->readAll());
+        syncWatcher.setFuture(future);
     }
 }
 
@@ -411,7 +421,7 @@ void MainWindow::onSync() {
 
     QJsonDocument doc(json);
 
-    qDebug() << doc.toJson();
+    //qDebug() << doc.toJson();
 
     post.setUrl(QUrl("http://api.tagu.in/sync"));
     nam->post(post, doc.toJson());
