@@ -1,7 +1,6 @@
-# JAV / Porn / Hentai Organizer
-a XBMC for porn
+# Organize your video files with tags
 
-The purpose of this project is to have a client that can download metadata about a JAV / Porn / Hentai video.  It will consist of a server and a client.
+The purpose of this project is to have a client that can download metadata about user tagged videos.  It will consist of a server and a client.
 
 There will be a mechanism to sync tags and actress based on file hash and video title.
 
@@ -23,7 +22,6 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 * Duplicate detection
 * Recommendations
 * OpenCV face detection
-* Subtitle sharing for JAV
 
 ## Requirements
 * [Qt5] (http://qt-project.org)
@@ -38,7 +36,7 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 To import videos into the database
 
 * menu > general > options > select a folder under "Images Folder" (this folder is where thumbnails are stored)
-* menu > general > options > add top level directory to either JAV, Porn, Hentai
+* menu > general > options > add top level directory to videos
 * menu > database > import videos
 
 The import will not copy or move any files, it will just insert file name, file path, and file hash into the database.
