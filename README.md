@@ -1,3 +1,5 @@
+
+
 # Organize your video files with tags
 
 The purpose of this project is to have a client that can download metadata about user tagged videos.  It will consist of a server and a client.
@@ -7,7 +9,7 @@ There will be a mechanism to sync tags and actress based on file hash and video 
 ## Features working
 * Tagging
 * Tag normalization
-* Tag autocompletetion
+* Tag autocomplete
 * Add actress to video
 * Actress autocompletion
 * Select directories to import into library
@@ -54,4 +56,3 @@ The import will not copy or move any files, it will just insert file name, file 
 * select an actress under the Actress combobox / type a new actress into the actress combobox
 * the new actress will appear in the actress list
 * double click an actress in the actress list to remove an actress from a video
-
